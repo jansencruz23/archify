@@ -2,6 +2,7 @@ import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_error_dialog.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/services/auth/auth_provider.dart';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,11 +17,13 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   late final _authProvider = Provider.of<AuthProvider>(context, listen: false);
+  late final _userProvider = Provider.of<UserProvider>(context, listen: false);
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPwController = TextEditingController();
 
+  // Register function calling the user provider
   Future<void> register() async {
     final email = _emailController.text;
     final password = _passwordController.text;
@@ -31,17 +34,20 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    _authProvider.setLoading(true);
+    _userProvider.setLoading(true);
 
     try {
       // Register in firebase auth
       await _authProvider.registerEmailPassword(email, password);
+
+      // Save user in firebase database
+      await _userProvider.saveUser(email);
     } catch (ex) {
       if (mounted) {
         showErrorDialog(context, ex.toString());
       }
     } finally {
-      _authProvider.setLoading(false);
+      _userProvider.setLoading(false);
     }
   }
 
@@ -101,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
             // Space
             const SizedBox(height: 30),
 
-            // dont have an acc?
+            // already have an acc?
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

@@ -1,6 +1,7 @@
 import 'package:archify/firebase_options.dart';
 import 'package:archify/services/auth/auth_gate.dart';
 import 'package:archify/services/auth/auth_provider.dart';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/themes/light_mode.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
       ],
       child: const MyApp(),
     ),
