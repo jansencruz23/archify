@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "816948322608",
+    "project_id": "archify-fb334",
+    "storage_bucket": "archify-fb334.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:816948322608:android:1138505a1aab8be0bb28f5",
+        "android_client_info": {
+          "package_name": "com.archify.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaXR4c6-0ws0okeNiXPI5mzJRudMQ43QQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
