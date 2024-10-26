@@ -15,10 +15,26 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late final _authProvider = Provider.of<AuthProvider>(context, listen: false);
+  late final AuthProvider _authProvider;
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   // Login
   Future<void> login() async {
@@ -26,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       await _authProvider.loginEmailPassword(
-          emailController.text, passwordController.text);
+          _emailController.text, _passwordController.text);
     } catch (ex) {
       // replace with custom show dialog for errros
       if (mounted) {
@@ -54,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
 
             // Login text field
             MyTextField(
-              controller: emailController,
+              controller: _emailController,
               hintText: 'Email',
               obscureText: false,
             ),
@@ -64,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
 
             // Password text field
             MyTextField(
-              controller: passwordController,
+              controller: _passwordController,
               hintText: 'Password',
               obscureText: true,
             ),

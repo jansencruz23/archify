@@ -1,8 +1,12 @@
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/base_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthProvider extends BaseProvider {
   final _authService = AuthService();
+
+  User? getCurrentUser() => _authService.getCurrentUser();
+  String getCurrentUid() => _authService.getCurrentUid();
 
   // Login
   Future<void> loginEmailPassword(String email, password) async {

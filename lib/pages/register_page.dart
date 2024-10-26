@@ -16,12 +16,32 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  late final _authProvider = Provider.of<AuthProvider>(context, listen: false);
-  late final _userProvider = Provider.of<UserProvider>(context, listen: false);
+  late final AuthProvider _authProvider;
+  late final UserProvider _userProvider;
 
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPwController = TextEditingController();
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+  late final TextEditingController _confirmPwController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPwController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPwController.dispose();
+    super.dispose();
+  }
 
   // Register function calling the user provider
   Future<void> register() async {
@@ -101,7 +121,9 @@ class _RegisterPageState extends State<RegisterPage> {
             // Login button
             MyButton(
               text: 'Sign Up',
-              onTap: () async => register(),
+              onTap: () async {
+                register();
+              },
             ),
 
             // Space
