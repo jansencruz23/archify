@@ -1,5 +1,4 @@
 import 'package:archify/firebase_options.dart';
-import 'package:archify/pages/login_page.dart';
 import 'package:archify/services/auth/auth_gate.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/themes/light_mode.dart';

@@ -1,4 +1,5 @@
 import 'package:archify/components/my_button.dart';
+import 'package:archify/components/my_error_dialog.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
@@ -29,12 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     } catch (ex) {
       // replace with custom show dialog for errros
       if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(ex.toString()),
-          ),
-        );
+        showErrorDialog(context, ex.toString());
       }
     }
   }
@@ -42,9 +38,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       // App bar
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
         title: const Text('Login'),
       ),
       body: SafeArea(
@@ -92,10 +88,11 @@ class _LoginPageState extends State<LoginPage> {
                 const Text('Don\'t have an account?'),
                 const SizedBox(width: 5),
                 GestureDetector(
+                  onTap: widget.onTap,
                   child: const Text('Sign up'),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
