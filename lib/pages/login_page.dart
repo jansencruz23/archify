@@ -25,10 +25,15 @@ class _LoginPageState extends State<LoginPage> {
 
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  //focus text field
+  late final FocusNode _fieldEmail;
+  late final FocusNode _fieldPass;
 
   @override
   void initState() {
     super.initState();
+    _fieldEmail = FocusNode();
+    _fieldPass = FocusNode();
 
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -41,6 +46,8 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _fieldEmail.dispose();
+    _fieldPass.dispose();
     super.dispose();
   }
 
@@ -142,9 +149,13 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 10),
             // Login text field
             MyTextField(
+              focusNode: _fieldEmail,
               controller: _emailController,
               hintText: 'Email',
               obscureText: false,
+              onSubmitted: (value) {
+                FocusScope.of(context).requestFocus(_fieldPass);
+              },
             ),
 
             // Space
@@ -152,9 +163,13 @@ class _LoginPageState extends State<LoginPage> {
 
             // Password text field
             MyTextField(
+              focusNode: _fieldPass,
               controller: _passwordController,
               hintText: 'Password',
               obscureText: true,
+              onSubmitted: (value) {
+                _fieldPass.unfocus();
+              },
             ),
 
             // Space

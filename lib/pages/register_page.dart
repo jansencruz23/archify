@@ -23,6 +23,10 @@ class _RegisterPageState extends State<RegisterPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   late final TextEditingController _confirmPwController;
+  //Text field focus
+  late final FocusNode _fieldEmail;
+  late final FocusNode _fieldPass;
+  late final FocusNode _fieldRepass;
 
   @override
   void initState() {
@@ -34,6 +38,10 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPwController = TextEditingController();
+
+    _fieldEmail = FocusNode();
+    _fieldPass = FocusNode();
+    _fieldRepass = FocusNode();
   }
 
   @override
@@ -41,6 +49,9 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPwController.dispose();
+    _fieldEmail.dispose();
+    _fieldPass.dispose();
+    _fieldRepass.dispose();
     super.dispose();
   }
 
@@ -157,9 +168,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // Login text field
               MyTextField(
+                focusNode: _fieldEmail,
                 controller: _emailController,
                 hintText: 'Email',
                 obscureText: false,
+                onSubmitted: (value) {
+                  FocusScope.of(context).requestFocus(_fieldPass);
+                },
               ),
 
               // Space
@@ -167,9 +182,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // Password text field
               MyTextField(
+                focusNode: _fieldPass,
                 controller: _passwordController,
                 hintText: 'Password',
                 obscureText: true,
+                onSubmitted: (value) {
+                  FocusScope.of(context).requestFocus(_fieldRepass);
+                },
               ),
 
               // Space
@@ -177,9 +196,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // Password text field
               MyTextField(
+                focusNode: _fieldRepass,
                 controller: _confirmPwController,
                 hintText: 'Confirm Password',
                 obscureText: true,
+                onSubmitted: (value) {
+                  FocusScope.of(context).unfocus();
+                },
               ),
 
               // Space
