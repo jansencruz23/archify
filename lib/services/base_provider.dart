@@ -1,4 +1,3 @@
-import 'package:archify/services/auth/auth_service.dart';
 import 'package:flutter/foundation.dart';
 
 class BaseProvider extends ChangeNotifier {

@@ -23,6 +23,12 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPwController = TextEditingController();
 
+//For Resposiveness
+  double _getClampedFontSize(BuildContext context, double scale) {
+    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
+    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
+  }
+
   // Register function calling the user provider
   Future<void> register() async {
     final email = _emailController.text;
@@ -51,75 +57,121 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+//Hover not finished yet
+  bool amIHovering = false;
+  Offset exitFrom = Offset(0, 0);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       // App bar
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        title: const Text(''),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Login header text
-            const Text('Sign Up'),
-
-            // Space between login and text boxes
-            const SizedBox(height: 30),
-
-            // Login text field
-            MyTextField(
-              controller: _emailController,
-              hintText: 'Email',
-              obscureText: false,
-            ),
-
-            // Space
-            const SizedBox(height: 30),
-
-            // Password text field
-            MyTextField(
-              controller: _passwordController,
-              hintText: 'Password',
-              obscureText: true,
-            ),
-
-            // Space
-            const SizedBox(height: 30),
-
-            // Password text field
-            MyTextField(
-              controller: _confirmPwController,
-              hintText: 'Confirm Password',
-              obscureText: true,
-            ),
-
-            // Space
-            const SizedBox(height: 30),
-
-            // Login button
-            MyButton(
-              text: 'Sign Up',
-              onTap: () async => register(),
-            ),
-
-            // Space
-            const SizedBox(height: 30),
-
-            // already have an acc?
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Already have an account?'),
-                const SizedBox(width: 5),
-                GestureDetector(
-                  onTap: widget.onTap,
-                  child: const Text('Sign in'),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Login header text
+              Text(
+                'Sign Up',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Sora',
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
                 ),
-              ],
-            ),
-          ],
+              ),
+
+              // Space between login and text boxes
+              const SizedBox(height: 30),
+
+              // Login text field
+              MyTextField(
+                controller: _emailController,
+                hintText: 'Email',
+                obscureText: false,
+              ),
+
+              // Space
+              const SizedBox(height: 30),
+
+              // Password text field
+              MyTextField(
+                controller: _passwordController,
+                hintText: 'Password',
+                obscureText: true,
+              ),
+
+              // Space
+              const SizedBox(height: 30),
+
+              // Password text field
+              MyTextField(
+                controller: _confirmPwController,
+                hintText: 'Confirm Password',
+                obscureText: true,
+              ),
+
+              // Space
+              const SizedBox(height: 40),
+
+              // Login button
+              MyButton(
+                text: 'Sign Up',
+                onTap: () async => register(),
+              ),
+
+              // Space
+              const SizedBox(height: 30),
+
+              // already have an acc?
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Already have an account?",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontFamily: 'Sora',
+                      fontSize: _getClampedFontSize(context, 0.02),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  GestureDetector(
+                    onTap: widget.onTap,
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      onEnter: (PointerEvent details) =>
+                          setState(() => amIHovering = true),
+
+                      // callback when your mouse pointer leaves the underlying widget
+                      onExit: (PointerEvent details) {
+                        setState(() {
+                          amIHovering = false;
+                          // Storing the exit position
+                          exitFrom = details.localPosition;
+                        });
+                      },
+                      child: Text(
+                        "Sign in",
+                        style: TextStyle(
+                          color: amIHovering
+                              ? Theme.of(context).colorScheme.secondaryContainer
+                              : Theme.of(context).colorScheme.secondary,
+                          fontFamily: 'Sora',
+                          fontSize: _getClampedFontSize(context, 0.02),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

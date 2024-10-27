@@ -79,6 +79,7 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  
   # fonts:
   #   - family: Schyler
   #     fonts:
@@ -90,6 +91,14 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+  fonts:
+    - family: Sora
+      fonts:
+        - asset: lib/assets/fonts/Sora-Regular.ttf
+        - asset: lib/assets/fonts/Sora-Bold.ttf
+          weight: 700
+        - asset: lib/assets/fonts/Sora-Italic.ttf
+          style: italic
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
