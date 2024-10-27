@@ -73,6 +73,7 @@ flutter:
     - lib/assets/images/Archify_Logo.jpg
     - lib/assets/images/sample_Image1.png
     - lib/assets/images/google.png
+    - lib/assets/images/sample_Image2.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

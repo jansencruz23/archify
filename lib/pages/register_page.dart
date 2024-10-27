@@ -4,6 +4,7 @@ import 'package:archify/components/my_square_tile.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -119,9 +120,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    //Gradinet Line Colors
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      // App bar
+      // App bar removed
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -129,28 +131,57 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.33,
-                constraints: const BoxConstraints(minWidth: double.infinity),
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
+              Stack(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.33,
+                    constraints:
+                        const BoxConstraints(minWidth: double.infinity),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(40),
+                        bottomRight: Radius.circular(40),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFD2691E),
+                          Color(0xFFE4A68A),
+                          Color(0xFFF5DEB3),
+                          Color(0xFFFAA376),
+                          Color(0xFFFF6F61),
+                        ],
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.bottomRight,
+                      ),
                     ),
-                    border: Border(
-                      bottom: BorderSide(width: 10, color: Colors.orange),
-                    )),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
                   ),
-                  child: Image.asset(
-                    'lib/assets/images/sample_Image1.png',
-                    fit: BoxFit.fill, // Adjust to fit the container
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.33,
+                    constraints:
+                        const BoxConstraints(minWidth: double.infinity),
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(40),
+                          bottomRight: Radius.circular(40),
+                        ),
+                        border: Border(
+                          bottom:
+                              BorderSide(width: 15, color: Colors.transparent),
+                        )),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(30),
+                        bottomRight: Radius.circular(30),
+                      ),
+                      child: Image.asset(
+                        'lib/assets/images/sample_Image2.jpg',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
+
               const SizedBox(height: 20),
               // Login header text
               Text(
@@ -164,7 +195,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
 
               // Space between login and text boxes
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
               // Login text field
               MyTextField(
