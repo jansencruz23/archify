@@ -18,6 +18,10 @@ class UserProvider extends BaseProvider {
     return await _userService.getUserFromFirebase(uid);
   }
 
+  Future<UserProfile?> getUserProfileByEmail(String email) async {
+    return await _userService.getUserByEmailFromFirebase(email);
+  }
+
   // Save user after registering
   Future<void> saveUser(String email) async {
     await _userService.saveUserInFirebase(email);

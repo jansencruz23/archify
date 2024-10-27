@@ -13,6 +13,11 @@ class AuthProvider extends BaseProvider {
     await _authService.loginEmailPasswordInFirebase(email, password);
   }
 
+  // Login with Google
+  Future<UserCredential?> loginWithGoogle() async {
+    return await _authService.loginWithGoogle();
+  }
+
   // Register
   Future<void> registerEmailPassword(String email, password) async {
     await _authService.registerEmailPasswordInFirebase(email, password);

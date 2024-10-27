@@ -71,6 +71,30 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  // Register with Google
+  Future<void> registerWithGoogle() async {
+    try {
+      // Get user credentials from Google login
+      final userCredential = await _authProvider.loginWithGoogle();
+
+      // Check if the user is new -> save user to database and
+      if (userCredential != null &&
+          userCredential.additionalUserInfo!.isNewUser) {
+        _userProvider.setLoading(true);
+
+        final email = _authProvider.getCurrentUser()!.email;
+        await _userProvider.saveUser(email!);
+      }
+    } catch (ex) {
+      // replace with custom show dialog for errors
+      if (mounted) {
+        showErrorDialog(context, ex.toString());
+      }
+    } finally {
+      _userProvider.setLoading(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,6 +164,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: const Text('Sign in'),
                 ),
               ],
+            ),
+
+            // Replace with my icon button
+            MyButton(
+              text: 'Sign up with Google',
+              onTap: () async => registerWithGoogle(),
             ),
           ],
         ),

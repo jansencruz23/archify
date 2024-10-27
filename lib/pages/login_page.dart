@@ -2,6 +2,7 @@ import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_error_dialog.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/services/auth/auth_provider.dart';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late final AuthProvider _authProvider;
+  late final UserProvider _userProvider;
 
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
@@ -25,6 +27,8 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
 
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
+
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
   }
@@ -44,10 +48,34 @@ class _LoginPageState extends State<LoginPage> {
       await _authProvider.loginEmailPassword(
           _emailController.text, _passwordController.text);
     } catch (ex) {
-      // replace with custom show dialog for errros
+      // replace with custom show dialog for errors
       if (mounted) {
         showErrorDialog(context, ex.toString());
       }
+    }
+  }
+
+  // Login with Google
+  Future<void> loginWithGoogle() async {
+    try {
+      // Get user credentials from Google login
+      final userCredential = await _authProvider.loginWithGoogle();
+
+      // Check if the user is new -> save user to database and
+      if (userCredential != null &&
+          userCredential.additionalUserInfo!.isNewUser) {
+        _userProvider.setLoading(true);
+
+        final email = _authProvider.getCurrentUser()!.email;
+        await _userProvider.saveUser(email!);
+      }
+    } catch (ex) {
+      // replace with custom show dialog for errors
+      if (mounted) {
+        showErrorDialog(context, ex.toString());
+      }
+    } finally {
+      _userProvider.setLoading(false);
     }
   }
 
@@ -108,6 +136,15 @@ class _LoginPageState extends State<LoginPage> {
                   child: const Text('Sign up'),
                 ),
               ],
+            ),
+
+            // Space
+            const SizedBox(height: 30),
+
+            // Replace with my icon button
+            MyButton(
+              text: 'Login with Google',
+              onTap: () async => loginWithGoogle(),
             ),
           ],
         ),

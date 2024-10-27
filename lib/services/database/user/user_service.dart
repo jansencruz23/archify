@@ -40,6 +40,22 @@ class UserService {
     }
   }
 
+  // Gets user profile from the database
+  Future<UserProfile?> getUserByEmailFromFirebase(String email) async {
+    try {
+      final userDoc = await _db
+          .collection('Users')
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+
+      return UserProfile.fromDocument(userDoc.docs.first);
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return null;
+    }
+  }
+
   // Update user's isNew property in database
   Future<void> updateUserNotNewInFirebase() async {
     try {
