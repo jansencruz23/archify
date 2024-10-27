@@ -29,6 +29,8 @@ class _RegisterPageState extends State<RegisterPage> {
   late final FocusNode _fieldPass;
   late final FocusNode _fieldRepass;
 
+  int _currentIndex = 2;
+
   @override
   void initState() {
     super.initState();
@@ -183,6 +185,14 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
 
               const SizedBox(height: 20),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:
+                      List.generate(3, (index) => buildDot(context, index)),
+                ),
+              ),
+              const SizedBox(height: 20),
               // Login header text
               Text(
                 'Sign Up',
@@ -332,6 +342,20 @@ class _RegisterPageState extends State<RegisterPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  AnimatedContainer buildDot(BuildContext context, int index) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      height: 10,
+      width: _currentIndex == index ? 25 : 10,
+      margin: const EdgeInsets.only(right: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).colorScheme.secondary,
       ),
     );
   }

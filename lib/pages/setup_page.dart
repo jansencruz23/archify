@@ -1,4 +1,6 @@
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/pages/login_page.dart';
+import 'package:archify/pages/register_page.dart';
 import 'package:archify/pages/setup_pages/setup_intro_page.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +57,15 @@ class _SetupPageState extends State<SetupPage> {
                   _currentIndex = index;
                 });
               },
-              children: [SetupIntroPage(), SetupIntroPage(), SetupIntroPage()],
+              children: [
+                SetupIntroPage(),
+                LoginPage(
+                  onTap: () {},
+                ),
+                RegisterPage(
+                  onTap: () {},
+                )
+              ],
             ),
           ),
           Container(
