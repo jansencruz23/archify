@@ -1,5 +1,6 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_error_dialog.dart';
+import 'package:archify/components/my_square_tile.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
@@ -16,12 +17,32 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  late final _authProvider = Provider.of<AuthProvider>(context, listen: false);
-  late final _userProvider = Provider.of<UserProvider>(context, listen: false);
+  late final AuthProvider _authProvider;
+  late final UserProvider _userProvider;
 
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPwController = TextEditingController();
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+  late final TextEditingController _confirmPwController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPwController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPwController.dispose();
+    super.dispose();
+  }
 
 //For Resposiveness
   double _getClampedFontSize(BuildContext context, double scale) {
@@ -61,20 +82,65 @@ class _RegisterPageState extends State<RegisterPage> {
   bool amIHovering = false;
   Offset exitFrom = Offset(0, 0);
 
+  // Register with Google
+  Future<void> registerWithGoogle() async {
+    try {
+      // Get user credentials from Google login
+      final userCredential = await _authProvider.loginWithGoogle();
+
+      // Check if the user is new -> save user to database and
+      if (userCredential != null &&
+          userCredential.additionalUserInfo!.isNewUser) {
+        _userProvider.setLoading(true);
+
+        final email = _authProvider.getCurrentUser()!.email;
+        await _userProvider.saveUser(email!);
+      }
+    } catch (ex) {
+      // replace with custom show dialog for errors
+      if (mounted) {
+        showErrorDialog(context, ex.toString());
+      }
+    } finally {
+      _userProvider.setLoading(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       // App bar
-      appBar: AppBar(
-        title: const Text(''),
-      ),
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.33,
+                constraints: const BoxConstraints(minWidth: double.infinity),
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
+                    ),
+                    border: Border(
+                      bottom: BorderSide(width: 10, color: Colors.orange),
+                    )),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
+                  ),
+                  child: Image.asset(
+                    'lib/assets/images/sample_Image1.png',
+                    fit: BoxFit.fill, // Adjust to fit the container
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               // Login header text
               Text(
                 'Sign Up',
@@ -87,7 +153,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
 
               // Space between login and text boxes
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               // Login text field
               MyTextField(
@@ -97,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
 
               // Space
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               // Password text field
               MyTextField(
@@ -107,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
 
               // Space
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               // Password text field
               MyTextField(
@@ -117,7 +183,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
 
               // Space
-              const SizedBox(height: 40),
+              const SizedBox(height: 10),
 
               // Login button
               MyButton(
@@ -126,7 +192,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
 
               // Space
-              const SizedBox(height: 30),
 
               // already have an acc?
               Row(
@@ -170,6 +235,46 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Or continue with',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                          fontFamily: 'Sora',
+                          fontSize: _getClampedFontSize(context, 0.02),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 50,
+                child: MySquareTile(
+                  imagePath: 'lib/assets/images/google.png',
+                  onTap: () async => registerWithGoogle(),
+                ),
+              ),
+              const SizedBox(height: 10),
             ],
           ),
         ),

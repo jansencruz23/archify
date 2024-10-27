@@ -6,7 +6,8 @@ class UserProfile {
   final String email;
   final String username;
   final String bio;
-  final String? pictureUrl;
+  final String pictureUrl;
+  final bool isNew;
 
   UserProfile({
     required this.uid,
@@ -15,17 +16,20 @@ class UserProfile {
     required this.username,
     required this.bio,
     required this.pictureUrl,
+    required this.isNew,
   });
 
   // Firebase -> App
   factory UserProfile.fromDocument(DocumentSnapshot doc) {
     return UserProfile(
-        uid: doc['uid'],
-        name: doc['name'],
-        email: doc['email'],
-        username: doc['username'],
-        bio: doc['bio'],
-        pictureUrl: doc['pictureUrl']);
+      uid: doc['uid'],
+      name: doc['name'],
+      email: doc['email'],
+      username: doc['username'],
+      bio: doc['bio'],
+      pictureUrl: doc['pictureUrl'],
+      isNew: doc['isNew'],
+    );
   }
 
   // App -> Firebase
@@ -37,6 +41,7 @@ class UserProfile {
       'username': username,
       'bio': bio,
       'pictureUrl': pictureUrl,
+      'isNew': isNew,
     };
   }
 }
