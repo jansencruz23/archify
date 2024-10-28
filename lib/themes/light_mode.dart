@@ -7,6 +7,7 @@ ThemeData lightMode = ThemeData(
     surface: Color(0xFFFAFAFA),
     primary: Color(0xFFFAFAFA),
     secondary: Color(0xFFFF6F61),
+    secondaryFixedDim: Color(0x7FDCCCB4),
     tertiary: Color.fromARGB(127, 249, 237, 215),
     outline: Color(0xFF333333),
     inversePrimary: Color(0xFF333333),
