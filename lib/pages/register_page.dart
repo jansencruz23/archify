@@ -1,8 +1,10 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_error_dialog.dart';
+import 'package:archify/components/my_square_tile.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +24,12 @@ class _RegisterPageState extends State<RegisterPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   late final TextEditingController _confirmPwController;
+  //Text field focus
+  late final FocusNode _fieldEmail;
+  late final FocusNode _fieldPass;
+  late final FocusNode _fieldRepass;
+
+  int _currentIndex = 2;
 
   @override
   void initState() {
@@ -33,6 +41,10 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPwController = TextEditingController();
+
+    _fieldEmail = FocusNode();
+    _fieldPass = FocusNode();
+    _fieldRepass = FocusNode();
   }
 
   @override
@@ -40,7 +52,16 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPwController.dispose();
+    _fieldEmail.dispose();
+    _fieldPass.dispose();
+    _fieldRepass.dispose();
     super.dispose();
+  }
+
+//For Resposiveness
+  double _getClampedFontSize(BuildContext context, double scale) {
+    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
+    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
   }
 
   // Register function calling the user provider
@@ -71,6 +92,10 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+//Hover not finished yet
+  bool amIHovering = false;
+  Offset exitFrom = Offset(0, 0);
+
   // Register with Google
   Future<void> registerWithGoogle() async {
     try {
@@ -97,82 +122,240 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    //Gradinet Line Colors
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      // App bar
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-      ),
+      // App bar removed
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Login header text
-            const Text('Sign Up'),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.33,
+                    constraints:
+                        const BoxConstraints(minWidth: double.infinity),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(40),
+                        bottomRight: Radius.circular(40),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFD2691E),
+                          Color(0xFFE4A68A),
+                          Color(0xFFF5DEB3),
+                          Color(0xFFFAA376),
+                          Color(0xFFFF6F61),
+                        ],
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.33,
+                    constraints:
+                        const BoxConstraints(minWidth: double.infinity),
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(40),
+                          bottomRight: Radius.circular(40),
+                        ),
+                        border: Border(
+                          bottom:
+                              BorderSide(width: 15, color: Colors.transparent),
+                        )),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(30),
+                        bottomRight: Radius.circular(30),
+                      ),
+                      child: Image.asset(
+                        'lib/assets/images/sample_Image2.jpg',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
 
-            // Space between login and text boxes
-            const SizedBox(height: 30),
-
-            // Login text field
-            MyTextField(
-              controller: _emailController,
-              hintText: 'Email',
-              obscureText: false,
-            ),
-
-            // Space
-            const SizedBox(height: 30),
-
-            // Password text field
-            MyTextField(
-              controller: _passwordController,
-              hintText: 'Password',
-              obscureText: true,
-            ),
-
-            // Space
-            const SizedBox(height: 30),
-
-            // Password text field
-            MyTextField(
-              controller: _confirmPwController,
-              hintText: 'Confirm Password',
-              obscureText: true,
-            ),
-
-            // Space
-            const SizedBox(height: 30),
-
-            // Login button
-            MyButton(
-              text: 'Sign Up',
-              onTap: () async {
-                register();
-              },
-            ),
-
-            // Space
-            const SizedBox(height: 30),
-
-            // already have an acc?
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Already have an account?'),
-                const SizedBox(width: 5),
-                GestureDetector(
-                  onTap: widget.onTap,
-                  child: const Text('Sign in'),
+              const SizedBox(height: 20),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:
+                      List.generate(3, (index) => buildDot(context, index)),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+              // Login header text
+              Text(
+                'Sign Up',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Sora',
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                ),
+              ),
 
-            // Replace with my icon button
-            MyButton(
-              text: 'Sign up with Google',
-              onTap: () async => registerWithGoogle(),
-            ),
-          ],
+              // Space between login and text boxes
+              const SizedBox(height: 10),
+
+              // Login text field
+              MyTextField(
+                focusNode: _fieldEmail,
+                controller: _emailController,
+                hintText: 'Email',
+                obscureText: false,
+                onSubmitted: (value) {
+                  FocusScope.of(context).requestFocus(_fieldPass);
+                },
+              ),
+
+              // Space
+              const SizedBox(height: 20),
+
+              // Password text field
+              MyTextField(
+                focusNode: _fieldPass,
+                controller: _passwordController,
+                hintText: 'Password',
+                obscureText: true,
+                onSubmitted: (value) {
+                  FocusScope.of(context).requestFocus(_fieldRepass);
+                },
+              ),
+
+              // Space
+              const SizedBox(height: 20),
+
+              // Password text field
+              MyTextField(
+                focusNode: _fieldRepass,
+                controller: _confirmPwController,
+                hintText: 'Confirm Password',
+                obscureText: true,
+                onSubmitted: (value) {
+                  FocusScope.of(context).unfocus();
+                },
+              ),
+
+              // Space
+              const SizedBox(height: 10),
+
+              // Login button
+              MyButton(
+                text: 'Sign Up',
+                onTap: () async => register(),
+              ),
+
+              // Space
+
+              // already have an acc?
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Already have an account?",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontFamily: 'Sora',
+                      fontSize: _getClampedFontSize(context, 0.02),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  GestureDetector(
+                    onTap: widget.onTap,
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      onEnter: (PointerEvent details) =>
+                          setState(() => amIHovering = true),
+
+                      // callback when your mouse pointer leaves the underlying widget
+                      onExit: (PointerEvent details) {
+                        setState(() {
+                          amIHovering = false;
+                          // Storing the exit position
+                          exitFrom = details.localPosition;
+                        });
+                      },
+                      child: Text(
+                        "Sign in",
+                        style: TextStyle(
+                          color: amIHovering
+                              ? Theme.of(context).colorScheme.secondaryContainer
+                              : Theme.of(context).colorScheme.secondary,
+                          fontFamily: 'Sora',
+                          fontSize: _getClampedFontSize(context, 0.02),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Or continue with',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                          fontFamily: 'Sora',
+                          fontSize: _getClampedFontSize(context, 0.02),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 50,
+                child: MySquareTile(
+                  imagePath: 'lib/assets/images/google.png',
+                  onTap: () async => registerWithGoogle(),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  AnimatedContainer buildDot(BuildContext context, int index) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      height: 10,
+      width: _currentIndex == index ? 25 : 10,
+      margin: const EdgeInsets.only(right: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).colorScheme.secondary,
       ),
     );
   }
