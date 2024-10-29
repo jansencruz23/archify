@@ -10,6 +10,8 @@ class MyNavbar extends StatelessWidget {
     required this.onItemTapped,
   }) : super(key: key);
 
+  static const double navIconSize = 30.0;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -39,8 +41,8 @@ class MyNavbar extends StatelessWidget {
         children: [
           Image.asset(
             iconPath,
-            height: 30,
-            width: 30,
+            height: navIconSize,
+            width: navIconSize,
           ),
           if (selectedIndex == index)
             Container(
@@ -48,7 +50,7 @@ class MyNavbar extends StatelessWidget {
               height: 8,
               width: 8,
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: Color(0xFFFF6F61),
                 shape: BoxShape.circle,
               ),
             ),
