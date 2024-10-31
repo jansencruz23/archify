@@ -70,54 +70,44 @@ class _HomePageState extends State<HomePage> {
                     preferredSize: Size.fromHeight(80),
                     child: AppBar(
                       // Leading section with profile picture and welcome text
-                      leadingWidth: MediaQuery.of(context).size.width - 50,
-                      leading: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            // Profile picture widget
-                            MyProfilePicture(
-                              height: 60,
-                              width: 60,
-                              onProfileTapped: () {},
+                      titleSpacing: 10,
+                      leadingWidth: 80,
+                      leading: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // Profile picture widget
+                          MyProfilePicture(
+                            height: 60,
+                            width: 60,
+                            onProfileTapped: () {},
+                          ),
+                        ],
+                      ),
+                      title: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Welcome back text
+                          Text(
+                            'Welcome back,',
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                                fontSize: 16),
+                          ),
+                          // User's name text
+                          Text(
+                            userProfile.name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color:
+                                  Theme.of(context).colorScheme.inversePrimary,
                             ),
-                            SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width - 50 - 100,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Welcome back text
-                                    Text(
-                                      'Welcome back,',
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary,
-                                          fontSize: 16),
-                                    ),
-                                    // User's name text
-                                    Text(
-                                      userProfile.name,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .inversePrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       // Notification icon button
                       actions: [

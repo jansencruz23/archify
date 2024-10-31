@@ -42,13 +42,15 @@ class _MyProfilePictureState extends State<MyProfilePicture> {
                 )
               : null,
         ),
-        child: const Center(
-          child: Icon(
-            Icons.person_rounded,
-            color: Colors.black38,
-            size: 35,
-          ),
-        ),
+        child: listeningProvider.picturePath == ''
+            ? const Center(
+                child: Icon(
+                  Icons.person_rounded,
+                  color: Colors.black38,
+                  size: 35,
+                ),
+              )
+            : null,
       ),
     );
   }
