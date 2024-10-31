@@ -35,7 +35,9 @@ class _MyProfilePictureState extends State<MyProfilePicture> {
           shape: BoxShape.circle,
           image: listeningProvider.picturePath != ''
               ? DecorationImage(
-                  image: Image.file(File(listeningProvider.picturePath)).image,
+                  image: listeningProvider.picturePath.startsWith('https')
+                      ? Image.network(listeningProvider.picturePath).image
+                      : Image.file(File(listeningProvider.picturePath)).image,
                   fit: BoxFit.cover,
                 )
               : null,

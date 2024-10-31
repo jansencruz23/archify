@@ -19,7 +19,15 @@ class UserProvider extends BaseProvider {
   // Gets current user's profile
   Future<UserProfile?> getCurrentUserProfile() async {
     final uid = _authService.getCurrentUid();
-    return await _userService.getUserFromFirebase(uid);
+    var user = await _userService.getUserFromFirebase(uid);
+
+    if (user == null) {
+      return null;
+    }
+
+    _picturePath = user.pictureUrl;
+    notifyListeners();
+    return user;
   }
 
   // Get a user's profile by their id
@@ -78,7 +86,7 @@ class UserProvider extends BaseProvider {
 
   // Upload profile picture to Firebase Storage
   Future<String> uploadProfilePicture(String path) async {
-    _picturePath = '';
-    return await _storageService.uploadImage(path);
+    _picturePath = await _storageService.uploadImage(path);
+    return _picturePath;
   }
 }
