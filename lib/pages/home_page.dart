@@ -67,68 +67,73 @@ class _HomePageState extends State<HomePage> {
                 child: Scaffold(
                   // AppBar with custom height
                   appBar: PreferredSize(
-                    preferredSize: Size.fromHeight(80),
-                    child: AppBar(
-                      // Leading section with profile picture and welcome text
-                      titleSpacing: 10,
-                      leadingWidth: 80,
-                      leading: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          // Profile picture widget
-                          MyProfilePicture(
-                            height: 60,
-                            width: 60,
-                            onProfileTapped: () {},
-                          ),
-                        ],
-                      ),
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Welcome back text
-                          Text(
-                            'Welcome back,',
-                            style: TextStyle(
+                    preferredSize: Size.fromHeight(90),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: AppBar(
+                        // Leading section with profile picture and welcome text
+                        titleSpacing: 10,
+                        leadingWidth: 80,
+                        leading: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // Profile picture widget
+                            MyProfilePicture(
+                              height: 60,
+                              width: 60,
+                              onProfileTapped: () {},
+                            ),
+                          ],
+                        ),
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Welcome back text
+                            Text(
+                              'Welcome back,',
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
+                                  fontSize: 16),
+                            ),
+                            // User's name text
+                            Text(
+                              userProfile.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
                                 color: Theme.of(context)
                                     .colorScheme
                                     .inversePrimary,
-                                fontSize: 16),
-                          ),
-                          // User's name text
-                          Text(
-                            userProfile.name,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Notification icon button
+                        actions: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.notifications_outlined,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                                size: 30,
+                              ),
                             ),
                           ),
                         ],
-                      ),
-                      // Notification icon button
-                      actions: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 5),
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.notifications_outlined,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary,
-                              size: 30,
-                            ),
+                        bottom: PreferredSize(
+                          preferredSize: Size.fromHeight(1),
+                          child: Divider(
+                            height: 2,
+                            color: Theme.of(context).colorScheme.outline,
                           ),
-                        ),
-                      ],
-                      bottom: PreferredSize(
-                        preferredSize: Size.fromHeight(1),
-                        child: Divider(
-                          height: 2,
-                          color: Theme.of(context).colorScheme.outline,
                         ),
                       ),
                     ),

@@ -8,12 +8,14 @@ class MyProfilePicture extends StatefulWidget {
   final void Function()? onProfileTapped;
   final double height;
   final double width;
+  final bool hasBorder;
 
   const MyProfilePicture({
     super.key,
     required this.height,
     required this.width,
     required this.onProfileTapped,
+    this.hasBorder = false,
   });
 
   @override
@@ -28,19 +30,22 @@ class _MyProfilePictureState extends State<MyProfilePicture> {
     return GestureDetector(
       onTap: widget.onProfileTapped,
       child: Container(
+        padding: const EdgeInsets.all(2),
         height: widget.height,
         width: widget.width,
         decoration: BoxDecoration(
-          color: Colors.grey,
-          shape: BoxShape.circle,
-          image: listeningProvider.picturePath != ''
-              ? DecorationImage(
-                  image: listeningProvider.picturePath.startsWith('https')
-                      ? Image.network(listeningProvider.picturePath).image
-                      : Image.file(File(listeningProvider.picturePath)).image,
-                  fit: BoxFit.cover,
+          gradient: widget.hasBorder
+              ? LinearGradient(
+                  colors: [
+                    Color(0xFFF5DEB3),
+                    Color(0xFFD2691E),
+                    Color(0xFFFF6F61),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 )
               : null,
+          shape: BoxShape.circle,
         ),
         child: listeningProvider.picturePath == ''
             ? const Center(
@@ -50,7 +55,26 @@ class _MyProfilePictureState extends State<MyProfilePicture> {
                   size: 35,
                 ),
               )
-            : null,
+            : Container(
+                height: widget.height,
+                width: widget.width,
+                decoration: BoxDecoration(
+                  border: widget.hasBorder
+                      ? Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 5,
+                        )
+                      : null,
+                  color: Colors.grey,
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: listeningProvider.picturePath.startsWith('https')
+                        ? Image.network(listeningProvider.picturePath).image
+                        : Image.file(File(listeningProvider.picturePath)).image,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
       ),
     );
   }
