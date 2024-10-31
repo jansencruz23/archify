@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/base_provider.dart';
@@ -30,5 +32,26 @@ class UserProvider extends BaseProvider {
   // Update user is not new
   Future<void> updateUserNotNew() async {
     await _userService.updateUserNotNewInFirebase();
+  }
+
+  // Gets 3 random name based from username
+  Future<List<String>> getRandomNames() async {
+    final user = await getCurrentUserProfile();
+    final username = user!.username;
+
+    List<String> names = [];
+
+    names.add(username);
+    names.add(randomNameGenerator(username));
+    names.add(randomNameGenerator(username));
+
+    return names;
+  }
+
+  // Generates a random name based on the given username
+  String randomNameGenerator(String username) {
+    final random = Random();
+    final randomNumber = random.nextInt(1000);
+    return '$username${randomNumber.toString()}';
   }
 }

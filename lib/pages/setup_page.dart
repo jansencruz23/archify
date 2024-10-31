@@ -2,6 +2,7 @@ import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/pages/login_page.dart';
 import 'package:archify/pages/register_page.dart';
 import 'package:archify/pages/setup_pages/setup_intro_page.dart';
+import 'package:archify/pages/setup_pages/setup_name_page.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,20 +16,27 @@ class SetupPage extends StatefulWidget {
 
 class _SetupPageState extends State<SetupPage> {
   late final UserProvider _userProvider;
+
+  late final FocusNode _nameFocusNode;
+  late final TextEditingController _nameController;
+  late final PageController _pageController;
+
   late int _currentIndex;
-  late PageController _controller;
 
   @override
   void initState() {
     super.initState();
 
     _currentIndex = 0;
-    _controller = PageController(initialPage: 0);
+
+    _nameFocusNode = FocusNode();
+    _nameController = TextEditingController();
+    _pageController = PageController(initialPage: 0);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    _controller.addListener(() {
+    _pageController.addListener(() {
       setState(() {
-        _currentIndex = _controller.page!.toInt();
+        _currentIndex = _pageController.page!.toInt();
       });
     });
   }
@@ -40,7 +48,8 @@ class _SetupPageState extends State<SetupPage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _nameController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -51,7 +60,7 @@ class _SetupPageState extends State<SetupPage> {
         children: [
           Expanded(
             child: PageView(
-              controller: _controller,
+              controller: _pageController,
               onPageChanged: (int index) {
                 setState(() {
                   _currentIndex = index;
@@ -59,12 +68,12 @@ class _SetupPageState extends State<SetupPage> {
               },
               children: [
                 SetupIntroPage(),
-                LoginPage(
-                  onTap: () {},
+                SetupNamePage(
+                  nameController: _nameController,
+                  nameFocusNode: _nameFocusNode,
+                  userProvider: _userProvider,
                 ),
-                RegisterPage(
-                  onTap: () {},
-                )
+                SetupIntroPage(),
               ],
             ),
           ),
@@ -89,7 +98,7 @@ class _SetupPageState extends State<SetupPage> {
                   await updateUserNotNew();
                 } else {
                   // If may kasunod pa
-                  _controller.nextPage(
+                  _pageController.nextPage(
                     duration: const Duration(milliseconds: 100),
                     curve: Curves.bounceIn,
                   );
