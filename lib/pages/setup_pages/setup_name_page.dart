@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 class SetupNamePage extends StatefulWidget {
   final UserProvider userProvider;
   final TextEditingController nameController;
-  final FocusNode nameFocusNode;
 
   const SetupNamePage({
     super.key,
     required this.nameController,
-    required this.nameFocusNode,
     required this.userProvider,
   });
 
@@ -19,11 +17,13 @@ class SetupNamePage extends StatefulWidget {
 }
 
 class _SetupNamePageState extends State<SetupNamePage> {
+  late final FocusNode nameFocusNode;
   List<String> _nameSuggestions = [];
   String name = '';
 
   @override
   void initState() {
+    nameFocusNode = FocusNode();
     super.initState();
     loadNameSuggestions();
   }
@@ -49,7 +49,7 @@ class _SetupNamePageState extends State<SetupNamePage> {
               controller: widget.nameController,
               hintText: 'Your Name',
               obscureText: false,
-              focusNode: widget.nameFocusNode,
+              focusNode: nameFocusNode,
             ),
             Expanded(
               child: ListView.builder(

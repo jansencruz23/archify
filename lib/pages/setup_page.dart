@@ -3,6 +3,7 @@ import 'package:archify/pages/login_page.dart';
 import 'package:archify/pages/register_page.dart';
 import 'package:archify/pages/setup_pages/setup_intro_page.dart';
 import 'package:archify/pages/setup_pages/setup_name_page.dart';
+import 'package:archify/pages/setup_pages/setup_profile_pic_page.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,19 +18,19 @@ class SetupPage extends StatefulWidget {
 class _SetupPageState extends State<SetupPage> {
   late final UserProvider _userProvider;
 
-  late final FocusNode _nameFocusNode;
   late final TextEditingController _nameController;
   late final PageController _pageController;
 
   late int _currentIndex;
+  late String _localPicturePath;
 
   @override
   void initState() {
     super.initState();
 
     _currentIndex = 0;
+    _localPicturePath = '';
 
-    _nameFocusNode = FocusNode();
     _nameController = TextEditingController();
     _pageController = PageController(initialPage: 0);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -41,9 +42,26 @@ class _SetupPageState extends State<SetupPage> {
     });
   }
 
-  // Update user so setup page will not be displaying again
-  Future<void> updateUserNotNew() async {
-    await _userProvider.updateUserNotNew();
+  // Open image picker
+  Future<void> onProfileTapped() async {
+    final imagePath = await _userProvider.openImagePicker();
+    setState(() {
+      _localPicturePath = imagePath;
+    });
+  }
+
+  // Upload profile picture to filebase
+  Future<String> uploadProfilePicture() async {
+    return await _userProvider.uploadProfilePicture(_localPicturePath);
+  }
+
+  Future<void> finishSetup() async {
+    goRootPage(context);
+    final pictureUrl = await uploadProfilePicture();
+    await _userProvider.updateUserAfterSetup(
+      name: _nameController.text,
+      pictureUrl: pictureUrl,
+    );
   }
 
   @override
@@ -70,10 +88,9 @@ class _SetupPageState extends State<SetupPage> {
                 SetupIntroPage(),
                 SetupNamePage(
                   nameController: _nameController,
-                  nameFocusNode: _nameFocusNode,
                   userProvider: _userProvider,
                 ),
-                SetupIntroPage(),
+                SetupProfilePicPage(onTap: onProfileTapped),
               ],
             ),
           ),
@@ -94,8 +111,7 @@ class _SetupPageState extends State<SetupPage> {
               onPressed: () async {
                 // Last page
                 if (_currentIndex == 2) {
-                  goRootPage(context);
-                  await updateUserNotNew();
+                  await finishSetup();
                 } else {
                   // If may kasunod pa
                   _pageController.nextPage(
