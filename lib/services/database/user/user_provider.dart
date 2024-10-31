@@ -12,22 +12,32 @@ class UserProvider extends BaseProvider {
   final _userService = UserService();
   final _storageService = StorageService();
 
-// IDISPLAY
+  // Properties to call in the UI
   late String _picturePath = '';
   String get picturePath => _picturePath;
+
+  late UserProfile _userProfile;
+  UserProfile get userProfile => _userProfile;
 
   // Gets current user's profile
   Future<UserProfile?> getCurrentUserProfile() async {
     final uid = _authService.getCurrentUid();
-    var user = await _userService.getUserFromFirebase(uid);
+    return await _userService.getUserFromFirebase(uid);
+  }
 
+  Future<void> loadUserProfile() async {
+    setLoading(true);
+
+    final user = await getCurrentUserProfile();
     if (user == null) {
-      return null;
+      return;
     }
 
+    _userProfile = user;
     _picturePath = user.pictureUrl;
+
+    setLoading(false);
     notifyListeners();
-    return user;
   }
 
   // Get a user's profile by their id
