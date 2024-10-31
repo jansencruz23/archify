@@ -16,20 +16,18 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late final AuthProvider _authProvider;
   late final UserProvider _userProvider;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
-
     _checkIfNewUser();
   }
 
   Future<void> _checkIfNewUser() async {
     final user = await _userProvider.getCurrentUserProfile();
-
     if (user != null && user.isNew) {
       if (mounted) {
         goSetup(context);
@@ -42,29 +40,36 @@ class _HomePageState extends State<HomePage> {
     if (mounted) goRootPage(context);
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
         return userProvider.isLoading
-            // If it is loading display loading circle
             ? const Center(child: CircularProgressIndicator())
             : Scaffold(
-                // Bottom nav bar (replace with custom)
-                bottomNavigationBar: const MyNavbar(),
-                body: Column(
-                  children: [
-                    IconButton(
-                      onPressed: () async => _logout(),
-                      icon: const Icon(Icons.home),
-                    ),
-                    IconButton(
-                      onPressed: () => goSetup(context),
-                      icon: const Icon(Icons.home),
-                    ),
-                  ],
-                ),
-              );
+          bottomNavigationBar: MyNavbar(
+            selectedIndex: _selectedIndex,
+            onItemTapped: _onItemTapped,
+          ),
+          body: Column(
+            children: [
+              IconButton(
+                onPressed: () async => _logout(),
+                icon: const Icon(Icons.home),
+              ),
+              IconButton(
+                onPressed: () => goSetup(context),
+                icon: const Icon(Icons.home),
+              ),
+            ],
+          ),
+        );
       },
     );
   }

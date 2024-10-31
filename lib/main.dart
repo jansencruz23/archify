@@ -1,4 +1,9 @@
 import 'package:archify/firebase_options.dart';
+import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/login_page.dart';
+import 'package:archify/pages/register_page.dart';
+import 'package:archify/pages/setup_page.dart';
+import 'package:archify/pages/setup_pages/setup_intro_page.dart';
 import 'package:archify/services/auth/auth_gate.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
@@ -32,7 +37,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: lightMode,
       initialRoute: '/',
-      routes: {'/': (context) => const AuthGate()},
+      routes: {'/': (context) => RegisterPage(onTap: () {},)},
     );
   }
 }
