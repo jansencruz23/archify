@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class MyButton extends StatefulWidget {
   final String text;
   final void Function()? onTap;
+  final double padding;
 
-  const MyButton({super.key, required this.text, this.onTap});
+  const MyButton({
+    super.key,
+    required this.text,
+    required this.onTap,
+    this.padding = 15,
+  });
 
   @override
   State<MyButton> createState() => _MyButtonState();
@@ -33,7 +39,7 @@ class _MyButtonState extends State<MyButton> {
             });
           },
           child: Container(
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.all(widget.padding),
             decoration: BoxDecoration(
               color: amIHovering
                   ? Theme.of(context).colorScheme.secondaryContainer

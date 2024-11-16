@@ -57,10 +57,15 @@ class UserService {
   }
 
   // Update user's isNew property in database
-  Future<void> updateUserNotNewInFirebase() async {
+  Future<void> updateUserAfterSetupInFirebase(
+      {required String name, required String pictureUrl}) async {
     try {
       final uid = AuthService().getCurrentUid();
-      await _db.collection('Users').doc(uid).update({'isNew': false});
+      await _db.collection('Users').doc(uid).update({
+        'name': name,
+        'pictureUrl': pictureUrl,
+        'isNew': false,
+      });
     } catch (ex) {
       logger.severe(ex.toString());
     }

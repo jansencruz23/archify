@@ -11,7 +11,7 @@ class SetupIntroPage extends StatelessWidget {
         padding: EdgeInsets.all(40),
         child: Column(
           children: [
-            const Text('Let\s set you up.'),
+            const Text('Let\'s set you up.'),
           ],
         ),
       ),
