@@ -1,5 +1,4 @@
 import 'package:archify/models/day.dart';
-import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -36,6 +35,25 @@ class DayService {
     } catch (ex) {
       logger.severe(ex.toString());
       return null;
+    }
+  }
+
+  // Start the day
+  Future<void> startDayInFirebase(String dayId, String nickname) async {
+    try {
+      final currentUserId = _authService.getCurrentUid();
+      await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .doc(currentUserId)
+          .set({
+        'uid': currentUserId,
+        'role': 'host',
+        'nickname': nickname,
+      });
+    } catch (ex) {
+      logger.severe(ex.toString());
     }
   }
 }

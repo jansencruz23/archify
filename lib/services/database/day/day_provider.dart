@@ -46,6 +46,10 @@ class DayProvider extends BaseProvider {
     return await _dayService.createDayInFirebase(day);
   }
 
+  Future<void> startDay(String dayId, String nickname) async {
+    await _dayService.startDayInFirebase(dayId, nickname);
+  }
+
   Future<void> deleteDay(String day) async {
     // Delete a day from the database
   }

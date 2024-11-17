@@ -1,4 +1,5 @@
 import 'package:archify/components/my_button.dart';
+import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -48,7 +49,10 @@ class _DayCodePageState extends State<DayCodePage> {
                       size: 200.0,
                     ),
                     Text(day == null ? 'Loading...' : day.code),
-                    MyButton(text: 'Start Day', onTap: () {}),
+                    MyButton(
+                      text: 'Start Day',
+                      onTap: () => goDaySpace(context, widget.dayId),
+                    ),
                   ],
                 ),
               ),

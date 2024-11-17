@@ -14,7 +14,7 @@ class JoinOrCreatePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               MyButton(text: 'Host a Day', onTap: () => goDaySettings(context)),
-              MyButton(text: 'Join', onTap: () {}),
+              MyButton(text: 'Join a Day', onTap: () => goJoin(context)),
             ],
           ),
         ),

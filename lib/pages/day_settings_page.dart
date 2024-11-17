@@ -18,6 +18,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
   late final TextEditingController _dayNameController;
   late final TextEditingController _dayDescriptionController;
   late final TextEditingController _maxParticipantsController;
+  late final TextEditingController _codeController;
   late TimeOfDay _votingDeadline;
   late final FocusNode _dayNameFocusNode;
   late final FocusNode _dayDescriptionFocusNode;
@@ -30,6 +31,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
     _dayNameController = TextEditingController();
     _dayDescriptionController = TextEditingController();
     _maxParticipantsController = TextEditingController();
+    _codeController = TextEditingController();
     _dayNameFocusNode = FocusNode();
     _dayDescriptionFocusNode = FocusNode();
     _maxParticipantsFocusNode = FocusNode();
