@@ -39,21 +39,72 @@ class DayService {
   }
 
   // Start the day
-  Future<void> startDayInFirebase(String dayId, String nickname) async {
+  Future<void> startDayInFirebase(String dayCode, String nickname) async {
     try {
+      final day = await getDayByCodeFromFirebase(dayCode);
+      if (day == null) {
+        return;
+      }
       final currentUserId = _authService.getCurrentUid();
       await _db
           .collection('Days')
-          .doc(dayId)
+          .doc(day.id)
           .collection('Participants')
           .doc(currentUserId)
           .set({
         'uid': currentUserId,
-        'role': 'host',
+        'role': day.hostId == currentUserId ? 'host' : 'participant',
         'nickname': nickname,
       });
     } catch (ex) {
       logger.severe(ex.toString());
+    }
+  }
+
+  Future<bool> isDayExistingAndActiveInFirebase(String dayCode) async {
+    try {
+      final dayDoc =
+          await _db.collection('Days').where('code', isEqualTo: dayCode).get();
+      if (dayDoc.docs.isEmpty) {
+        return false;
+      }
+
+      final day = Day.fromDocument(dayDoc.docs.first);
+      return day.status;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return false;
+    }
+  }
+
+  Future<String> getDayIdFromFirebase(String dayCode) async {
+    try {
+      final dayDoc =
+          await _db.collection('Days').where('code', isEqualTo: dayCode).get();
+      if (dayDoc.docs.isEmpty) {
+        return '';
+      }
+
+      final day = Day.fromDocument(dayDoc.docs.first);
+      return day.id;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return '';
+    }
+  }
+
+  Future<Day?> getDayByCodeFromFirebase(String dayCode) async {
+    try {
+      final dayDoc =
+          await _db.collection('Days').where('code', isEqualTo: dayCode).get();
+      if (dayDoc.docs.isEmpty) {
+        return null;
+      }
+
+      return Day.fromDocument(dayDoc.docs.first);
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return null;
     }
   }
 }

@@ -23,7 +23,9 @@ class _DayCodePageState extends State<DayCodePage> {
 
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
-    _loadDay();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadDay();
+    });
   }
 
   Future<void> _loadDay() async {
@@ -51,7 +53,7 @@ class _DayCodePageState extends State<DayCodePage> {
                     Text(day == null ? 'Loading...' : day.code),
                     MyButton(
                       text: 'Start Day',
-                      onTap: () => goDaySpace(context, widget.dayId),
+                      onTap: () => goDaySpace(context, day!.code),
                     ),
                   ],
                 ),

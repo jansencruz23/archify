@@ -54,7 +54,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(userProfile.name,
+                          Text(
+                              userProfile == null
+                                  ? 'Loading'
+                                  : userProfile.name,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
@@ -63,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 fontSize: 18,
                               )),
                           Text(
-                            userProfile.bio,
+                            userProfile == null ? 'Loading' : userProfile.bio,
                             maxLines: 3,
                             style: TextStyle(
                               fontSize: 12,

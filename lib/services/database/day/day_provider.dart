@@ -1,11 +1,18 @@
 import 'package:archify/models/day.dart';
 import 'package:archify/services/auth/auth_service.dart';
-import 'package:archify/services/base_provider.dart';
 import 'package:archify/services/database/day/day_service.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-class DayProvider extends BaseProvider {
+class DayProvider extends ChangeNotifier {
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   final _dayService = DayService();
   final _authService = AuthService();
 
@@ -41,13 +48,18 @@ class DayProvider extends BaseProvider {
           votingDeadline.hour, votingDeadline.minute),
       code: uuid.v4().substring(0, 5),
       createdAt: now,
+      status: true,
     );
 
     return await _dayService.createDayInFirebase(day);
   }
 
-  Future<void> startDay(String dayId, String nickname) async {
-    await _dayService.startDayInFirebase(dayId, nickname);
+  Future<void> startDay(String dayCode, String nickname) async {
+    await _dayService.startDayInFirebase(dayCode, nickname);
+  }
+
+  Future<bool> isDayExistingAndActive(String dayCode) async {
+    return await _dayService.isDayExistingAndActiveInFirebase(dayCode);
   }
 
   Future<void> deleteDay(String day) async {

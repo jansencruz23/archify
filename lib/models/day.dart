@@ -9,6 +9,7 @@ class Day {
   final DateTime votingDeadline;
   final String code;
   final DateTime createdAt;
+  final bool status;
 
   Day({
     required this.id,
@@ -19,6 +20,7 @@ class Day {
     required this.votingDeadline,
     required this.code,
     required this.createdAt,
+    required this.status,
   });
 
   // Firebase -> App
@@ -32,6 +34,7 @@ class Day {
       votingDeadline: (doc['votingDeadline'] as Timestamp).toDate(),
       code: doc['code'],
       createdAt: (doc['createdAt'] as Timestamp).toDate(),
+      status: doc['status'],
     );
   }
 
@@ -46,6 +49,7 @@ class Day {
       'votingDeadline': votingDeadline,
       'code': code,
       'createdAt': createdAt,
+      'status': status,
     };
   }
 }

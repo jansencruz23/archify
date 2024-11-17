@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class DaySpacePage extends StatefulWidget {
-  final String dayId;
+  final String dayCode;
 
-  const DaySpacePage({super.key, required this.dayId});
+  const DaySpacePage({super.key, required this.dayCode});
 
   @override
   State<DaySpacePage> createState() => _DaySpacePageState();
@@ -43,7 +43,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
   }
 
   Future<void> startDay() async {
-    await _dayProvider.startDay(widget.dayId, _nicknameController.text);
+    await _dayProvider.startDay(widget.dayCode, _nicknameController.text);
   }
 
   @override
