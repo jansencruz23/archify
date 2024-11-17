@@ -8,6 +8,7 @@ class Day {
   final int maxParticipants;
   final DateTime votingDeadline;
   final String code;
+  final DateTime createdAt;
 
   Day({
     required this.id,
@@ -17,6 +18,7 @@ class Day {
     required this.maxParticipants,
     required this.votingDeadline,
     required this.code,
+    required this.createdAt,
   });
 
   // Firebase -> App
@@ -27,8 +29,9 @@ class Day {
       name: doc['name'],
       description: doc['description'],
       maxParticipants: doc['maxParticipants'],
-      votingDeadline: doc['votingDeadline'],
+      votingDeadline: (doc['votingDeadline'] as Timestamp).toDate(),
       code: doc['code'],
+      createdAt: (doc['createdAt'] as Timestamp).toDate(),
     );
   }
 
@@ -42,6 +45,7 @@ class Day {
       'maxParticipants': maxParticipants,
       'votingDeadline': votingDeadline,
       'code': code,
+      'createdAt': createdAt,
     };
   }
 }

@@ -3,18 +3,39 @@ import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:logging/logging.dart';
 
 class DayService {
   final _db = FirebaseFirestore.instance;
   final _authService = AuthService();
   final _storage = FirebaseStorage.instance;
 
-  // Save day details in Firebase
-  Future<void> createDayInFirebase(Day day) async {
-    final docRef = _db.collection('Days').doc();
-    day.id = docRef.id;
+  final logger = Logger('UserService');
 
-    final dayMap = day.toMap();
-    await docRef.set(dayMap);
+  // Save day details in Firebase
+  Future<String> createDayInFirebase(Day day) async {
+    try {
+      final docRef = _db.collection('Days').doc();
+      day.id = docRef.id;
+
+      final dayMap = day.toMap();
+      await docRef.set(dayMap);
+
+      return day.id;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return '';
+    }
+  }
+
+  // Get day details from Firebase
+  Future<Day?> getDayFromFirebase(String dayId) async {
+    try {
+      final dayDoc = await _db.collection('Days').doc(dayId).get();
+      return Day.fromDocument(dayDoc);
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return null;
+    }
   }
 }

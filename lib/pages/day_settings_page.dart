@@ -1,5 +1,6 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_text_field.dart';
+import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
 
   Future<void> pickTime() async {
     final now = TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 8)));
-    print(now);
     final endOfDay = const TimeOfDay(hour: 23, minute: 59);
 
     final pickedTime = await showTimePicker(
@@ -91,12 +91,14 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
       return;
     }
 
-    await _dayProvider.createDay(
+    final dayId = await _dayProvider.createDay(
       name: dayName,
       description: dayDescription,
       maxParticipants: maxParticipants,
       votingDeadline: _votingDeadline,
     );
+
+    goDayCode(context, dayId);
   }
 
   @override

@@ -1,23 +1,35 @@
 import 'package:archify/models/day.dart';
 import 'package:archify/services/auth/auth_service.dart';
+import 'package:archify/services/base_provider.dart';
 import 'package:archify/services/database/day/day_service.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
-class DayProvider extends ChangeNotifier {
+class DayProvider extends BaseProvider {
   final _dayService = DayService();
   final _authService = AuthService();
 
-  Future<void> getDays() async {
-    // Get all days from the database
+  Day? _day;
+  Day? get day => _day;
+
+  Future<void> loadDay(String dayId) async {
+    final day = await _dayService.getDayFromFirebase(dayId);
+    if (day == null) {
+      return;
+    }
+
+    _day = day;
+    notifyListeners();
   }
 
-  Future<void> createDay({
+  Future<String> createDay({
     required String name,
     required String description,
     required int maxParticipants,
     required TimeOfDay votingDeadline,
   }) async {
     final now = DateTime.now();
+    final uuid = Uuid();
 
     final day = Day(
       id: '',
@@ -27,10 +39,11 @@ class DayProvider extends ChangeNotifier {
       maxParticipants: maxParticipants,
       votingDeadline: DateTime(now.year, now.month, now.day,
           votingDeadline.hour, votingDeadline.minute),
-      code: '',
+      code: uuid.v4().substring(0, 5),
+      createdAt: now,
     );
 
-    await _dayService.createDayInFirebase(day);
+    return await _dayService.createDayInFirebase(day);
   }
 
   Future<void> deleteDay(String day) async {
@@ -39,9 +52,5 @@ class DayProvider extends ChangeNotifier {
 
   Future<void> updateDay(String day) async {
     // Update a day in the database
-  }
-
-  Future<void> getDay(String day) async {
-    // Get a day from the database
   }
 }
