@@ -1,4 +1,5 @@
 import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/join_or_create_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/services/auth/login_or_register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +16,7 @@ class AuthGate extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const HomePage();
+            return const JoinOrCreatePage();
           } else {
             return const LoginOrRegister();
           }

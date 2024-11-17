@@ -1,3 +1,4 @@
+import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/setup_page.dart';
 import 'package:flutter/material.dart';
 
@@ -12,4 +13,9 @@ void goSetup(BuildContext context) {
     context,
     MaterialPageRoute(builder: (context) => const SetupPage()),
   );
+}
+
+void goDaySettings(BuildContext context) {
+  Navigator.push(context,
+      MaterialPageRoute(builder: (context) => const DaySettingsPage()));
 }
