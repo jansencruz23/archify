@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/base_provider.dart';
