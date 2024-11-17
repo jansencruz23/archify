@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 class Day {
-  final String id;
+  late String id;
   final String hostId;
   final String name;
   final String description;
@@ -19,10 +18,6 @@ class Day {
     required this.votingDeadline,
     required this.code,
   });
-
-  set id(String id) {
-    id = id;
-  }
 
   // Firebase -> App
   factory Day.fromDocument(DocumentSnapshot doc) {
