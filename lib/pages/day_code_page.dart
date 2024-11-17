@@ -1,6 +1,8 @@
+import 'package:archify/components/my_button.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class DayCodePage extends StatefulWidget {
   final String dayId;
@@ -37,7 +39,18 @@ class _DayCodePageState extends State<DayCodePage> {
           ? const Center(child: CircularProgressIndicator())
           : Scaffold(
               body: Center(
-                child: Text(day == null ? 'Loading...' : day.code),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    QrImageView(
+                      data: day == null ? '' : day.code,
+                      version: QrVersions.auto,
+                      size: 200.0,
+                    ),
+                    Text(day == null ? 'Loading...' : day.code),
+                    MyButton(text: 'Start Day', onTap: () {}),
+                  ],
+                ),
               ),
             ),
     );
