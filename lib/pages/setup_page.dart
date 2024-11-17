@@ -56,7 +56,7 @@ class _SetupPageState extends State<SetupPage> {
   }
 
   Future<void> finishSetup() async {
-    goRootPage(context);
+    Navigator.pop(context);
     final pictureUrl = await uploadProfilePicture();
     await _userProvider.updateUserAfterSetup(
       name: _nameController.text,
