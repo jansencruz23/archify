@@ -9,6 +9,7 @@ class MyTextField extends StatefulWidget {
   final Color? fillColor;
   final Color? focusColor;
   final ValueChanged<String>? onChanged;
+  final TextInputType? inputType;
 
   const MyTextField({
     this.onChanged,
@@ -20,6 +21,7 @@ class MyTextField extends StatefulWidget {
     required this.obscureText,
     required this.focusNode,
     this.onSubmitted,
+    this.inputType,
   });
 
   @override
@@ -68,6 +70,9 @@ class _MyTextFieldState extends State<MyTextField> {
           valueListenable: focusNotifier,
           builder: (context, hasFocus, child) {
             return TextField(
+              keyboardType: widget.inputType != null
+                  ? widget.inputType!
+                  : TextInputType.text,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.inversePrimary,
                 fontFamily: 'Sora',
