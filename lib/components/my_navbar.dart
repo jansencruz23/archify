@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class MyNavbar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
+  final bool showVerticalBar;
 
   const MyNavbar({
     Key? key,
     required this.selectedIndex,
     required this.onItemTapped,
+    required this.showVerticalBar,
   }) : super(key: key);
 
   static const double navIconSize = 30.0;
@@ -110,4 +112,53 @@ class MyNavbar extends StatelessWidget {
       ),
     );
   }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+  bool _showVerticalBar = true;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      _showVerticalBar = index == 2;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Selected Index: $_selectedIndex'),
+            SizedBox(height: 20),
+            MyNavbar(
+              selectedIndex: _selectedIndex,
+              onItemTapped: _onItemTapped,
+              showVerticalBar: _showVerticalBar,
+            ),
+            if (_showVerticalBar)
+              Container(
+                width: 10,
+                height: 80,
+                color: Colors.blue,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: HomeScreen(),
+  ));
 }
