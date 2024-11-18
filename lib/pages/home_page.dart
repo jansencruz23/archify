@@ -24,9 +24,9 @@ class _HomePageState extends State<HomePage> {
   late final AuthProvider _authProvider;
   late final UserProvider _userProvider;
   int _selectedIndex = 0;
+  late bool _setupNavigationTriggered;
 
-  bool _isKeyboardVisible =
-      false; //For Keyboard to remove navbar visibility -AAlfonso
+  bool _isKeyboardVisible = false; //For Keyboard to remove navbar visibility -AAlfonso
 
   final CarouselController _carouselController = CarouselController();
   int _currentIndex = 0; // Track the current index
@@ -79,14 +79,18 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _setupNavigationTriggered = false;
 
     _fieldComment = FocusNode();
 
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    _loadUserProfile();
-    _checkIfNewUser();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserProfile();
+      _checkIfNewUser();
+    });
 
     _commentController = TextEditingController();
 
@@ -103,6 +107,12 @@ class _HomePageState extends State<HomePage> {
     _fieldComment.dispose();
 
     super.dispose();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserProfile();
+      _checkIfNewUser();
+    });
+
   }
 
   Future<void> _loadUserProfile() async {
@@ -110,8 +120,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _checkIfNewUser() async {
+    if (_setupNavigationTriggered) return;
+
     final user = await _userProvider.getCurrentUserProfile();
+
     if (user != null && user.isNew) {
+      _setupNavigationTriggered = true;
       if (mounted) {
         goSetup(context);
       }
@@ -193,7 +207,9 @@ class _HomePageState extends State<HomePage> {
                             ),
                             // User's name text
                             Text(
-                              userProfile.name,
+                              userProfile == null
+                                  ? 'Loading'
+                                  : userProfile.name,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -236,7 +252,11 @@ class _HomePageState extends State<HomePage> {
                       : MyNavbar(
                           selectedIndex: _selectedIndex,
                           onItemTapped: _onItemTapped,
-                          // _isKeyboardVisible: _isKeyboardVisible, //NOTE: Need Key sa navbar ni jam para gumana
+                          showVerticalBar: true,
+                          isRotated: true,
+                    toggleRotation: (){},
+
+                          // _isKeyboardVisible: _isKeyboardVisible, //NOTE: Need Key sa navbar para gumana
                         ),
 
                   //Main Body

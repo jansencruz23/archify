@@ -1,13 +1,20 @@
 import 'dart:math';
-
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
-import 'package:archify/services/base_provider.dart';
 import 'package:archify/services/database/user/user_service.dart';
 import 'package:archify/services/storage/storage_service.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class UserProvider extends BaseProvider {
+class UserProvider extends ChangeNotifier {
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   final _authService = AuthService();
   final _userService = UserService();
   final _storageService = StorageService();
@@ -16,8 +23,8 @@ class UserProvider extends BaseProvider {
   late String _picturePath = '';
   String get picturePath => _picturePath;
 
-  late UserProfile _userProfile;
-  UserProfile get userProfile => _userProfile;
+  late UserProfile? _userProfile;
+  UserProfile? get userProfile => _userProfile;
 
   // Gets current user's profile
   Future<UserProfile?> getCurrentUserProfile() async {

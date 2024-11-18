@@ -52,9 +52,9 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPwController.dispose();
-    _fieldEmail.dispose();
-    _fieldPass.dispose();
-    _fieldRepass.dispose();
+    //_fieldEmail.dispose();
+    //_fieldPass.dispose();
+    //_fieldRepass.dispose();
     super.dispose();
   }
 

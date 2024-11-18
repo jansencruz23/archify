@@ -1,8 +1,16 @@
 import 'package:archify/services/auth/auth_service.dart';
-import 'package:archify/services/base_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-class AuthProvider extends BaseProvider {
+class AuthProvider extends ChangeNotifier {
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   final _authService = AuthService();
 
   User? getCurrentUser() => _authService.getCurrentUser();
