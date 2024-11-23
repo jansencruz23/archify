@@ -62,7 +62,7 @@ class DayProvider extends ChangeNotifier {
       description: description,
       maxParticipants: maxParticipants,
       votingDeadline: DateTime(now.year, now.month, now.day,
-          votingDeadline.hour, votingDeadline.minute),
+          votingDeadline.hour - 8, votingDeadline.minute),
       code: uuid.v4().substring(0, 5),
       createdAt: now,
       status: true,
@@ -101,7 +101,7 @@ class DayProvider extends ChangeNotifier {
     }
 
     final imageUrl = await uploadImage(image.path);
-    await _dayService.sendImage(imageUrl, dayCode);
+    await _dayService.sendImageToFirebase(imageUrl, dayCode);
     await loadMoments(dayCode);
 
     notifyListeners();
@@ -120,5 +120,9 @@ class DayProvider extends ChangeNotifier {
 
     _moments = moments;
     notifyListeners();
+  }
+
+  Future<void> likeImage(String dayCode, String momentId) async {
+    await _dayService.likeImageInFirebase(dayCode, momentId);
   }
 }

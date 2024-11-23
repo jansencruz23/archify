@@ -66,6 +66,10 @@ class _DaySpacePageState extends State<DaySpacePage> {
     );
   }
 
+  Future<void> _likeImage(String momentId) async {
+    await _dayProvider.likeImage(widget.dayCode, momentId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
@@ -99,6 +103,14 @@ class _DaySpacePageState extends State<DaySpacePage> {
                       return ListTile(
                         title: Text(moment.nickname),
                         leading: Image.network(moment.imageUrl),
+                        trailing: Wrap(
+                          children: [
+                            IconButton(
+                              onPressed: () => _likeImage(moment.momentId),
+                              icon: Icon(Icons.favorite_rounded),
+                            )
+                          ],
+                        ),
                       );
                     },
                   ),
