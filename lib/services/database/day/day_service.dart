@@ -62,7 +62,7 @@ class DayService {
     }
   }
 
-  Future<void> sendImage(String imageUrl, String dayCode) async {
+  Future<void> sendImageToFirebase(String imageUrl, String dayCode) async {
     try {
       final dayId = await getDayIdFromFirebase(dayCode);
       if (dayId.isEmpty) {
@@ -70,7 +70,7 @@ class DayService {
       }
 
       final moment = Moment(
-        imageId: '',
+        momentId: '',
         imageUrl: imageUrl,
         uploadedBy: _authService.getCurrentUid(),
         uploadedAt: DateTime.now(),
@@ -78,7 +78,7 @@ class DayService {
 
       final docRef =
           _db.collection('Days').doc(dayId).collection('Moments').doc();
-      moment.imageId = docRef.id;
+      moment.momentId = docRef.id;
 
       await docRef.set(moment.toMap());
     } catch (ex) {
@@ -183,6 +183,64 @@ class DayService {
     } catch (ex) {
       logger.severe(ex.toString());
       return [];
+    }
+  }
+
+  Future<void> likeImageInFirebase(String dayCode, String imageId) async {
+    try {
+      final dayId = await getDayIdFromFirebase(dayCode);
+      if (dayId.isEmpty) {
+        return;
+      }
+
+      final currentUid = _authService.getCurrentUid();
+      final likeDoc = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Moments')
+          .doc(imageId)
+          .collection('Likes')
+          .doc(currentUid)
+          .get();
+
+      if (likeDoc.exists) {
+        // User has already liked the image, so we remove the like
+        await likeDoc.reference.delete();
+
+        final momentDoc = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(imageId)
+            .get();
+        final moment = Moment.fromDocument(momentDoc.data()!);
+        moment.votes -= 1;
+
+        await momentDoc.reference.update({'votes': moment.votes});
+      } else {
+        // User has not liked the image, so we add the like
+        await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(imageId)
+            .collection('Likes')
+            .doc(currentUid)
+            .set({});
+
+        final momentDoc = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(imageId)
+            .get();
+        final moment = Moment.fromDocument(momentDoc.data()!);
+        moment.votes += 1;
+
+        await momentDoc.reference.update({'votes': moment.votes});
+      }
+    } catch (ex) {
+      logger.severe(ex.toString());
     }
   }
 }
