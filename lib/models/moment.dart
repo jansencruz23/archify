@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Moment {
   late String imageId;
   final String imageUrl;
   final String uploadedBy;
   final DateTime uploadedAt;
   final int votes;
+  late String nickname;
 
   Moment({
     required this.imageId,
@@ -18,7 +21,7 @@ class Moment {
       imageId: data['imageId'],
       imageUrl: data['imageUrl'],
       uploadedBy: data['uploadedBy'],
-      uploadedAt: data['uploadedAt'],
+      uploadedAt: (data['uploadedAt'] as Timestamp).toDate(),
       votes: data['votes'],
     );
   }

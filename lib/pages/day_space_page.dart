@@ -45,6 +45,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
 
   Future<void> _loadDay() async {
     await _dayProvider.loadDayByCode(widget.dayCode);
+    await _dayProvider.loadMoments(widget.dayCode);
   }
 
   Future<void> _startDay() async {
@@ -69,6 +70,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
     final day = listeningProvider.day;
+    final moments = listeningProvider.moments;
 
     return SafeArea(
       child: Scaffold(
@@ -83,7 +85,25 @@ class _DaySpacePageState extends State<DaySpacePage> {
         body: Center(
           child: Column(
             children: [
-              SingleChildScrollView(),
+              SingleChildScrollView(
+                child: Container(
+                  // random numbers
+                  // maging grid din pala based sa figma pero shshow ko muna
+                  height: MediaQuery.sizeOf(context).height - 200,
+                  width: MediaQuery.sizeOf(context).width,
+                  child: ListView.builder(
+                    itemCount: moments == null ? 0 : moments.length,
+                    itemBuilder: (context, index) {
+                      final moment = moments![index];
+
+                      return ListTile(
+                        title: Text(moment.nickname),
+                        leading: Image.network(moment.imageUrl),
+                      );
+                    },
+                  ),
+                ),
+              ),
               Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

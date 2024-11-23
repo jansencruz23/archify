@@ -1,4 +1,5 @@
 import 'package:archify/models/day.dart';
+import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/database/day/day_service.dart';
 import 'package:archify/services/storage/storage_service.dart';
@@ -21,6 +22,9 @@ class DayProvider extends ChangeNotifier {
 
   Day? _day;
   Day? get day => _day;
+
+  List<Moment>? _moments;
+  List<Moment>? get moments => _moments;
 
   Future<void> loadDay(String dayId) async {
     final day = await _dayService.getDayFromFirebase(dayId);
@@ -98,11 +102,23 @@ class DayProvider extends ChangeNotifier {
 
     final imageUrl = await uploadImage(image.path);
     await _dayService.sendImage(imageUrl, dayCode);
+    await loadMoments(dayCode);
+
     notifyListeners();
   }
 
   // Upload image to Firebase Storage
   Future<String> uploadImage(String path) async {
     return await _storageService.uploadDayImage(path);
+  }
+
+  Future<void> loadMoments(String dayCode) async {
+    final moments = await _dayService.getMomentsFromFirebase(dayCode);
+    if (moments.isEmpty) {
+      _moments = [];
+    }
+
+    _moments = moments;
+    notifyListeners();
   }
 }

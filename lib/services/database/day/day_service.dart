@@ -132,4 +132,57 @@ class DayService {
       return null;
     }
   }
+
+  Future<List<Moment>> getMomentsFromFirebase(String dayCode) async {
+    try {
+      final dayId = await getDayIdFromFirebase(dayCode);
+      if (dayId.isEmpty) {
+        return [];
+      }
+
+      final momentsDoc = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Moments')
+          .orderBy('uploadedAt', descending: true)
+          .get();
+
+      final moments = momentsDoc.docs
+          .map((doc) => Moment.fromDocument(doc.data()))
+          .toList();
+
+      for (var moment in moments) {
+        final participantDoc = await getParticipantsFromFirebase(dayId);
+        final participant = participantDoc.firstWhere(
+          (element) => element.uid == moment.uploadedBy,
+          orElse: () => Participant(uid: '', role: '', nickname: ''),
+        );
+
+        moment.nickname = participant.nickname;
+      }
+
+      return moments;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return [];
+    }
+  }
+
+  Future<List<Participant>> getParticipantsFromFirebase(String dayId) async {
+    try {
+      final participantsDoc = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .get();
+
+      final participants = participantsDoc.docs
+          .map((doc) => Participant.fromDocument(doc.data()))
+          .toList();
+      return participants;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return [];
+    }
+  }
 }
