@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 class MyNavbar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
+  final bool showVerticalBar;
+  final bool isRotated;
+  final Function toggleRotation;
 
   const MyNavbar({
     Key? key,
     required this.selectedIndex,
     required this.onItemTapped,
+    required this.showVerticalBar,
+    required this.isRotated,
+    required this.toggleRotation,
   }) : super(key: key);
 
   static const double navIconSize = 30.0;
@@ -61,7 +67,10 @@ class MyNavbar extends StatelessWidget {
 
   Widget _buildElevatedNavIcon() {
     return GestureDetector(
-      onTap: () => onItemTapped(2),
+      onTap: () {
+        toggleRotation();
+        onItemTapped(2);
+      },
       child: Transform.translate(
         offset: const Offset(0, -15),
         child: Stack(
@@ -90,23 +99,184 @@ class MyNavbar extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              height: 30,
-              width: 30,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.add,
-                  color: Color(0xFFD2691E),
-                  size: 28,
+            AnimatedRotation(
+              turns: isRotated ? 0.5 : 0,
+              duration: Duration(milliseconds: 300),
+              child: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.add,
+                    color: Color(0xFFD2691E),
+                    size: 28,
+                  ),
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  int _selectedIndex = 0;
+  bool _showVerticalBar = false;
+  bool _isRotated = false;
+  int _hoveredIndex = -1; // Add this to track hovered index
+
+  late AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
+
+  final List<Map<String, dynamic>> _menuItems = [
+    {'icon': Icons.wb_sunny, 'title': 'Join a day'},
+    {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
+    {'icon': Icons.settings, 'title': 'Settings'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset(0, 0))
+        .animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      if (index == 2) {
+        if (_showVerticalBar) {
+          _animationController.reverse();
+        } else {
+          _animationController.forward();
+        }
+        _showVerticalBar = !_showVerticalBar;
+      } else {
+        if (_showVerticalBar) {
+          _animationController.reverse();
+          _showVerticalBar = false;
+        }
+      }
+      _selectedIndex = index;
+    });
+  }
+
+  void _toggleRotation() {
+    setState(() {
+      _isRotated = !_isRotated;
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: MyNavbar(
+              selectedIndex: _selectedIndex,
+              onItemTapped: _onItemTapped,
+              showVerticalBar: _showVerticalBar,
+              isRotated: _isRotated,
+              toggleRotation: _toggleRotation,
+            ),
+          ),
+          if (_showVerticalBar)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 500),
+                  height: (_menuItems.length * 45).toDouble() + 100,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFF6F61),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                          icon: Icon(Icons.keyboard_arrow_down, size: 30, color: Colors.white),
+                          onPressed: () {
+                            setState(() {
+                              _animationController.reverse();
+                              _showVerticalBar = false;
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _menuItems.length,
+                          itemBuilder: (context, index) {
+                            final item = _menuItems[index];
+                            return MouseRegion(
+                              onEnter: (_) {
+                                setState(() {
+                                  _hoveredIndex = index;
+                                });
+                              },
+                              onExit: (_) {
+                                setState(() {
+                                  _hoveredIndex = -1;
+                                });
+                              },
+                              child: GestureDetector(
+                                onTap: () {
+                                  _onItemTapped(index); // Handle tap event
+                                },
+                                child: Container(
+                                  color: _hoveredIndex == index ? Color(0xFFF1695C) : Colors.transparent,
+                                  child: ListTile(
+                                    leading: Icon(item['icon'], color: Colors.white),
+                                    title: Text(
+                                      item['title'],
+                                      style: TextStyle(color: Colors.white, fontFamily: 'Sora'),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
