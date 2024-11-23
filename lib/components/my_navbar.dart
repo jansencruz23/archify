@@ -139,6 +139,12 @@ class _HomeScreenState extends State<HomeScreen>
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
+  final List<Map<String, dynamic>> _menuItems = [
+    {'icon': Icons.wb_sunny, 'title': 'Join a day'},
+    {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
+    {'icon': Icons.settings, 'title': 'Settings'},
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -213,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen>
                 position: _slideAnimation,
                 child: AnimatedContainer(
                   duration: Duration(milliseconds: 500),
-                  height: MediaQuery.of(context).size.height * 0.5 + 80,
+                  height: (_menuItems.length * 45).toDouble() + 100,
                   decoration: BoxDecoration(
                     color: Color(0xFFFF6F61),
                     borderRadius: BorderRadius.only(
@@ -226,7 +232,8 @@ class _HomeScreenState extends State<HomeScreen>
                       Align(
                         alignment: Alignment.topRight,
                         child: IconButton(
-                          icon: Icon(Icons.keyboard_arrow_down, size: 30),
+                          icon: Icon(Icons.keyboard_arrow_down,
+                              size: 30, color: Colors.white),
                           onPressed: () {
                             setState(() {
                               _animationController.reverse();
@@ -237,11 +244,16 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       Expanded(
                         child: ListView.builder(
-                          itemCount: 5,
+                          itemCount: _menuItems.length,
                           itemBuilder: (context, index) {
+                            final item = _menuItems[index];
                             return ListTile(
-                              leading: Icon(Icons.circle, color: Colors.white),
-                              title: Text('Item ${index + 1}'),
+                              leading: Icon(item['icon'], color: Colors.white),
+                              title: Text(
+                                item['title'],
+                                style: TextStyle(
+                                    color: Colors.white, fontFamily: 'Sora'),
+                              ),
                             );
                           },
                         ),
