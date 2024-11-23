@@ -1,4 +1,6 @@
 import 'package:archify/models/day.dart';
+import 'package:archify/models/moment.dart';
+import 'package:archify/models/participant.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -46,16 +48,42 @@ class DayService {
         return;
       }
       final currentUserId = _authService.getCurrentUid();
+      final participant = Participant(
+        uid: currentUserId,
+        role: day.hostId == currentUserId ? 'host' : 'participant',
+        nickname: nickname,
+      );
       await _db
           .collection('Days')
           .doc(day.id)
           .collection('Participants')
           .doc(currentUserId)
-          .set({
-        'uid': currentUserId,
-        'role': day.hostId == currentUserId ? 'host' : 'participant',
-        'nickname': nickname,
-      });
+          .set(participant.toMap());
+    } catch (ex) {
+      logger.severe(ex.toString());
+    }
+  }
+
+  Future<void> sendImage(String imageUrl, String dayCode) async {
+    try {
+      final dayId = await getDayIdFromFirebase(dayCode);
+      if (dayId.isEmpty) {
+        return;
+      }
+
+      final moment = Moment(
+        imageId: '',
+        imageUrl: imageUrl,
+        uploadedBy: _authService.getCurrentUid(),
+        uploadedAt: DateTime.now(),
+      );
+
+      await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Moments')
+          .doc()
+          .set(moment.toMap());
     } catch (ex) {
       logger.severe(ex.toString());
     }

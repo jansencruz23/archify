@@ -130,7 +130,8 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -154,7 +155,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
 
     _slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset(0, 0))
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+        .animate(CurvedAnimation(
+            parent: _animationController, curve: Curves.easeInOut));
   }
 
   void _onItemTapped(int index) {
@@ -227,7 +229,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       Align(
                         alignment: Alignment.topRight,
                         child: IconButton(
-                          icon: Icon(Icons.keyboard_arrow_down, size: 30, color: Colors.white),
+                          icon: Icon(Icons.keyboard_arrow_down,
+                              size: 30, color: Colors.white),
                           onPressed: () {
                             setState(() {
                               _animationController.reverse();
@@ -257,12 +260,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   _onItemTapped(index); // Handle tap event
                                 },
                                 child: Container(
-                                  color: _hoveredIndex == index ? Color(0xFFF1695C) : Colors.transparent,
+                                  color: _hoveredIndex == index
+                                      ? Color(0xFFF1695C)
+                                      : Colors.transparent,
                                   child: ListTile(
-                                    leading: Icon(item['icon'], color: Colors.white),
+                                    leading:
+                                        Icon(item['icon'], color: Colors.white),
                                     title: Text(
                                       item['title'],
-                                      style: TextStyle(color: Colors.white, fontFamily: 'Sora'),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Sora'),
                                     ),
                                   ),
                                 ),

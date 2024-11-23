@@ -103,7 +103,7 @@ class UserProvider extends ChangeNotifier {
 
   // Upload profile picture to Firebase Storage
   Future<String> uploadProfilePicture(String path) async {
-    _picturePath = await _storageService.uploadImage(path);
+    _picturePath = await _storageService.uploadProfilePicture(path);
     return _picturePath;
   }
 }

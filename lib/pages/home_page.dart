@@ -151,6 +151,9 @@ class _HomePageState extends State<HomePage> {
                   bottomNavigationBar: MyNavbar(
                     selectedIndex: _selectedIndex,
                     onItemTapped: _onItemTapped,
+                    isRotated: false,
+                    showVerticalBar: false,
+                    toggleRotation: () {},
                   ),
                   body: Column(
                     children: [
