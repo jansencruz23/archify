@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: lightMode,
       initialRoute: '/',
-      routes: {'/': (context) => RegisterPage(onTap: () {})},
+      routes: {'/': (context) => AuthGate()},
     );
   }
 }
