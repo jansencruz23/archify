@@ -130,7 +130,8 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -213,7 +214,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 child: AnimatedContainer(
                   duration: Duration(milliseconds: 500),
                   height: MediaQuery.of(context).size.height * 0.5 + 80,
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFF6F61),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
                   child: Column(
                     children: [
                       Align(
@@ -233,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           itemCount: 5,
                           itemBuilder: (context, index) {
                             return ListTile(
-                              leading: Icon(Icons.circle, color: Colors.blue),
+                              leading: Icon(Icons.circle, color: Colors.white),
                               title: Text('Item ${index + 1}'),
                             );
                           },
