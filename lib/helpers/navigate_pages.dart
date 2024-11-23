@@ -39,9 +39,9 @@ void goJoin(BuildContext context) {
   );
 }
 
-void goDaySpace(BuildContext context, String dayId) {
+void goDaySpace(BuildContext context, String dayCode) {
   Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => DaySpacePage(dayCode: dayId)),
+    MaterialPageRoute(builder: (context) => DaySpacePage(dayCode: dayCode)),
   );
 }

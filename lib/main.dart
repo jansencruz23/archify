@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: lightMode,
       initialRoute: '/',
-      routes: {'/': (context) => HomePage()},
+      routes: {'/': (context) => AuthGate()},
     );
   }
 }
