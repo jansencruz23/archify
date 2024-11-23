@@ -300,9 +300,11 @@ class _HomePageState extends State<HomePage> {
 
                             // realIndex = index;
 
-                            bool isMainPhoto = this.realIndex == index;
+                            bool isMainPhoto = this.realIndex == index; //Gamiting Index yung Day
 
-                            print("isMainPhoto: $isMainPhoto");
+                            print("isMainPhoto: $isMainPhoto"); // Pang debug lang AAlfonso
+
+
                             return Stack(
                               children: [
                                 // Container Image
@@ -313,7 +315,7 @@ class _HomePageState extends State<HomePage> {
                                       MediaQuery.of(context).size.height * 0.5,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
-                                        35), // Curved edges
+                                        35),
                                     image: DecorationImage(
                                       image: AssetImage(
                                           carouselData[index]['image']!),
@@ -560,10 +562,10 @@ class _HomePageState extends State<HomePage> {
                                     MediaQuery.of(context).viewInsets.bottom)),
 
                         // Test Icons
-                        IconButton(
-                          onPressed: _logout,
-                          icon: const Icon(Icons.logout),
-                        ),
+                        // IconButton(
+                        //   onPressed: _logout,
+                        //   icon: const Icon(Icons.logout),
+                        // ),
                         // IconButton(
                         //   onPressed: () => goSetup(context),
                         //   icon: const Icon(Icons.home),
