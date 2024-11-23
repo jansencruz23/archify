@@ -95,6 +95,15 @@ class DayService {
       }
 
       final day = Day.fromDocument(dayDoc.docs.first);
+
+      if (day.status == false) {
+        return false;
+      }
+
+      if (day.votingDeadline.isBefore(DateTime.now())) {
+        return false;
+      }
+
       return day.status;
     } catch (ex) {
       logger.severe(ex.toString());

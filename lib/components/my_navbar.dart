@@ -39,23 +39,23 @@ class MyNavbar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavIcon(String iconPath, int index) {
+  Widget _buildNavIcon(String assetPath, int index) {
     return GestureDetector(
       onTap: () => onItemTapped(index),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            iconPath,
-            height: navIconSize,
+            assetPath,
             width: navIconSize,
+            height: navIconSize,
           ),
           if (selectedIndex == index)
             Container(
               margin: const EdgeInsets.only(top: 4),
               height: 8,
               width: 8,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xFFFF6F61),
                 shape: BoxShape.circle,
               ),
@@ -80,7 +80,7 @@ class MyNavbar extends StatelessWidget {
               height: 60,
               width: 60,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
                     Color(0xFFF5DEB3),
                     Color(0xFFD2691E),
@@ -101,7 +101,7 @@ class MyNavbar extends StatelessWidget {
             ),
             AnimatedRotation(
               turns: isRotated ? 0.5 : 0,
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               child: Container(
                 height: 30,
                 width: 30,
@@ -109,7 +109,7 @@ class MyNavbar extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: Center(
+                child: const Center(
                   child: Icon(
                     Icons.add,
                     color: Color(0xFFD2691E),
@@ -135,25 +135,29 @@ class _HomeScreenState extends State<HomeScreen>
   int _selectedIndex = 0;
   bool _showVerticalBar = false;
   bool _isRotated = false;
+  int _hoveredIndex = -1;
 
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+
+  final List<Map<String, dynamic>> _menuItems = [
+    {'icon': Icons.wb_sunny, 'title': 'Join a day'},
+    {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
+    {'icon': Icons.settings, 'title': 'Settings'},
+  ];
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 1),
-      end: Offset(0, 0),
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0))
+            .animate(CurvedAnimation(
+                parent: _animationController, curve: Curves.easeInOut));
   }
 
   void _onItemTapped(int index) {
@@ -179,6 +183,56 @@ class _HomeScreenState extends State<HomeScreen>
     setState(() {
       _isRotated = !_isRotated;
     });
+  }
+
+  void _showJoinOptionsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Color(0xFFFF6F61),
+          title: Text(
+            'Choose an option',
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'Sora',
+            ),
+          ),
+          children: [
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Enter a code selected')),
+                );
+              },
+              child: const Text(
+                'Enter a code',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Sora',
+                ),
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Scan QR code selected')),
+                );
+              },
+              child: const Text(
+                'Scan QR code',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Sora',
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -212,15 +266,22 @@ class _HomeScreenState extends State<HomeScreen>
               child: SlideTransition(
                 position: _slideAnimation,
                 child: AnimatedContainer(
-                  duration: Duration(milliseconds: 500),
-                  height: MediaQuery.of(context).size.height * 0.5 + 80,
-                  color: Colors.white,
+                  duration: const Duration(milliseconds: 500),
+                  height: (_menuItems.length * 45).toDouble() + 100,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFF6F61),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
                   child: Column(
                     children: [
                       Align(
                         alignment: Alignment.topRight,
                         child: IconButton(
-                          icon: Icon(Icons.keyboard_arrow_down, size: 30),
+                          icon: const Icon(Icons.keyboard_arrow_down,
+                              size: 30, color: Colors.white),
                           onPressed: () {
                             setState(() {
                               _animationController.reverse();
@@ -231,11 +292,44 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       Expanded(
                         child: ListView.builder(
-                          itemCount: 5,
+                          itemCount: _menuItems.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              leading: Icon(Icons.circle, color: Colors.blue),
-                              title: Text('Item ${index + 1}'),
+                            final item = _menuItems[index];
+                            return MouseRegion(
+                              onEnter: (_) {
+                                setState(() {
+                                  _hoveredIndex = index;
+                                });
+                              },
+                              onExit: (_) {
+                                setState(() {
+                                  _hoveredIndex = -1;
+                                });
+                              },
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (index == 0) {
+                                    _showJoinOptionsDialog(context);
+                                  } else {
+                                    _onItemTapped(index);
+                                  }
+                                },
+                                child: Container(
+                                  color: _hoveredIndex == index
+                                      ? const Color(0xFFF1695C)
+                                      : Colors.transparent,
+                                  child: ListTile(
+                                    leading:
+                                        Icon(item['icon'], color: Colors.white),
+                                    title: Text(
+                                      item['title'],
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Sora'),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             );
                           },
                         ),
