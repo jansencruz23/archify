@@ -62,7 +62,7 @@ class DayProvider extends ChangeNotifier {
       description: description,
       maxParticipants: maxParticipants,
       votingDeadline: DateTime(now.year, now.month, now.day,
-          votingDeadline.hour, votingDeadline.minute),
+          votingDeadline.hour - 8, votingDeadline.minute),
       code: uuid.v4().substring(0, 5),
       createdAt: now,
       status: true,
