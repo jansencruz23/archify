@@ -1,5 +1,5 @@
 class Moment {
-  final String imageId;
+  late String imageId;
   final String imageUrl;
   final String uploadedBy;
   final DateTime uploadedAt;

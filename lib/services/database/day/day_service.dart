@@ -3,13 +3,11 @@ import 'package:archify/models/moment.dart';
 import 'package:archify/models/participant.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:logging/logging.dart';
 
 class DayService {
   final _db = FirebaseFirestore.instance;
   final _authService = AuthService();
-  final _storage = FirebaseStorage.instance;
 
   final logger = Logger('UserService');
 
@@ -78,12 +76,11 @@ class DayService {
         uploadedAt: DateTime.now(),
       );
 
-      await _db
-          .collection('Days')
-          .doc(dayId)
-          .collection('Moments')
-          .doc()
-          .set(moment.toMap());
+      final docRef =
+          _db.collection('Days').doc(dayId).collection('Moments').doc();
+      moment.imageId = docRef.id;
+
+      await docRef.set(moment.toMap());
     } catch (ex) {
       logger.severe(ex.toString());
     }
