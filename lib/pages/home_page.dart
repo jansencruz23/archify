@@ -86,7 +86,6 @@ class _HomePageState extends State<HomePage> {
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
 
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserProfile();
       _checkIfNewUser();
@@ -112,7 +111,6 @@ class _HomePageState extends State<HomePage> {
       _loadUserProfile();
       _checkIfNewUser();
     });
-
   }
 
   Future<void> _loadUserProfile() async {
@@ -254,7 +252,7 @@ class _HomePageState extends State<HomePage> {
                           onItemTapped: _onItemTapped,
                           showVerticalBar: true,
                           isRotated: true,
-                    toggleRotation: (){},
+                          toggleRotation: () {},
 
                           // _isKeyboardVisible: _isKeyboardVisible, //NOTE: Need Key sa navbar para gumana
                         ),

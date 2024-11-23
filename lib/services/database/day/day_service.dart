@@ -1,13 +1,13 @@
 import 'package:archify/models/day.dart';
+import 'package:archify/models/moment.dart';
+import 'package:archify/models/participant.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:logging/logging.dart';
 
 class DayService {
   final _db = FirebaseFirestore.instance;
   final _authService = AuthService();
-  final _storage = FirebaseStorage.instance;
 
   final logger = Logger('UserService');
 
@@ -46,16 +46,41 @@ class DayService {
         return;
       }
       final currentUserId = _authService.getCurrentUid();
+      final participant = Participant(
+        uid: currentUserId,
+        role: day.hostId == currentUserId ? 'host' : 'participant',
+        nickname: nickname,
+      );
       await _db
           .collection('Days')
           .doc(day.id)
           .collection('Participants')
           .doc(currentUserId)
-          .set({
-        'uid': currentUserId,
-        'role': day.hostId == currentUserId ? 'host' : 'participant',
-        'nickname': nickname,
-      });
+          .set(participant.toMap());
+    } catch (ex) {
+      logger.severe(ex.toString());
+    }
+  }
+
+  Future<void> sendImage(String imageUrl, String dayCode) async {
+    try {
+      final dayId = await getDayIdFromFirebase(dayCode);
+      if (dayId.isEmpty) {
+        return;
+      }
+
+      final moment = Moment(
+        imageId: '',
+        imageUrl: imageUrl,
+        uploadedBy: _authService.getCurrentUid(),
+        uploadedAt: DateTime.now(),
+      );
+
+      final docRef =
+          _db.collection('Days').doc(dayId).collection('Moments').doc();
+      moment.imageId = docRef.id;
+
+      await docRef.set(moment.toMap());
     } catch (ex) {
       logger.severe(ex.toString());
     }
@@ -105,6 +130,59 @@ class DayService {
     } catch (ex) {
       logger.severe(ex.toString());
       return null;
+    }
+  }
+
+  Future<List<Moment>> getMomentsFromFirebase(String dayCode) async {
+    try {
+      final dayId = await getDayIdFromFirebase(dayCode);
+      if (dayId.isEmpty) {
+        return [];
+      }
+
+      final momentsDoc = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Moments')
+          .orderBy('uploadedAt', descending: true)
+          .get();
+
+      final moments = momentsDoc.docs
+          .map((doc) => Moment.fromDocument(doc.data()))
+          .toList();
+
+      for (var moment in moments) {
+        final participantDoc = await getParticipantsFromFirebase(dayId);
+        final participant = participantDoc.firstWhere(
+          (element) => element.uid == moment.uploadedBy,
+          orElse: () => Participant(uid: '', role: '', nickname: ''),
+        );
+
+        moment.nickname = participant.nickname;
+      }
+
+      return moments;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return [];
+    }
+  }
+
+  Future<List<Participant>> getParticipantsFromFirebase(String dayId) async {
+    try {
+      final participantsDoc = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .get();
+
+      final participants = participantsDoc.docs
+          .map((doc) => Participant.fromDocument(doc.data()))
+          .toList();
+      return participants;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return [];
     }
   }
 }
