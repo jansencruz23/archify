@@ -66,13 +66,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-//For Resposiveness
+//For Responsiveness
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;
     return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
   }
 
-  //hover
+  //hover for button and mouse change
   bool amIHovering = false;
   Offset exitFrom = Offset(0, 0);
 

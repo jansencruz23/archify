@@ -135,16 +135,9 @@ class _HomeScreenState extends State<HomeScreen>
   int _selectedIndex = 0;
   bool _showVerticalBar = false;
   bool _isRotated = false;
-  int _hoveredIndex = -1; // Add this to track hovered index
 
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
-
-  final List<Map<String, dynamic>> _menuItems = [
-    {'icon': Icons.wb_sunny, 'title': 'Join a day'},
-    {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
-    {'icon': Icons.settings, 'title': 'Settings'},
-  ];
 
   @override
   void initState() {
@@ -154,9 +147,13 @@ class _HomeScreenState extends State<HomeScreen>
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset(0, 0))
-        .animate(CurvedAnimation(
-            parent: _animationController, curve: Curves.easeInOut));
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(0, 1),
+      end: Offset(0, 0),
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
   }
 
   void _onItemTapped(int index) {
@@ -216,21 +213,14 @@ class _HomeScreenState extends State<HomeScreen>
                 position: _slideAnimation,
                 child: AnimatedContainer(
                   duration: Duration(milliseconds: 500),
-                  height: (_menuItems.length * 45).toDouble() + 100,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFF6F61),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
+                  height: MediaQuery.of(context).size.height * 0.5 + 80,
+                  color: Colors.white,
                   child: Column(
                     children: [
                       Align(
                         alignment: Alignment.topRight,
                         child: IconButton(
-                          icon: Icon(Icons.keyboard_arrow_down,
-                              size: 30, color: Colors.white),
+                          icon: Icon(Icons.keyboard_arrow_down, size: 30),
                           onPressed: () {
                             setState(() {
                               _animationController.reverse();
@@ -241,40 +231,11 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       Expanded(
                         child: ListView.builder(
-                          itemCount: _menuItems.length,
+                          itemCount: 5,
                           itemBuilder: (context, index) {
-                            final item = _menuItems[index];
-                            return MouseRegion(
-                              onEnter: (_) {
-                                setState(() {
-                                  _hoveredIndex = index;
-                                });
-                              },
-                              onExit: (_) {
-                                setState(() {
-                                  _hoveredIndex = -1;
-                                });
-                              },
-                              child: GestureDetector(
-                                onTap: () {
-                                  _onItemTapped(index); // Handle tap event
-                                },
-                                child: Container(
-                                  color: _hoveredIndex == index
-                                      ? Color(0xFFF1695C)
-                                      : Colors.transparent,
-                                  child: ListTile(
-                                    leading:
-                                        Icon(item['icon'], color: Colors.white),
-                                    title: Text(
-                                      item['title'],
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Sora'),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            return ListTile(
+                              leading: Icon(Icons.circle, color: Colors.blue),
+                              title: Text('Item ${index + 1}'),
                             );
                           },
                         ),
