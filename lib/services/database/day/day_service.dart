@@ -54,6 +54,7 @@ class DayService {
         role: day.hostId == currentUserId ? 'host' : 'participant',
         nickname: nickname,
         fcmToken: fcmToken,
+        hasUploaded: false,
       );
       await _db
           .collection('Days')
@@ -195,8 +196,13 @@ class DayService {
         final participantDoc = await getParticipantsFromFirebase(dayId);
         final participant = participantDoc.firstWhere(
           (element) => element.uid == moment.uploadedBy,
-          orElse: () =>
-              Participant(uid: '', role: '', nickname: '', fcmToken: ''),
+          orElse: () => Participant(
+            uid: '',
+            role: '',
+            nickname: '',
+            fcmToken: '',
+            hasUploaded: false,
+          ),
         );
 
         moment.nickname = participant.nickname;
