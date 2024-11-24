@@ -70,4 +70,28 @@ class UserService {
       logger.severe(ex.toString());
     }
   }
+
+  Future<void> addDayToUserProfile(String dayId, String uid) async {
+    try {
+      final userDays = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('DayIds')
+          .doc(dayId)
+          .get();
+
+      if (userDays.exists) {
+        return;
+      }
+
+      await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('DayIds')
+          .doc(dayId)
+          .set({});
+    } catch (ex) {
+      logger.severe(ex.toString());
+    }
+  }
 }

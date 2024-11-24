@@ -2,6 +2,7 @@ import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/database/day/day_service.dart';
+import 'package:archify/services/database/user/user_service.dart';
 import 'package:archify/services/storage/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,6 +18,7 @@ class DayProvider extends ChangeNotifier {
   }
 
   final _dayService = DayService();
+  final _userService = UserService();
   final _authService = AuthService();
   final _storageService = StorageService();
 
@@ -54,10 +56,11 @@ class DayProvider extends ChangeNotifier {
   }) async {
     final now = DateTime.now();
     final uuid = Uuid();
+    final uid = _authService.getCurrentUid();
 
     final day = Day(
       id: '',
-      hostId: _authService.getCurrentUid(),
+      hostId: uid,
       name: name,
       description: description,
       maxParticipants: maxParticipants,
@@ -68,15 +71,25 @@ class DayProvider extends ChangeNotifier {
       status: true,
     );
 
-    return await _dayService.createDayInFirebase(day);
+    final dayId = await _dayService.createDayInFirebase(day);
+    await _userService.addDayToUserProfile(dayId, uid);
+
+    return dayId;
   }
 
   Future<void> startDay(String dayCode, String nickname) async {
+    final dayId = await _dayService.getDayIdFromFirebase(dayCode);
+    _userService.addDayToUserProfile(dayId, _authService.getCurrentUid());
+
     await _dayService.startDayInFirebase(dayCode, nickname);
   }
 
   Future<bool> isDayExistingAndActive(String dayCode) async {
     return await _dayService.isDayExistingAndActiveInFirebase(dayCode);
+  }
+
+  Future<bool> isRoomFull(String dayCode) async {
+    return await _dayService.isRoomFull(dayCode);
   }
 
   Future<void> deleteDay(String day) async {
