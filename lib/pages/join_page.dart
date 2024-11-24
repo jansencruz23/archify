@@ -69,7 +69,7 @@ class _JoinPageState extends State<JoinPage> {
                 obscureText: false,
                 focusNode: _codeFocusNode,
               ),
-              MyButton(text: 'Join Day', onTap: joinDay),
+              MyButton(text: 'Join a Day', onTap: joinDay),
             ],
           ),
         ),

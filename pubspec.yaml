@@ -46,7 +46,11 @@ dependencies:
   uuid: ^4.5.1
   getwidget: ^4.0.0
   carousel_slider: ^5.0.0
+<<<<<<< HEAD
+  flutter_staggered_grid_view: ^0.7.0
+=======
   firebase_messaging: ^15.1.5
+>>>>>>> origin/JCruz
 
 dev_dependencies:
   flutter_test:
@@ -84,9 +88,10 @@ flutter:
     - lib/assets/images/setting_icon.png
     - lib/assets/images/AAlfonso_img.png
     - lib/assets/images/JSalem_img.png
-    - lib/assets/images/JCruz_img.png
     - lib/assets/images/Bestday_img.png
     - lib/assets/images/Book_img.png
+    - lib/assets/images/JCruz_img.png
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

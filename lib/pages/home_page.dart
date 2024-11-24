@@ -26,8 +26,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   late bool _setupNavigationTriggered;
 
-  bool _isKeyboardVisible =
-      false; //For Keyboard to remove navbar visibility -AAlfonso
+  bool _isKeyboardVisible = false; //For Keyboard to remove navbar visibility -AAlfonso
 
   final CarouselController _carouselController = CarouselController();
   int _currentIndex = 0; // Track the current index
@@ -73,6 +72,9 @@ class _HomePageState extends State<HomePage> {
   late final TextEditingController _commentController;
 
   late final FocusNode _fieldComment;
+
+
+
 
   @override
   void initState() {
@@ -290,15 +292,16 @@ class _HomePageState extends State<HomePage> {
 
                         //Carousel
                         CarouselSlider.builder(
+
                           itemCount: carouselData.length,
                           itemBuilder: (context, index, realIndex) {
+
                             // realIndex = index;
 
-                            bool isMainPhoto = this.realIndex ==
-                                index; //Gamiting Index yung Day
+                            bool isMainPhoto = this.realIndex == index; //Gamiting Index yung Day
 
-                            print(
-                                "isMainPhoto: $isMainPhoto"); // Pang debug lang AAlfonso
+                            print("isMainPhoto: $isMainPhoto"); // Pang debug lang AAlfonso
+
 
                             return Stack(
                               children: [
@@ -309,7 +312,8 @@ class _HomePageState extends State<HomePage> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.5,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(35),
+                                    borderRadius: BorderRadius.circular(
+                                        35),
                                     image: DecorationImage(
                                       image: AssetImage(
                                           carouselData[index]['image']!),
@@ -391,6 +395,7 @@ class _HomePageState extends State<HomePage> {
                                                   .colorScheme
                                                   .tertiaryContainer),
                                           onPressed: () {
+
                                             // Handle the heart button press
                                           },
                                         ),
