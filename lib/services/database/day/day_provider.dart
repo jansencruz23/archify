@@ -79,6 +79,10 @@ class DayProvider extends ChangeNotifier {
     return await _dayService.isDayExistingAndActiveInFirebase(dayCode);
   }
 
+  Future<bool> isRoomFull(String dayCode) async {
+    return await _dayService.isRoomFull(dayCode);
+  }
+
   Future<void> deleteDay(String day) async {
     // Delete a day from the database
   }

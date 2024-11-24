@@ -66,6 +66,32 @@ class DayService {
     }
   }
 
+  Future<bool> isRoomFull(String dayCode) async {
+    try {
+      final day = await getDayByCodeFromFirebase(dayCode);
+      if (day == null) {
+        return false;
+      }
+
+      final currentParticipantCount = await _db
+          .collection('Days')
+          .doc(day.id)
+          .collection('Participants')
+          .count()
+          .get()
+          .then((value) => value.count);
+
+      if (currentParticipantCount == null) {
+        return true;
+      }
+
+      return day.maxParticipants <= currentParticipantCount;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return true;
+    }
+  }
+
   Future<void> sendImageToFirebase(String imageUrl, String dayCode) async {
     try {
       final dayId = await getDayIdFromFirebase(dayCode);

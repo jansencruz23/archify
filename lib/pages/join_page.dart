@@ -31,7 +31,16 @@ class _JoinPageState extends State<JoinPage> {
     final dayExists =
         await _dayProvider.isDayExistingAndActive(_codeController.text);
 
+    final isRoomFull = await _dayProvider.isRoomFull(_codeController.text);
+
     if (!mounted) return;
+
+    if (isRoomFull) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Room is full')),
+      );
+      return;
+    }
 
     if (!dayExists) {
       ScaffoldMessenger.of(context).showSnackBar(
