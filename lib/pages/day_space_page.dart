@@ -33,9 +33,18 @@ class _DaySpacePageState extends State<DaySpacePage> {
     });
   }
 
-  void _showImageDialog(Moment x) {
+  void _showImageDialog(Moment moment) {
     showDialog(context: context, builder: (content) => AlertDialog(
-
+  content:Container(
+    width: 200,
+    height: 200,
+    decoration: BoxDecoration(
+        image: DecorationImage(
+            image: ExactAssetImage(moment as String),
+            fit: BoxFit.cover
+        )
+    ),
+  ),
     ));
   }
 
@@ -163,20 +172,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
                               Stack(
                                 children: [
                                   GestureDetector(
-                                    onTap: () => _showImageDialog(moment) // ayun napasa mo na nun
-                                    // tas show mo nalang
-                                      //pwede pa explain hahaha
-                                    // bale pag nag tap k
-                                      // yung () => ba?
-                                    //from the top sir XD
-                                    // ung kanina gumawa ng function tas cacall mo lang sa tap
-                                    //bali gumawa ka ng bagong name ng moment?
-                                    //indee pinasa lang ung current moment na
-                                    //a params lang yung Moment?
-                                      //await showDialog(
-                                        //  context: context,
-                                          //builder: (_) => ImageDialog()
-                                      //);
+                                    onTap: () => _showImageDialog(moment)
                                     ,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(16.0),
@@ -234,20 +230,20 @@ class _DaySpacePageState extends State<DaySpacePage> {
   }
 }
 //eto sen
-class ImageDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        width: 200,
-        height: 200,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: ExactAssetImage('lib/assets/images/sample_Image2.jpg'),
-                fit: BoxFit.cover
-            )
-        ),
-      ),
-    );
-  }
-}
+// class ImageDialog extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Dialog(
+//       child: Container(
+//         width: 200,
+//         height: 200,
+//         decoration: BoxDecoration(
+//             image: DecorationImage(
+//                 image: ExactAssetImage('lib/assets/images/sample_Image2.jpg'),
+//                 fit: BoxFit.cover
+//             )
+//         ),
+//       ),
+//     );
+//   }
+// }
