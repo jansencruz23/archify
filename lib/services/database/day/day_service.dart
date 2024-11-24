@@ -10,7 +10,7 @@ class DayService {
   final _db = FirebaseFirestore.instance;
   final _authService = AuthService();
 
-  final logger = Logger('UserService');
+  final _logger = Logger('UserService');
 
   // Save day details in Firebase
   Future<String> createDayInFirebase(Day day) async {
@@ -23,7 +23,7 @@ class DayService {
 
       return day.id;
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return '';
     }
   }
@@ -34,7 +34,7 @@ class DayService {
       final dayDoc = await _db.collection('Days').doc(dayId).get();
       return Day.fromDocument(dayDoc);
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return null;
     }
   }
@@ -62,7 +62,7 @@ class DayService {
           .doc(currentUserId)
           .set(participant.toMap());
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
     }
   }
 
@@ -87,7 +87,7 @@ class DayService {
 
       return day.maxParticipants <= currentParticipantCount;
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return true;
     }
   }
@@ -112,7 +112,7 @@ class DayService {
 
       await docRef.set(moment.toMap());
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
     }
   }
 
@@ -137,7 +137,7 @@ class DayService {
 
       return day.status;
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return false;
     }
   }
@@ -153,7 +153,7 @@ class DayService {
       final day = Day.fromDocument(dayDoc.docs.first);
       return day.id;
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return '';
     }
   }
@@ -168,7 +168,7 @@ class DayService {
 
       return Day.fromDocument(dayDoc.docs.first);
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return null;
     }
   }
@@ -204,7 +204,7 @@ class DayService {
 
       return moments;
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return [];
     }
   }
@@ -222,7 +222,7 @@ class DayService {
           .toList();
       return participants;
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return [];
     }
   }
@@ -281,7 +281,7 @@ class DayService {
         await momentDoc.reference.update({'votes': moment.votes});
       }
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
     }
   }
 }
