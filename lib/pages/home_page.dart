@@ -250,9 +250,9 @@ class _HomePageState extends State<HomePage> {
                       : MyNavbar(
                           selectedIndex: _selectedIndex,
                           onItemTapped: _onItemTapped,
-                          showVerticalBar: true,
-                          isRotated: true,
-                          toggleRotation: () {},
+                          // showVerticalBar: _showVerticalBar,
+                          // isRotated: _isRotated,
+                          // toggleRotation: _toggleRotation ,
 
                           // _isKeyboardVisible: _isKeyboardVisible, //NOTE: Need Key sa navbar para gumana
                         ),

@@ -34,19 +34,23 @@ class _DaySpacePageState extends State<DaySpacePage> {
   }
 
   void _showImageDialog(Moment moment) {
-    showDialog(context: context, builder: (content) => AlertDialog(
-  content:Container(
-    width: 200,
-    height: 200,
-    decoration: BoxDecoration(
-        image: DecorationImage(
-            image: ExactAssetImage(moment as String),
-            fit: BoxFit.cover
-        )
-    ),
-  ),
-    ));
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Container(
+          width: 200,
+          height: 200,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(moment.imageUrl),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+    );
   }
+
 
   void _showNicknameInputDialog() {
     showDialog(
@@ -119,7 +123,6 @@ class _DaySpacePageState extends State<DaySpacePage> {
               ],
             ),
           ),
-
         ),
         body: Center(
           child: Column(
@@ -130,8 +133,6 @@ class _DaySpacePageState extends State<DaySpacePage> {
                     itemCount: moments?.length ?? 0,
                     itemBuilder: (context, index) {
                       final moment = moments![index];
-
-
 
 
                       return Padding(
