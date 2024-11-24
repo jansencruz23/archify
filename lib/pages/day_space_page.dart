@@ -2,6 +2,8 @@ import 'package:archify/components/my_input_alert_box.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'dart:ui' as ui;
 
 class DaySpacePage extends StatefulWidget {
   final String dayCode;
@@ -29,6 +31,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
       _loadDay();
     });
   }
+
 
   void _showNicknameInputDialog() {
     showDialog(
@@ -82,56 +85,152 @@ class _DaySpacePageState extends State<DaySpacePage> {
           title: Text(day == null ? 'Loading' : day.name),
           bottom: PreferredSize(
             preferredSize: Size.zero,
-            child: Text(
-                'Deadline: ${day == null ? 'Loading' : day.votingDeadline.toString()}'),
+            // AAlfonso TEMPORARY FOR DEBUGGING LANG
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+            Text(
+            'Deadline: ${day == null ? 'Loading' : day.votingDeadline.toString()}'),
+
+                IconButton(
+                  onPressed: _cameraUploadClicked,
+                  icon: Icon(Icons.camera_alt_rounded),
+                ),
+                IconButton(
+                  onPressed: _imageUploadClicked,
+                  icon: Icon(Icons.photo),
+                ),
+
+              ],
+            ),
           ),
+
         ),
         body: Center(
           child: Column(
             children: [
-              SingleChildScrollView(
-                child: Container(
-                  // random numbers
-                  // maging grid din pala based sa figma pero shshow ko muna
-                  height: MediaQuery.sizeOf(context).height - 200,
-                  width: MediaQuery.sizeOf(context).width,
-                  child: ListView.builder(
-                    itemCount: moments == null ? 0 : moments.length,
+              Expanded(
+                child: MasonryGridView.builder(gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                    shrinkWrap: true,
+                    itemCount: moments?.length ?? 0,
                     itemBuilder: (context, index) {
                       final moment = moments![index];
 
-                      return ListTile(
-                        title: Text(moment.nickname),
-                        leading: Image.network(moment.imageUrl),
-                        trailing: Wrap(
-                          children: [
-                            IconButton(
-                              onPressed: () => _likeImage(moment.momentId),
-                              icon: Icon(Icons.favorite_rounded),
-                            )
-                          ],
+
+
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme
+                                .of(context)
+                                .colorScheme
+                                .primary,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if(moment.nickname.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      ClipOval(
+                                        child: Image.network(
+                                          moment.imageUrl,
+                                          height: 40,
+                                          width: 40,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      SizedBox(width: 8,),
+                                      Text(
+                                        moment.nickname, style: TextStyle(
+                                          fontFamily: 'Sora',
+                                          fontSize: 16
+                                      ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              Stack(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await showDialog(
+                                          context: context,
+                                          builder: (_) => ImageDialog()
+                                      );
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      child: Image.network(
+                                          moment.imageUrl,
+                                        width: double.infinity,
+                                        height:  (index % 3 == 0) ? 180 : 230,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  //AAlfonso Temporary Like button
+                                  Positioned(child: IconButton(
+                                  onPressed: () => _likeImage(moment.momentId),
+                                  icon: Icon(Icons.favorite_rounded),
+
+                                )
+                                  ),
+                                ],
+                              ),
+
+
+                            ],),
                         ),
                       );
-                    },
-                  ),
-                ),
+
+
+                      // return Padding(
+                      //   padding: const EdgeInsets.all(8.0),
+                      //   child: ListTile(
+                      //     title: Text(moment.nickname),
+                      //     leading: Image.network(moment.imageUrl),
+                      //     trailing: Wrap(
+                      //       children: [
+                      //         IconButton(
+                      //           onPressed: () => _likeImage(moment.momentId),
+                      //           icon: Icon(Icons.favorite_rounded),
+                      //         )
+                      //       ],
+                      //     ),
+                      //
+                      //
+                      //
+                      //   ),
+                      // ),
+                    },),
               ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    onPressed: _cameraUploadClicked,
-                    icon: Icon(Icons.camera_alt_rounded),
-                  ),
-                  IconButton(
-                    onPressed: _imageUploadClicked,
-                    icon: Icon(Icons.photo),
-                  ),
-                ],
-              ),
+
             ],
           ),
+        ),
+      ),
+    );
+
+  }
+}
+
+class ImageDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        width: 200,
+        height: 200,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: ExactAssetImage('lib/assets/images/sample_Image2.jpg'),
+                fit: BoxFit.cover
+            )
         ),
       ),
     );
