@@ -1,4 +1,5 @@
 import 'package:archify/components/my_input_alert_box.dart';
+import 'package:archify/models/moment.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +33,11 @@ class _DaySpacePageState extends State<DaySpacePage> {
     });
   }
 
+  void _showImageDialog(Moment x) {
+    showDialog(context: context, builder: (content) => AlertDialog(
+
+    ));
+  }
 
   void _showNicknameInputDialog() {
     showDialog(
@@ -157,12 +163,21 @@ class _DaySpacePageState extends State<DaySpacePage> {
                               Stack(
                                 children: [
                                   GestureDetector(
-                                    onTap: () async {
-                                      await showDialog(
-                                          context: context,
-                                          builder: (_) => ImageDialog()
-                                      );
-                                    },
+                                    onTap: () => _showImageDialog(moment) // ayun napasa mo na nun
+                                    // tas show mo nalang
+                                      //pwede pa explain hahaha
+                                    // bale pag nag tap k
+                                      // yung () => ba?
+                                    //from the top sir XD
+                                    // ung kanina gumawa ng function tas cacall mo lang sa tap
+                                    //bali gumawa ka ng bagong name ng moment?
+                                    //indee pinasa lang ung current moment na
+                                    //a params lang yung Moment?
+                                      //await showDialog(
+                                        //  context: context,
+                                          //builder: (_) => ImageDialog()
+                                      //);
+                                    ,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(16.0),
                                       child: Image.network(
@@ -218,7 +233,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
 
   }
 }
-
+//eto sen
 class ImageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
