@@ -1,4 +1,5 @@
 import 'package:archify/components/my_input_alert_box.dart';
+import 'package:archify/models/moment.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,24 @@ class _DaySpacePageState extends State<DaySpacePage> {
       _showNicknameInputDialog();
       _loadDay();
     });
+  }
+
+  void _showImageDialog(Moment moment) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Container(
+          width: 200,
+          height: 200,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(moment.imageUrl),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
 
@@ -104,7 +123,6 @@ class _DaySpacePageState extends State<DaySpacePage> {
               ],
             ),
           ),
-
         ),
         body: Center(
           child: Column(
@@ -115,8 +133,6 @@ class _DaySpacePageState extends State<DaySpacePage> {
                     itemCount: moments?.length ?? 0,
                     itemBuilder: (context, index) {
                       final moment = moments![index];
-
-
 
 
                       return Padding(
@@ -157,12 +173,8 @@ class _DaySpacePageState extends State<DaySpacePage> {
                               Stack(
                                 children: [
                                   GestureDetector(
-                                    onTap: () async {
-                                      await showDialog(
-                                          context: context,
-                                          builder: (_) => ImageDialog()
-                                      );
-                                    },
+                                    onTap: () => _showImageDialog(moment)
+                                    ,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(16.0),
                                       child: Image.network(
@@ -218,21 +230,21 @@ class _DaySpacePageState extends State<DaySpacePage> {
 
   }
 }
-
-class ImageDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        width: 200,
-        height: 200,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: ExactAssetImage('lib/assets/images/sample_Image2.jpg'),
-                fit: BoxFit.cover
-            )
-        ),
-      ),
-    );
-  }
-}
+//eto sen
+// class ImageDialog extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Dialog(
+//       child: Container(
+//         width: 200,
+//         height: 200,
+//         decoration: BoxDecoration(
+//             image: DecorationImage(
+//                 image: ExactAssetImage('lib/assets/images/sample_Image2.jpg'),
+//                 fit: BoxFit.cover
+//             )
+//         ),
+//       ),
+//     );
+//   }
+// }

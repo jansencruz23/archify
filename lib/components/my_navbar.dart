@@ -141,7 +141,8 @@ class _HomeScreenState extends State<HomeScreen>
   late Animation<Offset> _slideAnimation;
 
   final List<Map<String, dynamic>> _menuItems = [
-    {'icon': Icons.wb_sunny, 'title': 'Join a day'},
+    {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
+    {'icon': Icons.qr_code_scanner, 'title': 'Scan QR code'},
     {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
     {'icon': Icons.settings, 'title': 'Settings'},
   ];
@@ -157,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen>
     _slideAnimation =
         Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0))
             .animate(CurvedAnimation(
-                parent: _animationController, curve: Curves.easeInOut));
+            parent: _animationController, curve: Curves.easeInOut));
   }
 
   void _onItemTapped(int index) {
@@ -185,47 +186,73 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  void _showJoinOptionsDialog(BuildContext context) {
+  void _showEnterDayCodeDialog(BuildContext context) {
+    TextEditingController _codeController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(
-          backgroundColor: Color(0xFFFF6F61),
-          title: Text(
-            'Choose an option',
-            style: const TextStyle(
-              color: Colors.white,
+        return AlertDialog(
+          backgroundColor: const Color(0xFFFF6F61),
+          title: const Text(
+            'Enter Day Code',
+            style: TextStyle(
               fontFamily: 'Sora',
+              color: Colors.white,
             ),
           ),
-          children: [
-            SimpleDialogOption(
+          content: TextField(
+            controller: _codeController,
+            cursorColor: Colors.white, // Cursor remains white
+            decoration: const InputDecoration(
+              hintText: 'Enter your code',
+              hintStyle: TextStyle(
+                fontFamily: 'Sora',
+                color: Colors.white70,
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
+            ),
+            style: const TextStyle(
+              fontFamily: 'Sora',
+              color: Colors.white,
+            ),
+          ),
+          actions: [
+            TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Enter a code selected')),
-                );
               },
               child: const Text(
-                'Enter a code',
+                'Cancel',
                 style: TextStyle(
-                  color: Colors.white,
                   fontFamily: 'Sora',
+                  color: Colors.white,
                 ),
               ),
             ),
-            SimpleDialogOption(
+            TextButton(
               onPressed: () {
+                String enteredCode = _codeController.text;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Scan QR code selected')),
+                  SnackBar(
+                    content: Text(
+                      'Code Entered: $enteredCode',
+                      style: const TextStyle(fontFamily: 'Sora'),
+                    ),
+                  ),
                 );
               },
               child: const Text(
-                'Scan QR code',
+                'Enter',
                 style: TextStyle(
-                  color: Colors.white,
                   fontFamily: 'Sora',
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -308,26 +335,25 @@ class _HomeScreenState extends State<HomeScreen>
                               },
                               child: GestureDetector(
                                 onTap: () {
-                                  if (index == 0) {
-                                    _showJoinOptionsDialog(context);
-                                  } else {
-                                    _onItemTapped(index);
+                                  if (item['title'] == 'Enter a day code') {
+                                    _showEnterDayCodeDialog(context);
                                   }
                                 },
-                                child: Container(
-                                  color: _hoveredIndex == index
-                                      ? const Color(0xFFF1695C)
-                                      : Colors.transparent,
-                                  child: ListTile(
-                                    leading:
-                                        Icon(item['icon'], color: Colors.white),
-                                    title: Text(
-                                      item['title'],
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Sora'),
+                                child: ListTile(
+                                  leading: Icon(
+                                    item['icon'],
+                                    color: Colors.white,
+                                  ),
+                                  title: Text(
+                                    item['title'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Sora',
                                     ),
                                   ),
+                                  tileColor: _hoveredIndex == index
+                                      ? const Color(0xFFF2776B)
+                                      : Colors.transparent,
                                 ),
                               ),
                             );

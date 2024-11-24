@@ -23,11 +23,28 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late final AuthProvider _authProvider;
   late final UserProvider _userProvider;
-  int _selectedIndex = 0;
   late bool _setupNavigationTriggered;
 
   bool _isKeyboardVisible =
       false; //For Keyboard to remove navbar visibility -AAlfonso
+  int _selectedIndex = 0;
+  bool _showVerticalBar = false;
+  bool _isRotated = false;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 2) {
+        _showVerticalBar = !_showVerticalBar;
+      }
+    });
+  }
+
+  void _toggleRotation() {
+    setState(() {
+      _isRotated = !_isRotated;
+    });
+  }
 
   final CarouselController _carouselController = CarouselController();
   int _currentIndex = 0; // Track the current index
@@ -131,12 +148,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _logout() async {
     await AuthService().logoutInFirebase();
     if (mounted) goRootPage(context);
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   //For Responsiveness
@@ -248,10 +259,9 @@ class _HomePageState extends State<HomePage> {
                       : MyNavbar(
                           selectedIndex: _selectedIndex,
                           onItemTapped: _onItemTapped,
-                          showVerticalBar: true,
-                          isRotated: true,
-                          toggleRotation: () {},
-
+                          showVerticalBar: _showVerticalBar,
+                          isRotated: _isRotated,
+                          toggleRotation: _toggleRotation,
                           // _isKeyboardVisible: _isKeyboardVisible, //NOTE: Need Key sa navbar para gumana
                         ),
 
