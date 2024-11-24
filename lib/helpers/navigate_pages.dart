@@ -50,6 +50,6 @@ void goDaySpace(BuildContext context, String dayCode) {
 void goHome(BuildContext context) {
   Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => const HomePage()),
+    MaterialPageRoute(builder: (context) => HomePage()),
   );
 }

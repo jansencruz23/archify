@@ -53,7 +53,7 @@ class _DayCodePageState extends State<DayCodePage> {
                     Text(day == null ? 'Loading...' : day.code),
                     MyButton(
                       text: 'Start Day',
-                      onTap: () => goDaySpace(context, day!.code),
+                      onTap: () =>  goHome(context),
                     ),
                   ],
                 ),

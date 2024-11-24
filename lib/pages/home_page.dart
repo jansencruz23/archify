@@ -27,6 +27,8 @@ class _HomePageState extends State<HomePage> {
   late bool _setupNavigationTriggered;
 
   bool _isKeyboardVisible = false; //For Keyboard to remove navbar visibility -AAlfonso
+  bool _isRotated = false;
+  bool _showVerticalBar = false;
 
   final CarouselController _carouselController = CarouselController();
   int _currentIndex = 0; // Track the current index
@@ -141,6 +143,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _toggleRotation() {
+    setState(() {
+      _isRotated = !_isRotated;
+    });
+  }
+
+
+
   //For Responsiveness
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;
@@ -250,9 +260,13 @@ class _HomePageState extends State<HomePage> {
                       : MyNavbar(
                           selectedIndex: _selectedIndex,
                           onItemTapped: _onItemTapped,
-                          // showVerticalBar: _showVerticalBar,
-                          // isRotated: _isRotated,
-                          // toggleRotation: _toggleRotation ,
+                          showVerticalBar: false,
+                          isRotated: false,
+                          toggleRotation: (){
+                            setState(() {
+                              _isRotated = !_isRotated;
+                            });
+                          },
 
                           // _isKeyboardVisible: _isKeyboardVisible, //NOTE: Need Key sa navbar para gumana
                         ),
