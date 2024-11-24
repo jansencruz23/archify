@@ -7,6 +7,7 @@ import 'package:archify/services/auth/auth_gate.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
+import 'package:archify/services/notification/fcm_service.dart';
 import 'package:archify/themes/light_mode.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ void main() async {
   // Firebase setup
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FCMService.setupFCM();
 
   runApp(
     MultiProvider(

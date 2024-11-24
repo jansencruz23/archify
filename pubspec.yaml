@@ -46,6 +46,7 @@ dependencies:
   uuid: ^4.5.1
   getwidget: ^4.0.0
   carousel_slider: ^5.0.0
+  firebase_messaging: ^15.1.5
 
 dev_dependencies:
   flutter_test:

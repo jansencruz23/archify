@@ -3,6 +3,7 @@ import 'package:archify/models/moment.dart';
 import 'package:archify/models/participant.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:logging/logging.dart';
 
 class DayService {
@@ -46,10 +47,13 @@ class DayService {
         return;
       }
       final currentUserId = _authService.getCurrentUid();
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+
       final participant = Participant(
         uid: currentUserId,
         role: day.hostId == currentUserId ? 'host' : 'participant',
         nickname: nickname,
+        fcmToken: fcmToken,
       );
       await _db
           .collection('Days')
@@ -101,6 +105,7 @@ class DayService {
       }
 
       if (day.votingDeadline.isBefore(DateTime.now())) {
+        await _db.collection('Days').doc(day.id).update({'status': false});
         return false;
       }
 
@@ -164,7 +169,8 @@ class DayService {
         final participantDoc = await getParticipantsFromFirebase(dayId);
         final participant = participantDoc.firstWhere(
           (element) => element.uid == moment.uploadedBy,
-          orElse: () => Participant(uid: '', role: '', nickname: ''),
+          orElse: () =>
+              Participant(uid: '', role: '', nickname: '', fcmToken: ''),
         );
 
         moment.nickname = participant.nickname;
