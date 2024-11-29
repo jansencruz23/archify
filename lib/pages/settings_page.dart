@@ -61,34 +61,6 @@ class _SettingsPageState extends State<SettingsPage> {
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    _rateMyApp.init().then((_) {
-      if (_rateMyApp.shouldOpenDialog && !_isDialogShown) {
-        _rateMyApp.showStarRateDialog(
-          context,
-          title: 'Enjoying Archify?',
-          message: 'Please leave a rating!',
-          actionsBuilder: (context, stars) {
-            return [
-              TextButton(
-                onPressed: () {
-                  _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
-                  Navigator.pop(context);
-                },
-                child: Text('Later'),
-              ),
-              TextButton(
-                onPressed: () {
-                  _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
-                  Navigator.pop(context);
-                },
-                child: Text('Rate Now'),
-              ),
-            ];
-          },
-        );
-        _isDialogShown = true;
-      }
-    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // _loadUserProfile();
@@ -213,32 +185,49 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       onTap: () {
                         // print('rate');
-                        if (_rateMyApp.shouldOpenDialog && !_isDialogShown) {
+                        print('Is dialog shown? $_isDialogShown'); // for debuging
+
+
                           _rateMyApp.showStarRateDialog(
                             context,
                             title: 'Enjoying Archify?',
                             message: 'Please leave a rating!',
+                            dialogStyle: DialogStyle(
+                              titleAlign: TextAlign.center, // Align the title text
+                              titleStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.inversePrimary, // Set the title color
+                                fontWeight: FontWeight.bold, // Set additional styles if needed
+                                fontSize: 20.0,
+                              ),
+                              messageAlign: TextAlign.center, // Align the message text
+                              messageStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.inversePrimary, // Set the message color
+                                fontSize: 16.0,
+                              ),
+                            ),
                             actionsBuilder: (context, stars) {
                               return [
-                                TextButton(
-                                  onPressed: () {
-                                    _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Later'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Rate Now'),
+                                Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Later', style: TextStyle( color:Theme.of(context).colorScheme.inversePrimary ),),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Rate Now', style: TextStyle( color: Theme.of(context).colorScheme.inversePrimary),),
+                                    ),
+                                  ],
                                 ),
                               ];
                             },
                           );
-                          _isDialogShown = true;
-                        }
                       },
                     ),
 
