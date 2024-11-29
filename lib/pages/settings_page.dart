@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +6,7 @@ import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/helpers/navigate_pages.dart';
-
+import 'package:archify/components/my_settings_button.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_profile_picture.dart';
 
@@ -92,8 +91,9 @@ class _SettingsPageState extends State<SettingsPage> {
     return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
   }
 
-
-
+  //hover for button and mouse change
+  bool amIHovering = false;
+  Offset exitFrom = Offset(0, 0);
 
   Future<void> _logout() async {
     await AuthService().logoutInFirebase();
@@ -156,6 +156,64 @@ class _SettingsPageState extends State<SettingsPage> {
           isRotated: _isRotated,
           toggleRotation: _toggleRotation,
           // _isKeyboardVisible: _isKeyboardVisible, //NOTE: Need Key sa navbar para gumana
+        ),
+
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              MySettingsButton(
+                text: 'Rate Us',
+                icon: Icon(Icons.star_border_outlined, color: Theme.of(context).colorScheme.inversePrimary),
+                onTap: () {
+                  print('rate');
+                },
+              ),
+              MySettingsButton(
+                text: 'Share',
+                icon: Icon(Icons.share_outlined, color: Theme.of(context).colorScheme.inversePrimary),
+                onTap: () {
+                  print('share');
+                },
+              ),
+              MySettingsButton(
+                text: 'Privacy',
+                icon: Icon(Icons.lock_outline_sharp, color: Theme.of(context).colorScheme.inversePrimary),
+                onTap: () {
+                  print('privacy');
+                },
+              ),
+              MySettingsButton(
+                text: 'About',
+                icon: Icon(Icons.file_present_outlined, color: Theme.of(context).colorScheme.inversePrimary),
+                onTap: () {
+                  print('about');
+                },
+              ),
+              MySettingsButton(
+                text: 'Contact',
+                icon: Icon(Icons.mail_outline_rounded, color: Theme.of(context).colorScheme.inversePrimary),
+                onTap: () {
+                  print('contact');
+                },
+              ),
+              MySettingsButton(
+                text: 'Feedback',
+                icon: Icon(Icons.feedback_outlined, color: Theme.of(context).colorScheme.inversePrimary),
+                onTap: () {
+                  print('feedback');
+                },
+              ),
+              MySettingsButton(
+                text: 'Logout',
+                icon: Icon(Icons.logout, color: Theme.of(context).colorScheme.inversePrimary),
+                onTap: () {
+                  _logout();
+                  print('logout');
+                },
+              ),
+            ],
+          ),
         ),
       ));
     });
