@@ -6,6 +6,7 @@ class MyNavbar extends StatelessWidget {
   final bool showVerticalBar;
   final bool isRotated;
   final Function toggleRotation;
+  final Function(BuildContext) showEnterDayCodeDialog;
 
   const MyNavbar({
     Key? key,
@@ -14,6 +15,7 @@ class MyNavbar extends StatelessWidget {
     required this.showVerticalBar,
     required this.isRotated,
     required this.toggleRotation,
+    required this.showEnterDayCodeDialog,
   }) : super(key: key);
 
   static const double navIconSize = 30.0;
@@ -290,6 +292,7 @@ class _HomeScreenState extends State<HomeScreen>
               showVerticalBar: _showVerticalBar,
               isRotated: _isRotated,
               toggleRotation: _toggleRotation,
+              showEnterDayCodeDialog: _showEnterDayCodeDialog,
             ),
           ),
           if (_showVerticalBar)
