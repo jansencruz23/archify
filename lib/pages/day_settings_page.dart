@@ -130,7 +130,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 25.0),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -138,7 +138,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: const Color(0xFFD9D9D9),
+                      color: const Color(0xFFFF6F61),
                     width: 1.0,
                   ),
                   borderRadius: BorderRadius.circular(8.0),
@@ -146,21 +146,22 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
                   Icons.sunny,
-                  color: Colors.black,
+                  color: Color(0xFFFF6F61),
                   size: 30.0,
                 ),
               ),
               const SizedBox(height: 16),
               const Text(
-                "Ready for the Best Picture Challenge?",
+                "Ready for the Challenge?",
                 style: TextStyle(
                   fontFamily: 'Sora',
-                  fontSize: 16,
-                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 21,
+                  color: Color(0xFF333333),
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 25),
               MyTextField(
                 controller: _dayNameController,
                 hintText: 'Day',
@@ -183,14 +184,63 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                 inputType: TextInputType.number,
               ),
               const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: pickTime,
-                child: const Text('Pick Voting Deadline'),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8, // Adjust percentage as needed
+                  child: ElevatedButton(
+                    onPressed: pickTime,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(const Color(0xFFFAF1E1)), // Set button background color
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)), // Match text field radius
+                      ),
+                      elevation: MaterialStateProperty.all(0), // Match text field flat design
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align text and icon
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12), // Add left margin to the text
+                          child: const Text(
+                            'Pick Voting Deadline',
+                            style: TextStyle(
+                              color: Color(0xFFC8C1B4), // Set text color
+                              fontFamily: 'Sora',
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12), // Add right margin to the icon
+                          child: const Icon(
+                            Icons.calendar_today, // Calendar icon
+                            color: Color(0xFFC8C1B4), // Set icon color
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ),
               const SizedBox(height: 12),
               MyButton(
                 onTap: createDay,
                 text: 'Create Day',
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  "<- Back to home",
+                  style: TextStyle(
+                    fontFamily: 'Sora',
+                    fontSize: 14,
+                    color: Color(0xFF333333),
+                  ),
+                ),
               ),
             ],
           ),
