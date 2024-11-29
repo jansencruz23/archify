@@ -574,6 +574,13 @@ class _HomePageState extends State<HomePage> {
                         //   onPressed: () => goSetup(context),
                         //   icon: const Icon(Icons.home),
                         // ),
+
+                        ElevatedButton(
+                          onPressed: () {
+                            goJoinOrCreate(context);
+                          },
+                          child: const Text('Join or Create'),
+                        ),
                       ],
                     ),
                   ),

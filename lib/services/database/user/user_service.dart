@@ -1,3 +1,4 @@
+import 'package:archify/models/joined_day.dart';
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -76,7 +77,7 @@ class UserService {
       final userDays = await _db
           .collection('Users')
           .doc(uid)
-          .collection('DayIds')
+          .collection('JoinedDays')
           .doc(dayId)
           .get();
 
@@ -84,12 +85,14 @@ class UserService {
         return;
       }
 
+      final day = JoinedDay(dayId: dayId, date: DateTime.now());
+
       await _db
           .collection('Users')
           .doc(uid)
-          .collection('DayIds')
+          .collection('JoinedDays')
           .doc(dayId)
-          .set({});
+          .set(day.toMap());
     } catch (ex) {
       logger.severe(ex.toString());
     }

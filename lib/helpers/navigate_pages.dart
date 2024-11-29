@@ -2,6 +2,7 @@ import 'package:archify/pages/day_code_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/day_space_page.dart';
 import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/join_or_create_page.dart';
 import 'package:archify/pages/join_page.dart';
 import 'package:archify/pages/setup_page.dart';
 import 'package:flutter/material.dart';
@@ -51,5 +52,12 @@ void goHome(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => HomePage()),
+  );
+}
+
+void goJoinOrCreate(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const JoinOrCreatePage()),
   );
 }
