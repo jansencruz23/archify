@@ -11,6 +11,7 @@ import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -22,11 +23,19 @@ class _SettingsPageState extends State<SettingsPage> {
   late final AuthProvider _authProvider;
   late final UserProvider _userProvider;
   late bool _setupNavigationTriggered;
+  DateTime? minimumDate;
 
   int _selectedIndex = 0;
   bool _showVerticalBar = false;
   bool _isRotated = false;
   bool _isDialogShown = false;
+
+  final RateMyApp _rateMyApp = RateMyApp(
+    preferencesPrefix: 'rateMyApp_',
+    minDays: 0,
+    minLaunches: 0,
+    googlePlayIdentifier: 'com.archify.app',
+  );
 
   void _onItemTapped(int index) {
     setState(() {
@@ -124,13 +133,13 @@ class _SettingsPageState extends State<SettingsPage> {
     if (mounted) goRootPage(context);
   }
 
-  final RateMyApp _rateMyApp = RateMyApp(
-    preferencesPrefix: 'rateMyApp_',
-    minDays: 0,
-    minLaunches: 0,
-    googlePlayIdentifier: 'com.archify.app',
-  );
 
+
+
+
+  void initializeDate() {
+    minimumDate = DateTime.now();  // Ensure this is done before access.
+  }
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
@@ -203,7 +212,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         color: Theme.of(context).colorScheme.inversePrimary,
                       ),
                       onTap: () {
-                        print('rate');
+                        // print('rate');
                         if (_rateMyApp.shouldOpenDialog && !_isDialogShown) {
                           _rateMyApp.showStarRateDialog(
                             context,
