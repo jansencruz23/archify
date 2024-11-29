@@ -118,7 +118,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                    'Deadline: ${day == null ? 'Loading' : day!.votingDeadline.toString()}'),
+                    'Deadline: ${day == null ? 'Loading' : day!.votingDeadline.add(Duration(hours: 8)).toString()}'),
                 IconButton(
                   onPressed: _cameraUploadClicked,
                   icon: Icon(Icons.camera_alt_rounded),
