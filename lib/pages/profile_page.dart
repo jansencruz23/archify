@@ -20,7 +20,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
     _userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    _loadUserProfile();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserProfile();
+      _loadUserMoments();
+    });
+  }
+
+  Future<void> _loadUserMoments() async {
+    await _userProvider.loadUserMoments();
   }
 
   Future<void> _loadUserProfile() async {
@@ -31,6 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
     final userProfile = listeningProvider.userProfile;
+    final days = listeningProvider.moments;
 
     return Consumer<UserProvider>(builder: (context, userProvider, child) {
       return userProvider.isLoading
