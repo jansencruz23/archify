@@ -308,14 +308,14 @@ class _HomePageState extends State<HomePage> {
 
                         //Carousel
                         CarouselSlider.builder(
-                          itemCount: days.length,
+                          itemCount: listeningProvider.moments.length,
                           itemBuilder: (context, index, realIndex) {
-                            if (days.isEmpty) {
+                            if (listeningProvider.moments.isEmpty) {
                               return const Center(
                                 child: Text('No moments available.'),
                               );
                             }
-                            final moment = days[index];
+                            final moment = listeningProvider.moments[index];
                             bool isMainPhoto = this.realIndex ==
                                 index; //Gamiting Index yung Day
 
