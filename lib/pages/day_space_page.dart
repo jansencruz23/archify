@@ -194,57 +194,15 @@ class _DaySpacePageState extends State<DaySpacePage> {
                                   ),
                                 ],
                               ),
-
-
                             ],),
                         ),
                       );
-
-
-                      // return Padding(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: ListTile(
-                      //     title: Text(moment.nickname),
-                      //     leading: Image.network(moment.imageUrl),
-                      //     trailing: Wrap(
-                      //       children: [
-                      //         IconButton(
-                      //           onPressed: () => _likeImage(moment.momentId),
-                      //           icon: Icon(Icons.favorite_rounded),
-                      //         )
-                      //       ],
-                      //     ),
-                      //
-                      //
-                      //
-                      //   ),
-                      // ),
                     },),
               ),
-
             ],
           ),
         ),
       ),
     );
-
   }
 }
-//eto sen
-// class ImageDialog extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Dialog(
-//       child: Container(
-//         width: 200,
-//         height: 200,
-//         decoration: BoxDecoration(
-//             image: DecorationImage(
-//                 image: ExactAssetImage('lib/assets/images/sample_Image2.jpg'),
-//                 fit: BoxFit.cover
-//             )
-//         ),
-//       ),
-//     );
-//   }
-// }

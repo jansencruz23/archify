@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   late final UserProvider _userProvider;
   late bool _setupNavigationTriggered;
 
-  bool _isKeyboardVisible = false; //For Keyboard to remove navbar visibility -AAlfonso
+  bool _isKeyboardVisible = true; //For Keyboard to remove navbar visibility -AAlfonso
   int _selectedIndex = 0;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -256,9 +256,11 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   //AAlfonso notes, updated para invisible navbar when typing
-                  bottomNavigationBar: _isKeyboardVisible
-                      ? null // Hide navbar when keyboard is visible
-                      : MyNavbar(
+                  bottomNavigationBar:
+                  // _isKeyboardVisible
+                  //     ? null // Hide navbar when keyboard is visible
+                  //     :
+                  MyNavbar(
                           selectedIndex: _selectedIndex,
                           onItemTapped: _onItemTapped,
                           showVerticalBar: _showVerticalBar,

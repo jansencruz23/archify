@@ -3,6 +3,7 @@ import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -84,7 +85,19 @@ class _ProfilePageState extends State<ProfilePage> {
                             padding: 8,
                           )),
                     ),
-                  )),
+
+                  )),body: MasonryGridView.builder(gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                  shrinkWrap: true,
+                  itemCount: 6, //sample
+                  itemBuilder: (context, index){
+                    final index = 0;
+                    return Container(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                    );
+                  }
+              ),
             ));
     });
   }
