@@ -141,6 +141,10 @@ class UserService {
       for (final day in joinedDays.docs) {
         final dayId = day.data()['dayId'];
         final dayMoments = await _db.collection('Days').doc(dayId).get();
+        final validDay = dayMoments.data()!['winnerId'] != "";
+
+        if (!validDay) continue;
+
         final winnerId = dayMoments.data()!['winnerId'];
         final momentDoc = await _db
             .collection('Days')
