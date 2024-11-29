@@ -138,4 +138,8 @@ class DayProvider extends ChangeNotifier {
   Future<void> likeImage(String dayCode, String momentId) async {
     await _dayService.likeImageInFirebase(dayCode, momentId);
   }
+
+  Future<bool> isParticipant(String dayCode) async {
+    return await _dayService.isParticipant(dayCode);
+  }
 }

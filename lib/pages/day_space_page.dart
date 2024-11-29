@@ -28,29 +28,34 @@ class _DaySpacePageState extends State<DaySpacePage> {
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showNicknameInputDialog();
+      _isParticipant().then((isParticipant) {
+        if (!isParticipant) _showNicknameInputDialog();
+      });
       _loadDay();
     });
   }
 
-  void _showImageDialog(Moment moment) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Container(
-          width: 200,
-          height: 200,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(moment.imageUrl),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-      ),
-    );
+  Future<bool> _isParticipant() async {
+    return await _dayProvider.isParticipant(widget.dayCode);
   }
 
+  // void _showImageDialog(Moment moment) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       content: Container(
+  //         width: 200,
+  //         height: 200,
+  //         decoration: BoxDecoration(
+  //           image: DecorationImage(
+  //             image: NetworkImage(moment.imageUrl),
+  //             fit: BoxFit.cover,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _showNicknameInputDialog() {
     showDialog(
@@ -108,9 +113,8 @@ class _DaySpacePageState extends State<DaySpacePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-            Text(
-            'Deadline: ${day == null ? 'Loading' : day.votingDeadline.toString()}'),
-
+                Text(
+                    'Deadline: ${day == null ? 'Loading' : day.votingDeadline.toString()}'),
                 IconButton(
                   onPressed: _cameraUploadClicked,
                   icon: Icon(Icons.camera_alt_rounded),
@@ -119,7 +123,6 @@ class _DaySpacePageState extends State<DaySpacePage> {
                   onPressed: _imageUploadClicked,
                   icon: Icon(Icons.photo),
                 ),
-
               ],
             ),
           ),
@@ -128,106 +131,100 @@ class _DaySpacePageState extends State<DaySpacePage> {
           child: Column(
             children: [
               Expanded(
-                child: MasonryGridView.builder(gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                    shrinkWrap: true,
-                    itemCount: moments?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final moment = moments![index];
+                child: MasonryGridView.builder(
+                  gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2),
+                  shrinkWrap: true,
+                  itemCount: moments?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final moment = moments![index];
 
-
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .primary,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if(moment.nickname.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      ClipOval(
-                                        child: Image.network(
-                                          moment.imageUrl,
-                                          height: 40,
-                                          width: 40,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      SizedBox(width: 8,),
-                                      Text(
-                                        moment.nickname, style: TextStyle(
-                                          fontFamily: 'Sora',
-                                          fontSize: 16
-                                      ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              Stack(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => _showImageDialog(moment)
-                                    ,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(16.0),
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (moment.nickname.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    ClipOval(
                                       child: Image.network(
-                                          moment.imageUrl,
-                                        width: double.infinity,
-                                        height:  (index % 3 == 0) ? 180 : 230,
+                                        moment.imageUrl,
+                                        height: 40,
+                                        width: 40,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      moment.nickname,
+                                      style: TextStyle(
+                                          fontFamily: 'Sora', fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            Stack(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {} /*=> _showImageDialog(moment)*/,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                    child: Image.network(
+                                      moment.imageUrl,
+                                      width: double.infinity,
+                                      height: (index % 3 == 0) ? 180 : 230,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                  //AAlfonso Temporary Like button
-                                  Positioned(child: IconButton(
+                                ),
+                                //AAlfonso Temporary Like button
+                                Positioned(
+                                    child: IconButton(
                                   onPressed: () => _likeImage(moment.momentId),
                                   icon: Icon(Icons.favorite_rounded),
-
-                                )
-                                  ),
-                                ],
-                              ),
-
-
-                            ],),
+                                )),
+                              ],
+                            ),
+                          ],
                         ),
-                      );
+                      ),
+                    );
 
-
-                      // return Padding(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: ListTile(
-                      //     title: Text(moment.nickname),
-                      //     leading: Image.network(moment.imageUrl),
-                      //     trailing: Wrap(
-                      //       children: [
-                      //         IconButton(
-                      //           onPressed: () => _likeImage(moment.momentId),
-                      //           icon: Icon(Icons.favorite_rounded),
-                      //         )
-                      //       ],
-                      //     ),
-                      //
-                      //
-                      //
-                      //   ),
-                      // ),
-                    },),
+                    // return Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: ListTile(
+                    //     title: Text(moment.nickname),
+                    //     leading: Image.network(moment.imageUrl),
+                    //     trailing: Wrap(
+                    //       children: [
+                    //         IconButton(
+                    //           onPressed: () => _likeImage(moment.momentId),
+                    //           icon: Icon(Icons.favorite_rounded),
+                    //         )
+                    //       ],
+                    //     ),
+                    //
+                    //
+                    //
+                    //   ),
+                    // ),
+                  },
+                ),
               ),
-
             ],
           ),
         ),
       ),
     );
-
   }
 }
 //eto sen

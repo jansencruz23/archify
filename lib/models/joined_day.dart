@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class JoinedDay {
   final String dayId;
   final DateTime date;
@@ -7,17 +9,17 @@ class JoinedDay {
     required this.date,
   });
 
-  factory JoinedDay.fromDocument(Map<String, dynamic> json) {
+  factory JoinedDay.fromDocument(Map<String, dynamic> data) {
     return JoinedDay(
-      dayId: json['dayId'],
-      date: DateTime.parse(json['date']),
+      dayId: data['dayId'],
+      date: (data['date'] as Timestamp).toDate(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'dayId': dayId,
-      'date': date.toIso8601String(),
+      'date': date,
     };
   }
 }

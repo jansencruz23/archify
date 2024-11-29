@@ -290,4 +290,26 @@ class DayService {
       _logger.severe(ex.toString());
     }
   }
+
+  Future<bool> isParticipant(String dayCode) async {
+    try {
+      final dayId = await getDayIdFromFirebase(dayCode);
+      if (dayId.isEmpty) {
+        return false;
+      }
+
+      final currentUid = _authService.getCurrentUid();
+      final participantDoc = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .doc(currentUid)
+          .get();
+
+      return participantDoc.exists;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return false;
+    }
+  }
 }

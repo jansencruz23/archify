@@ -574,7 +574,12 @@ class _HomePageState extends State<HomePage> {
                         //   onPressed: () => goSetup(context),
                         //   icon: const Icon(Icons.home),
                         // ),
-
+                        ElevatedButton(
+                          onPressed: () {
+                            goDayGate(context);
+                          },
+                          child: const Text('Day'),
+                        ),
                         ElevatedButton(
                           onPressed: () {
                             goJoinOrCreate(context);

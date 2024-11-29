@@ -85,7 +85,7 @@ class UserService {
         return;
       }
 
-      final day = JoinedDay(dayId: dayId, date: DateTime.now());
+      final day = JoinedDay(dayId: dayId, date: DateTime.now().toUtc());
 
       await _db
           .collection('Users')
@@ -95,6 +95,33 @@ class UserService {
           .set(day.toMap());
     } catch (ex) {
       logger.severe(ex.toString());
+    }
+  }
+
+  Future<String?> getJoinedDayIdToday() async {
+    try {
+      final uid = _authService.getCurrentUid();
+      final today = DateTime.now().toUtc().add(Duration(hours: 8));
+      final todayStart = DateTime(today.year, today.month, today.day);
+      final todayEnd = DateTime(today.year, today.month, today.day, 23, 59, 59);
+
+      final joined = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('JoinedDays')
+          .where('date', isGreaterThanOrEqualTo: todayStart)
+          .where('date', isLessThanOrEqualTo: todayEnd)
+          .get();
+
+      if (joined.docs.isEmpty) {
+        return null;
+      }
+
+      final joinedDay = JoinedDay.fromDocument(joined.docs.first.data());
+      return joinedDay.dayId;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return null;
     }
   }
 }

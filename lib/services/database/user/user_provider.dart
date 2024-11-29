@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
+import 'package:archify/services/database/day/day_service.dart';
 import 'package:archify/services/database/user/user_service.dart';
 import 'package:archify/services/storage/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class UserProvider extends ChangeNotifier {
 
   final _authService = AuthService();
   final _userService = UserService();
+  final _dayService = DayService();
   final _storageService = StorageService();
 
   // Properties to call in the UI
@@ -105,5 +107,15 @@ class UserProvider extends ChangeNotifier {
   Future<String> uploadProfilePicture(String path) async {
     _picturePath = await _storageService.uploadProfilePicture(path);
     return _picturePath;
+  }
+
+  Future<String?> getJoinedDayCodeToday() async {
+    final dayId = await _userService.getJoinedDayIdToday();
+    if (dayId == null) return null;
+
+    final dayCode = await _dayService.getDayFromFirebase(dayId);
+    if (dayCode == null) return null;
+
+    return dayCode.code;
   }
 }
