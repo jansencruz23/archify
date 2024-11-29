@@ -57,8 +57,7 @@ class DayProvider extends ChangeNotifier {
     required int maxParticipants,
     required TimeOfDay votingDeadline,
   }) async {
-    final now = DateTime.now();
-    final tempNow = DateTime.now().add(Duration(hours: 8));
+    final now = DateTime.now().add(Duration(hours: 8));
     final uuid = Uuid();
     final uid = _authService.getCurrentUid();
 
@@ -155,6 +154,7 @@ class DayProvider extends ChangeNotifier {
 
   Future<bool> hasVotingDeadlineExpired(String dayCode) async {
     final expired = await _dayService.hasVotingDeadlineExpired(dayCode);
+    await loadMoments(dayCode);
     notifyListeners();
     return expired;
   }

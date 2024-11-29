@@ -66,7 +66,7 @@ class _MyDayState extends State<MyDay> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Text(
-                widget.moment.uploadedAt.toString(),
+                widget.moment.uploadedAt.add(Duration(hours: 8)).toString(),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.tertiaryContainer,
                   fontSize: 12,

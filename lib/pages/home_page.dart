@@ -310,11 +310,17 @@ class _HomePageState extends State<HomePage> {
                         CarouselSlider.builder(
                           itemCount: days.length,
                           itemBuilder: (context, index, realIndex) {
-                            //final moment = days[index];
+                            if (days.isEmpty) {
+                              return const Center(
+                                child: Text('No moments available.'),
+                              );
+                            }
+                            final moment = days[index];
                             bool isMainPhoto = this.realIndex ==
                                 index; //Gamiting Index yung Day
 
-                            return Container();
+                            return MyDay(
+                                moment: moment, isMainPhoto: isMainPhoto);
                           },
                           options: CarouselOptions(
                               enlargeCenterPage: true,
