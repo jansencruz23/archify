@@ -49,9 +49,9 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.blue,
+              primary: Color(0xFFFF6F61),
               onPrimary: Colors.white,
-              onSurface: Colors.black,
+              onSurface: Color(0xFF333333),
             ),
             dialogBackgroundColor: Colors.white,
           ),
@@ -59,6 +59,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
         );
       },
     );
+
 
     if (pickedTime != null) {
       if (pickedTime.hour < now.hour ||
@@ -138,7 +139,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                      color: const Color(0xFFFF6F61),
+                    color: const Color(0xFFFF6F61),
                     width: 1.0,
                   ),
                   borderRadius: BorderRadius.circular(8.0),
@@ -185,44 +186,44 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
               ),
               const SizedBox(height: 12),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8, // Adjust percentage as needed
-                  child: ElevatedButton(
-                    onPressed: pickTime,
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(const Color(0xFFFAF1E1)), // Set button background color
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                      ),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)), // Match text field radius
-                      ),
-                      elevation: MaterialStateProperty.all(0), // Match text field flat design
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: ElevatedButton(
+                  onPressed: pickTime,
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(const Color(0xFFFAF1E1)),
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align text and icon
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12), // Add left margin to the text
-                          child: const Text(
-                            'Pick Voting Deadline',
-                            style: TextStyle(
-                              color: Color(0xFFC8C1B4), // Set text color
-                              fontFamily: 'Sora',
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 12), // Add right margin to the icon
-                          child: const Icon(
-                            Icons.calendar_today, // Calendar icon
-                            color: Color(0xFFC8C1B4), // Set icon color
-                            size: 20,
-                          ),
-                        ),
-                      ],
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                     ),
+                    elevation: MaterialStateProperty.all(0),
                   ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: const Text(
+                          'Pick Voting Deadline',
+                          style: TextStyle(
+                            color: Color(0xFFC8C1B4),
+                            fontFamily: 'Sora',
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: const Icon(
+                          Icons.calendar_today,
+                          color: Color(0xFFC8C1B4),
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: 12),
               MyButton(
