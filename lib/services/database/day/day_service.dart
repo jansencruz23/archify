@@ -384,7 +384,8 @@ class DayService {
       final dayDoc = await _db.collection('Days').doc(dayId).get();
       final day = Day.fromDocument(dayDoc);
       final now = DateTime.now().add(Duration(hours: 8));
-      final active = day.votingDeadline.isAfter(now);
+      final votingDeadline = day.votingDeadline.add(Duration(hours: 8));
+      final active = votingDeadline.isAfter(now);
 
       if (!active) {
         await getWinnerFromFirebase(dayId);

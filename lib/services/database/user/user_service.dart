@@ -103,16 +103,15 @@ class UserService {
   Future<String?> getJoinedDayIdToday() async {
     try {
       final uid = _authService.getCurrentUid();
-      final today = DateTime.now().toUtc().add(Duration(hours: 8));
-      final todayStart = DateTime(today.year, today.month, today.day);
-      final todayEnd = DateTime(today.year, today.month, today.day, 23, 59, 59);
+      final now = DateTime.now().add(Duration(hours: 8));
+      final todayStart = DateTime(now.year, now.month, now.day, 0, 0, 0);
+      final todayEnd = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
       final joined = await _db
           .collection('Users')
           .doc(uid)
           .collection('JoinedDays')
-          .where('date', isGreaterThanOrEqualTo: todayStart)
-          .where('date', isLessThanOrEqualTo: todayEnd)
+          .orderBy('date', descending: true)
           .get();
 
       if (joined.docs.isEmpty) {
@@ -120,6 +119,12 @@ class UserService {
       }
 
       final joinedDay = JoinedDay.fromDocument(joined.docs.first.data());
+      final dayDate = joinedDay.date.add(Duration(hours: 8));
+
+      if (dayDate.isBefore(todayStart) || dayDate.isAfter(todayEnd)) {
+        return null;
+      }
+
       return joinedDay.dayId;
     } catch (ex) {
       logger.severe(ex.toString());
