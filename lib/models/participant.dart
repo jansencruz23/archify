@@ -3,7 +3,7 @@ class Participant {
   final String role;
   final String nickname;
   final String? fcmToken;
-  final bool hasUploaded;
+  late bool hasUploaded;
 
   Participant({
     required this.uid,

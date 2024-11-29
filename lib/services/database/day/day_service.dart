@@ -100,6 +100,21 @@ class DayService {
         return;
       }
 
+      final uid = _authService.getCurrentUid();
+      final participantDoc = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .doc(uid)
+          .get();
+
+      if (!participantDoc.exists) {
+        return;
+      }
+
+      final participant = Participant.fromDocument(participantDoc.data()!);
+      participant.hasUploaded = true;
+
       final moment = Moment(
         momentId: '',
         imageUrl: imageUrl,
@@ -112,6 +127,7 @@ class DayService {
       moment.momentId = docRef.id;
 
       await docRef.set(moment.toMap());
+      await participantDoc.reference.update(participant.toMap());
     } catch (ex) {
       _logger.severe(ex.toString());
     }

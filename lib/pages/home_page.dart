@@ -565,15 +565,6 @@ class _HomePageState extends State<HomePage> {
                                 bottom:
                                     MediaQuery.of(context).viewInsets.bottom)),
 
-                        // Test Icons
-                        // IconButton(
-                        //   onPressed: _logout,
-                        //   icon: const Icon(Icons.logout),
-                        // ),
-                        // IconButton(
-                        //   onPressed: () => goSetup(context),
-                        //   icon: const Icon(Icons.home),
-                        // ),
                         ElevatedButton(
                           onPressed: () {
                             goDayGate(context);
@@ -585,6 +576,16 @@ class _HomePageState extends State<HomePage> {
                             goJoinOrCreate(context);
                           },
                           child: const Text('Join or Create'),
+                        ),
+
+                        // Test Icons
+                        IconButton(
+                          onPressed: _logout,
+                          icon: const Icon(Icons.logout),
+                        ),
+                        IconButton(
+                          onPressed: () => goSetup(context),
+                          icon: const Icon(Icons.home),
                         ),
                       ],
                     ),

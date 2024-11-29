@@ -1,6 +1,8 @@
 // To determine if day space if joineddays has the same date as today or go to empty day page
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/pages/day_code_page.dart';
+import 'package:archify/pages/day_space_page.dart';
+import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,22 +30,22 @@ class _DayGateState extends State<DayGate> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _checkJoinedDay(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          } else if (snapshot.hasData) {
-            goDaySpace(context, snapshot.data.toString());
-            return const SizedBox.shrink();
-          } else {
-            goEmptyDay(context);
-            return const SizedBox.shrink();
-          }
-        });
+    return Scaffold(
+      body: FutureBuilder(
+          future: _checkJoinedDay(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else if (snapshot.hasData) {
+              return DaySpacePage(dayCode: snapshot.data.toString());
+            } else {
+              return EmptyDayPage();
+            }
+          }),
+    );
   }
 }

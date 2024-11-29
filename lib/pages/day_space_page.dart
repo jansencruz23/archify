@@ -39,23 +39,23 @@ class _DaySpacePageState extends State<DaySpacePage> {
     return await _dayProvider.isParticipant(widget.dayCode);
   }
 
-  // void _showImageDialog(Moment moment) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       content: Container(
-  //         width: 200,
-  //         height: 200,
-  //         decoration: BoxDecoration(
-  //           image: DecorationImage(
-  //             image: NetworkImage(moment.imageUrl),
-  //             fit: BoxFit.cover,
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  void _showImageDialog(Moment moment) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Container(
+          width: 200,
+          height: 200,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(moment.imageUrl),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   void _showNicknameInputDialog() {
     showDialog(
@@ -175,7 +175,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
                             Stack(
                               children: [
                                 GestureDetector(
-                                  onTap: () {} /*=> _showImageDialog(moment)*/,
+                                  onTap: () => _showImageDialog(moment),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(16.0),
                                     child: Image.network(
