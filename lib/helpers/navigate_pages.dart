@@ -1,9 +1,13 @@
 import 'package:archify/pages/day_code_page.dart';
+import 'package:archify/pages/day_expired_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/day_space_page.dart';
+import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/join_or_create_page.dart';
 import 'package:archify/pages/join_page.dart';
 import 'package:archify/pages/setup_page.dart';
+import 'package:archify/services/database/day/day_gate.dart';
 import 'package:flutter/material.dart';
 
 // Helper para short code sa pag navigate thru pages
@@ -41,15 +45,38 @@ void goJoin(BuildContext context) {
 }
 
 void goDaySpace(BuildContext context, String dayCode) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => DaySpacePage(dayCode: dayCode)),
-  );
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DaySpacePage(dayCode: dayCode)),
+    );
+  });
 }
 
 void goHome(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => HomePage()),
+  );
+}
+
+void goJoinOrCreate(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const JoinOrCreatePage()),
+  );
+}
+
+void goEmptyDay(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const EmptyDayPage()),
+  );
+}
+
+void goDayGate(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const DayGate()),
   );
 }

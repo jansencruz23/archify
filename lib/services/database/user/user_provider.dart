@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'package:archify/models/moment.dart';
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
+import 'package:archify/services/database/day/day_service.dart';
 import 'package:archify/services/database/user/user_service.dart';
 import 'package:archify/services/storage/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +19,25 @@ class UserProvider extends ChangeNotifier {
 
   final _authService = AuthService();
   final _userService = UserService();
+  final _dayService = DayService();
   final _storageService = StorageService();
 
   // Properties to call in the UI
   late String _picturePath = '';
   String get picturePath => _picturePath;
 
-  late UserProfile? _userProfile;
+  late UserProfile? _userProfile = UserProfile(
+      uid: '',
+      name: '',
+      email: '',
+      username: '',
+      bio: '',
+      pictureUrl: '',
+      isNew: false);
   UserProfile? get userProfile => _userProfile;
+
+  late List<Moment> _moments = [];
+  List<Moment> get moments => _moments;
 
   // Gets current user's profile
   Future<UserProfile?> getCurrentUserProfile() async {
@@ -44,6 +57,16 @@ class UserProvider extends ChangeNotifier {
     _picturePath = user.pictureUrl;
 
     setLoading(false);
+    notifyListeners();
+  }
+
+  Future<void> loadUserMoments() async {
+    final user = await getCurrentUserProfile();
+    if (user == null) {
+      return;
+    }
+
+    _moments = await _userService.getUserMomentsFromFirebase();
     notifyListeners();
   }
 
@@ -105,5 +128,15 @@ class UserProvider extends ChangeNotifier {
   Future<String> uploadProfilePicture(String path) async {
     _picturePath = await _storageService.uploadProfilePicture(path);
     return _picturePath;
+  }
+
+  Future<String?> getJoinedDayCodeToday() async {
+    final dayId = await _userService.getJoinedDayIdToday();
+    if (dayId == null) return null;
+
+    final dayCode = await _dayService.getDayFromFirebase(dayId);
+    if (dayCode == null) return null;
+
+    return dayCode.code;
   }
 }

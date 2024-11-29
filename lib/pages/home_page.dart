@@ -25,7 +25,8 @@ class _HomePageState extends State<HomePage> {
   late final UserProvider _userProvider;
   late bool _setupNavigationTriggered;
 
-  bool _isKeyboardVisible = true; //For Keyboard to remove navbar visibility -AAlfonso
+  bool _isKeyboardVisible =
+      false; //For Keyboard to remove navbar visibility -AAlfonso
   int _selectedIndex = 0;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -90,9 +91,6 @@ class _HomePageState extends State<HomePage> {
 
   late final FocusNode _fieldComment;
 
-
-
-
   @override
   void initState() {
     super.initState();
@@ -105,6 +103,7 @@ class _HomePageState extends State<HomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserProfile();
+      _loadUserMoments();
       _checkIfNewUser();
     });
 
@@ -126,8 +125,13 @@ class _HomePageState extends State<HomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserProfile();
+      _loadUserMoments();
       _checkIfNewUser();
     });
+  }
+
+  Future<void> _loadUserMoments() async {
+    await _userProvider.loadUserMoments();
   }
 
   Future<void> _loadUserProfile() async {
@@ -169,6 +173,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
     final userProfile = listeningProvider.userProfile;
+    final days = listeningProvider.moments;
 
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
@@ -256,11 +261,9 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   //AAlfonso notes, updated para invisible navbar when typing
-                  bottomNavigationBar:
-                  // _isKeyboardVisible
-                  //     ? null // Hide navbar when keyboard is visible
-                  //     :
-                  MyNavbar(
+                  bottomNavigationBar: _isKeyboardVisible
+                      ? null // Hide navbar when keyboard is visible
+                      : MyNavbar(
                           selectedIndex: _selectedIndex,
                           onItemTapped: _onItemTapped,
                           showVerticalBar: _showVerticalBar,
@@ -304,16 +307,15 @@ class _HomePageState extends State<HomePage> {
 
                         //Carousel
                         CarouselSlider.builder(
-
                           itemCount: carouselData.length,
                           itemBuilder: (context, index, realIndex) {
-
                             // realIndex = index;
 
-                            bool isMainPhoto = this.realIndex == index; //Gamiting Index yung Day
+                            bool isMainPhoto = this.realIndex ==
+                                index; //Gamiting Index yung Day
 
-                            print("isMainPhoto: $isMainPhoto"); // Pang debug lang AAlfonso
-
+                            print(
+                                "isMainPhoto: $isMainPhoto"); // Pang debug lang AAlfonso
 
                             return Stack(
                               children: [
@@ -324,8 +326,7 @@ class _HomePageState extends State<HomePage> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.5,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        35),
+                                    borderRadius: BorderRadius.circular(35),
                                     image: DecorationImage(
                                       image: AssetImage(
                                           carouselData[index]['image']!),
@@ -407,7 +408,6 @@ class _HomePageState extends State<HomePage> {
                                                   .colorScheme
                                                   .tertiaryContainer),
                                           onPressed: () {
-
                                             // Handle the heart button press
                                           },
                                         ),
@@ -572,15 +572,28 @@ class _HomePageState extends State<HomePage> {
                                 bottom:
                                     MediaQuery.of(context).viewInsets.bottom)),
 
+                        ElevatedButton(
+                          onPressed: () {
+                            goDayGate(context);
+                          },
+                          child: const Text('Day'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            goJoinOrCreate(context);
+                          },
+                          child: const Text('Join or Create'),
+                        ),
+
                         // Test Icons
-                        // IconButton(
-                        //   onPressed: _logout,
-                        //   icon: const Icon(Icons.logout),
-                        // ),
-                        // IconButton(
-                        //   onPressed: () => goSetup(context),
-                        //   icon: const Icon(Icons.home),
-                        // ),
+                        IconButton(
+                          onPressed: _logout,
+                          icon: const Icon(Icons.logout),
+                        ),
+                        IconButton(
+                          onPressed: () => goSetup(context),
+                          icon: const Icon(Icons.home),
+                        ),
                       ],
                     ),
                   ),
