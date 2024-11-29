@@ -302,6 +302,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.0"
+  flutter_terms_viewer:
+    dependency: "direct main"
+    description:
+      name: flutter_terms_viewer
+      sha256: "40835ac59558183edf450d00a1dfba5dd73f9ee3a74a1eb6b0daaa92b2b9288f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter

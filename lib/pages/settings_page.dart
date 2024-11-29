@@ -11,6 +11,8 @@ import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_terms_viewer/flutter_terms_viewer.dart';
+import 'package:archify/pages/terms_and_condition_page.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -105,9 +107,7 @@ class _SettingsPageState extends State<SettingsPage> {
     await AuthService().logoutInFirebase();
     if (mounted) goRootPage(context);
   }
-
-
-
+  
   void initializeDate() {
     minimumDate = DateTime.now();  // Ensure this is done before access.
   }
@@ -245,8 +245,20 @@ class _SettingsPageState extends State<SettingsPage> {
                           color: Theme.of(context).colorScheme.inversePrimary),
                       onTap: () {
                         print('privacy');
-                      },
-                    ),
+
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              child: TermsAndConditionsPage(),
+                            );
+                          },
+                        );
+                    
+                            },
+                          ),
+                        
+                    
                     MySettingsButton(
                       text: 'About',
                       icon: Icon(Icons.file_present_outlined,
