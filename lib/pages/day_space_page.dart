@@ -1,4 +1,5 @@
 import 'package:archify/components/my_input_alert_box.dart';
+import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/database/day/day_provider.dart';
@@ -30,18 +31,11 @@ class _DaySpacePageState extends State<DaySpacePage> {
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _hasVotingDeadlineExpired().then((hasExpired) {
-        if (hasExpired) _showVotingResults();
-      });
       _isParticipant().then((isParticipant) {
         if (!isParticipant) _showNicknameInputDialog();
       });
       _loadDay();
     });
-  }
-
-  Future<bool> _hasVotingDeadlineExpired() async {
-    return await _dayProvider.hasVotingDeadlineExpired(widget.dayCode);
   }
 
   Future<bool> _isParticipant() async {
@@ -62,15 +56,6 @@ class _DaySpacePageState extends State<DaySpacePage> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  void _showVotingResults() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text('Tapos na. Winner: ${day?.winnerId ?? "Unknown"}'),
       ),
     );
   }

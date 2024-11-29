@@ -1,4 +1,5 @@
 import 'package:archify/pages/day_code_page.dart';
+import 'package:archify/pages/day_expired_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/day_space_page.dart';
 import 'package:archify/pages/empty_day_page.dart';

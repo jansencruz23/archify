@@ -379,7 +379,7 @@ class DayService {
   Future<bool> hasVotingDeadlineExpired(String dayCode) async {
     try {
       final dayId = await getDayIdFromFirebase(dayCode);
-      if (dayId.isEmpty) return false;
+      if (dayId.isEmpty) return true;
 
       final dayDoc = await _db.collection('Days').doc(dayId).get();
       final day = Day.fromDocument(dayDoc);
@@ -388,6 +388,10 @@ class DayService {
 
       if (!active) {
         await getWinnerFromFirebase(dayId);
+      }
+
+      if (!day.status) {
+        return true;
       }
 
       return !active;
