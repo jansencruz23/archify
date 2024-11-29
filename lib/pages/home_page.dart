@@ -103,6 +103,7 @@ class _HomePageState extends State<HomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserProfile();
+      _loadUserMoments();
       _checkIfNewUser();
     });
 
@@ -124,8 +125,13 @@ class _HomePageState extends State<HomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserProfile();
+      _loadUserMoments();
       _checkIfNewUser();
     });
+  }
+
+  Future<void> _loadUserMoments() async {
+    await _userProvider.loadUserMoments();
   }
 
   Future<void> _loadUserProfile() async {
@@ -167,6 +173,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
     final userProfile = listeningProvider.userProfile;
+    final days = listeningProvider.moments;
 
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {

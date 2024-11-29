@@ -351,6 +351,31 @@ class DayService {
     }
   }
 
+  Future<void> getWinnerFromFirebase(String dayId) async {
+    try {
+      await _db.collection('Days').doc(dayId).update({'status': false});
+
+      final moments = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Moments')
+          .orderBy('votes', descending: true)
+          .limit(1)
+          .get();
+
+      if (moments.docs.isNotEmpty) {
+        final winner = moments.docs.first;
+        final moment = Moment.fromDocument(winner.data());
+        await _db
+            .collection('Days')
+            .doc(dayId)
+            .update({'winnerId': moment.momentId});
+      }
+    } catch (ex) {
+      _logger.severe(ex.toString());
+    }
+  }
+
   Future<bool> hasVotingDeadlineExpired(String dayCode) async {
     try {
       final dayId = await getDayIdFromFirebase(dayCode);
@@ -358,30 +383,14 @@ class DayService {
 
       final dayDoc = await _db.collection('Days').doc(dayId).get();
       final day = Day.fromDocument(dayDoc);
-      final active = day.votingDeadline.isBefore(DateTime.now());
+      final now = DateTime.now().add(Duration(hours: 8));
+      final active = day.votingDeadline.isAfter(now);
 
       if (!active) {
-        await _db.collection('Days').doc(dayId).update({'status': false});
-
-        final moments = await _db
-            .collection('Days')
-            .doc(dayId)
-            .collection('Moments')
-            .orderBy('votes', descending: true)
-            .limit(1)
-            .get();
-
-        if (moments.docs.isNotEmpty) {
-          final winner = moments.docs.first;
-          final moment = Moment.fromDocument(winner.data());
-          await _db
-              .collection('Days')
-              .doc(dayId)
-              .update({'winnerId': moment.momentId});
-        }
+        await getWinnerFromFirebase(dayId);
       }
 
-      return active;
+      return !active;
     } catch (ex) {
       _logger.severe(ex.toString());
       return false;

@@ -153,6 +153,8 @@ class DayProvider extends ChangeNotifier {
   }
 
   Future<bool> hasVotingDeadlineExpired(String dayCode) async {
-    return await _dayService.hasVotingDeadlineExpired(dayCode);
+    final expired = await _dayService.hasVotingDeadlineExpired(dayCode);
+    notifyListeners();
+    return expired;
   }
 }

@@ -1,4 +1,6 @@
+import 'package:archify/models/day.dart';
 import 'package:archify/models/joined_day.dart';
+import 'package:archify/models/moment.dart';
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -122,6 +124,41 @@ class UserService {
     } catch (ex) {
       logger.severe(ex.toString());
       return null;
+    }
+  }
+
+  Future<List<Moment>> getUserMomentsFromFirebase() async {
+    try {
+      final moments = List<Moment>.empty(growable: true);
+      final uid = _authService.getCurrentUid();
+      final joinedDays = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('JoinedDays')
+          .orderBy('date', descending: true)
+          .get();
+
+      for (final day in joinedDays.docs) {
+        final dayId = day.data()['dayId'];
+        final dayMoments = await _db.collection('Days').doc(dayId).get();
+        final winnerId = dayMoments.data()!['winnerId'];
+        final momentDoc = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(winnerId)
+            .get();
+
+        final moment = Moment.fromDocument(momentDoc.data()!);
+        moment.dayName = dayMoments.data()!['name'];
+
+        moments.add(moment);
+      }
+
+      return moments;
+    } catch (ex) {
+      logger.severe(ex.toString());
+      return [];
     }
   }
 }

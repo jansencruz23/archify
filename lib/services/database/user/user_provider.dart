@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:archify/models/moment.dart';
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/database/day/day_service.dart';
@@ -25,8 +26,18 @@ class UserProvider extends ChangeNotifier {
   late String _picturePath = '';
   String get picturePath => _picturePath;
 
-  late UserProfile? _userProfile;
+  late UserProfile? _userProfile = UserProfile(
+      uid: '',
+      name: '',
+      email: '',
+      username: '',
+      bio: '',
+      pictureUrl: '',
+      isNew: false);
   UserProfile? get userProfile => _userProfile;
+
+  late List<Moment> _moments = [];
+  List<Moment> get moments => _moments;
 
   // Gets current user's profile
   Future<UserProfile?> getCurrentUserProfile() async {
@@ -46,6 +57,16 @@ class UserProvider extends ChangeNotifier {
     _picturePath = user.pictureUrl;
 
     setLoading(false);
+    notifyListeners();
+  }
+
+  Future<void> loadUserMoments() async {
+    final user = await getCurrentUserProfile();
+    if (user == null) {
+      return;
+    }
+
+    _moments = await _userService.getUserMomentsFromFirebase();
     notifyListeners();
   }
 

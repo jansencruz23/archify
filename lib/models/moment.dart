@@ -7,6 +7,7 @@ class Moment {
   final DateTime uploadedAt;
   late int votes;
   late String nickname;
+  late String dayName;
 
   Moment({
     required this.momentId,
@@ -14,6 +15,7 @@ class Moment {
     required this.uploadedBy,
     required this.uploadedAt,
     this.votes = 0,
+    this.dayName = '',
   });
 
   factory Moment.fromDocument(Map<String, dynamic> data) {
@@ -23,6 +25,7 @@ class Moment {
       uploadedBy: data['uploadedBy'],
       uploadedAt: (data['uploadedAt'] as Timestamp).toDate(),
       votes: data['votes'],
+      dayName: data['dayName'],
     );
   }
 
@@ -33,6 +36,7 @@ class Moment {
       'uploadedBy': uploadedBy,
       'uploadedAt': uploadedAt,
       'votes': votes,
+      'dayName': dayName,
     };
   }
 }
