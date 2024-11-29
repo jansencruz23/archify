@@ -10,6 +10,7 @@ import 'package:archify/components/my_settings_button.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:rate_my_app/rate_my_app.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -104,8 +105,6 @@ class _SettingsPageState extends State<SettingsPage> {
     await AuthService().logoutInFirebase();
     if (mounted) goRootPage(context);
   }
-
-
 
 
 
@@ -231,14 +230,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                     ),
 
-
-
                     MySettingsButton(
                       text: 'Share',
                       icon: Icon(Icons.share_outlined,
                           color: Theme.of(context).colorScheme.inversePrimary),
-                      onTap: () {
-                        print('share');
+                      onTap: () async {
+                        // print('share');
+
+                         Share.share('com.archify.app');
                       },
                     ),
                     MySettingsButton(
