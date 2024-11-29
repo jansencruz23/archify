@@ -14,7 +14,6 @@ class DaySettingsPage extends StatefulWidget {
 
 class _DaySettingsPageState extends State<DaySettingsPage> {
   late final DayProvider _dayProvider;
-
   late final TextEditingController _dayNameController;
   late final TextEditingController _dayDescriptionController;
   late final TextEditingController _maxParticipantsController;
@@ -49,12 +48,12 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Colors.blue, // header background color
-              onPrimary: Colors.white, // header text color
-              onSurface: Colors.black, // body text color
+            colorScheme: const ColorScheme.light(
+              primary: Colors.blue,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
             ),
-            dialogBackgroundColor: Colors.white, // background color
+            dialogBackgroundColor: Colors.white,
           ),
           child: child!,
         );
@@ -76,9 +75,9 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
 
   void _showInvalidTimeError() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Please pick a time from now until 11:59 PM.'),
-        duration: const Duration(seconds: 2),
+        duration: Duration(seconds: 2),
       ),
     );
   }
@@ -89,7 +88,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
     final maxParticipants = int.tryParse(_maxParticipantsController.text);
 
     if (dayName.isEmpty || dayDescription.isEmpty || maxParticipants == null) {
-      //_showInvalidInputError();
       return;
     }
 
@@ -106,38 +104,96 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            MyTextField(
-              controller: _dayNameController,
-              hintText: 'Day',
-              obscureText: false,
-              focusNode: _dayNameFocusNode,
+      backgroundColor: const Color(0xFFFFFFFF),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80.0),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0),
             ),
-            MyTextField(
-              controller: _dayDescriptionController,
-              hintText: 'Day Description',
-              obscureText: false,
-              focusNode: _dayDescriptionFocusNode,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          alignment: Alignment.centerLeft,
+          child: const SafeArea(
+            child: Text(
+              "Create a Day",
+              style: TextStyle(
+                fontFamily: 'Sora',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
             ),
-            MyTextField(
-              controller: _maxParticipantsController,
-              hintText: 'Max Participants',
-              obscureText: false,
-              focusNode: _maxParticipantsFocusNode,
-              inputType: TextInputType.number,
-            ),
-            ElevatedButton(
-              onPressed: pickTime,
-              child: const Text('Pick Voting Deadline'),
-            ),
-            MyButton(
-              onTap: createDay,
-              text: 'Create Day',
-            ),
-          ],
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color(0xFFD9D9D9),
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.sunny,
+                  color: Colors.black,
+                  size: 30.0,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Ready for the Best Picture Challenge?",
+                style: TextStyle(
+                  fontFamily: 'Sora',
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              MyTextField(
+                controller: _dayNameController,
+                hintText: 'Day',
+                obscureText: false,
+                focusNode: _dayNameFocusNode,
+              ),
+              const SizedBox(height: 12),
+              MyTextField(
+                controller: _dayDescriptionController,
+                hintText: 'Day Description',
+                obscureText: false,
+                focusNode: _dayDescriptionFocusNode,
+              ),
+              const SizedBox(height: 12),
+              MyTextField(
+                controller: _maxParticipantsController,
+                hintText: 'Max Participants',
+                obscureText: false,
+                focusNode: _maxParticipantsFocusNode,
+                inputType: TextInputType.number,
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: pickTime,
+                child: const Text('Pick Voting Deadline'),
+              ),
+              const SizedBox(height: 12),
+              MyButton(
+                onTap: createDay,
+                text: 'Create Day',
+              ),
+            ],
+          ),
         ),
       ),
     );
