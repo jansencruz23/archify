@@ -136,7 +136,6 @@ class _HomeScreenState extends State<HomeScreen>
   bool _showVerticalBar = false;
   bool _isRotated = false;
   int _hoveredIndex = -1;
-
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
@@ -146,6 +145,8 @@ class _HomeScreenState extends State<HomeScreen>
     {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
     {'icon': Icons.settings, 'title': 'Settings'},
   ];
+
+
 
   @override
   void initState() {
@@ -159,14 +160,20 @@ class _HomeScreenState extends State<HomeScreen>
         Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0))
             .animate(CurvedAnimation(
             parent: _animationController, curve: Curves.easeInOut));
+
+    _animationController.addStatusListener((status) {
+      print('Animation status: $status');
+    });
   }
 
   void _onItemTapped(int index) {
     setState(() {
       if (index == 2) {
         if (_showVerticalBar) {
+          print('Reversing animation');
           _animationController.reverse();
         } else {
+          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
@@ -203,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           content: TextField(
             controller: _codeController,
-            cursorColor: Colors.white, // Cursor remains white
+            cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Enter your code',
               hintStyle: TextStyle(
@@ -347,13 +354,10 @@ class _HomeScreenState extends State<HomeScreen>
                                   title: Text(
                                     item['title'],
                                     style: const TextStyle(
-                                      color: Colors.white,
                                       fontFamily: 'Sora',
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  tileColor: _hoveredIndex == index
-                                      ? const Color(0xFFF2776B)
-                                      : Colors.transparent,
                                 ),
                               ),
                             );

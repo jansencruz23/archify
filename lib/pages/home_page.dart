@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
       if (index == 2) {
-        _showVerticalBar = !_showVerticalBar;
+        _showVerticalBar = !_showVerticalBar; // Toggles the vertical bar
       }
     });
   }
