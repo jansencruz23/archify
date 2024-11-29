@@ -235,8 +235,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: Icon(Icons.share_outlined,
                           color: Theme.of(context).colorScheme.inversePrimary),
                       onTap: () async {
-                        // print('share');
-
+                        //Used to share link from appstore or google playstore but hindi publish app nato
                          Share.share('com.archify.app');
                       },
                     ),
