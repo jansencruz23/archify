@@ -10,6 +10,7 @@ class Day {
   final String code;
   final DateTime createdAt;
   final bool status;
+  late String winnerId;
 
   Day({
     required this.id,
@@ -21,6 +22,7 @@ class Day {
     required this.code,
     required this.createdAt,
     required this.status,
+    this.winnerId = '',
   });
 
   // Firebase -> App
@@ -35,6 +37,7 @@ class Day {
       code: doc['code'],
       createdAt: (doc['createdAt'] as Timestamp).toDate(),
       status: doc['status'],
+      winnerId: doc['winnerId'],
     );
   }
 
@@ -50,6 +53,7 @@ class Day {
       'code': code,
       'createdAt': createdAt,
       'status': status,
+      'winnerId': winnerId,
     };
   }
 }

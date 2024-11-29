@@ -1,4 +1,5 @@
 import 'package:archify/components/my_input_alert_box.dart';
+import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
   late final TextEditingController _nicknameController;
   late final FocusNode _nicknameFocusNode;
   late final DayProvider _dayProvider;
+  late Day? day;
 
   @override
   void initState() {
@@ -28,11 +30,18 @@ class _DaySpacePageState extends State<DaySpacePage> {
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _hasVotingDeadlineExpired().then((hasExpired) {
+        if (hasExpired) _showVotingResults();
+      });
       _isParticipant().then((isParticipant) {
         if (!isParticipant) _showNicknameInputDialog();
       });
       _loadDay();
     });
+  }
+
+  Future<bool> _hasVotingDeadlineExpired() async {
+    return await _dayProvider.hasVotingDeadlineExpired(widget.dayCode);
   }
 
   Future<bool> _isParticipant() async {
@@ -53,6 +62,15 @@ class _DaySpacePageState extends State<DaySpacePage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showVotingResults() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text('Tapos na. Winner: ${day?.winnerId ?? "Unknown"}'),
       ),
     );
   }
@@ -101,21 +119,21 @@ class _DaySpacePageState extends State<DaySpacePage> {
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
-    final day = listeningProvider.day;
+    day = listeningProvider.day;
     final moments = listeningProvider.moments;
     final hasUploaded = listeningProvider.hasUploaded;
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(day == null ? 'Loading' : day.name),
+          title: Text(day == null ? 'Loading' : day!.name),
           bottom: PreferredSize(
             preferredSize: Size.zero,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                    'Deadline: ${day == null ? 'Loading' : day.votingDeadline.toString()}'),
+                    'Deadline: ${day == null ? 'Loading' : day!.votingDeadline.toString()}'),
                 IconButton(
                   onPressed: _cameraUploadClicked,
                   icon: Icon(Icons.camera_alt_rounded),

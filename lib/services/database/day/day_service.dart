@@ -310,9 +310,7 @@ class DayService {
   Future<bool> isParticipant(String dayCode) async {
     try {
       final dayId = await getDayIdFromFirebase(dayCode);
-      if (dayId.isEmpty) {
-        return false;
-      }
+      if (dayId.isEmpty) return false;
 
       final currentUid = _authService.getCurrentUid();
       final participantDoc = await _db
@@ -333,9 +331,8 @@ class DayService {
     try {
       final uid = _authService.getCurrentUid();
       final dayId = await getDayIdFromFirebase(dayCode);
-      if (dayId.isEmpty) {
-        return false;
-      }
+
+      if (dayId.isEmpty) return false;
 
       final participantDoc = await _db
           .collection('Days')
@@ -344,12 +341,47 @@ class DayService {
           .doc(uid)
           .get();
 
-      if (!participantDoc.exists) {
-        return false;
-      }
+      if (!participantDoc.exists) return false;
 
       final participant = Participant.fromDocument(participantDoc.data()!);
       return participant.hasUploaded;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return false;
+    }
+  }
+
+  Future<bool> hasVotingDeadlineExpired(String dayCode) async {
+    try {
+      final dayId = await getDayIdFromFirebase(dayCode);
+      if (dayId.isEmpty) return false;
+
+      final dayDoc = await _db.collection('Days').doc(dayId).get();
+      final day = Day.fromDocument(dayDoc);
+      final active = day.votingDeadline.isBefore(DateTime.now());
+
+      if (!active) {
+        await _db.collection('Days').doc(dayId).update({'status': false});
+
+        final moments = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .orderBy('votes', descending: true)
+            .limit(1)
+            .get();
+
+        if (moments.docs.isNotEmpty) {
+          final winner = moments.docs.first;
+          final moment = Moment.fromDocument(winner.data());
+          await _db
+              .collection('Days')
+              .doc(dayId)
+              .update({'winnerId': moment.momentId});
+        }
+      }
+
+      return active;
     } catch (ex) {
       _logger.severe(ex.toString());
       return false;
