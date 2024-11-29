@@ -28,6 +28,9 @@ class DayProvider extends ChangeNotifier {
   List<Moment>? _moments;
   List<Moment>? get moments => _moments;
 
+  bool? _hasUploaded;
+  bool get hasUploaded => _hasUploaded ?? false;
+
   Future<void> loadDay(String dayId) async {
     final day = await _dayService.getDayFromFirebase(dayId);
     if (day == null) {
@@ -116,6 +119,7 @@ class DayProvider extends ChangeNotifier {
     final imageUrl = await uploadImage(image.path);
     await _dayService.sendImageToFirebase(imageUrl, dayCode);
     await loadMoments(dayCode);
+    await loadHasUploaded(dayCode);
 
     notifyListeners();
   }
@@ -141,5 +145,10 @@ class DayProvider extends ChangeNotifier {
 
   Future<bool> isParticipant(String dayCode) async {
     return await _dayService.isParticipant(dayCode);
+  }
+
+  Future<void> loadHasUploaded(String dayCode) async {
+    _hasUploaded = await _dayService.hasParticipantUploaded(dayCode);
+    notifyListeners();
   }
 }

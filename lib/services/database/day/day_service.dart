@@ -328,4 +328,31 @@ class DayService {
       return false;
     }
   }
+
+  Future<bool> hasParticipantUploaded(String dayCode) async {
+    try {
+      final uid = _authService.getCurrentUid();
+      final dayId = await getDayIdFromFirebase(dayCode);
+      if (dayId.isEmpty) {
+        return false;
+      }
+
+      final participantDoc = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .doc(uid)
+          .get();
+
+      if (!participantDoc.exists) {
+        return false;
+      }
+
+      final participant = Participant.fromDocument(participantDoc.data()!);
+      return participant.hasUploaded;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return false;
+    }
+  }
 }
