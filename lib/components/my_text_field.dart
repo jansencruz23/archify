@@ -53,12 +53,11 @@ class _MyTextFieldState extends State<MyTextField> {
 
   @override
   Widget build(BuildContext context) {
-    //Focus color ng textfield pag typing
     final fillColor =
         widget.fillColor ?? Theme.of(context).colorScheme.tertiary;
-    //ano magandang color pag typings??
     final focusColor =
         widget.focusColor ?? Theme.of(context).colorScheme.secondaryFixedDim;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
       child: Container(
@@ -70,9 +69,7 @@ class _MyTextFieldState extends State<MyTextField> {
           valueListenable: focusNotifier,
           builder: (context, hasFocus, child) {
             return TextField(
-              keyboardType: widget.inputType != null
-                  ? widget.inputType!
-                  : TextInputType.text,
+              keyboardType: widget.inputType ?? TextInputType.text,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.inversePrimary,
                 fontFamily: 'Sora',
@@ -98,6 +95,7 @@ class _MyTextFieldState extends State<MyTextField> {
                   fontFamily: 'Sora',
                   fontSize: 18,
                 ),
+                  contentPadding: const EdgeInsets.only(left: 30),
               ),
             );
           },
