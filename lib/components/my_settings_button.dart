@@ -23,7 +23,7 @@ class _MySettingsButtonState extends State<MySettingsButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       child: GestureDetector(
         onTap: widget.onTap,
         child: GestureDetector(
@@ -52,7 +52,7 @@ class _MySettingsButtonState extends State<MySettingsButton> {
           },
           child: AnimatedContainer(
             duration: Duration(microseconds: 200),
-            height: 45,
+            height: 50,
             decoration: BoxDecoration(
               color:
               _isLongPressed

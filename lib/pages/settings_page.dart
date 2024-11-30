@@ -12,8 +12,8 @@ import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter_terms_viewer/flutter_terms_viewer.dart';
 import 'package:archify/pages/terms_and_condition_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -43,6 +43,10 @@ class _SettingsPageState extends State<SettingsPage> {
   int _selectedIndex = 0;
   bool _showVerticalBar = false;
   bool _isRotated = false;
+
+  String subject = '';
+  String body = '';
+  String email = _email;//how to get email
 
 
   late final RateMyApp _rateMyApp = RateMyApp(
@@ -83,7 +87,6 @@ class _SettingsPageState extends State<SettingsPage> {
       // _loadUserProfile();
       // _checkIfNewUser();
     });
-
     @override
     void dispose() {
       super.dispose();
@@ -132,6 +135,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
     final userProfile = listeningProvider.userProfile;
+
     return Consumer<UserProvider>(builder: (context, userProvider, child) {
       return _userProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -148,6 +152,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Row(
                           children: [
+
                             Icon(Icons.settings,
                                 color: Theme.of(context)
                                     .colorScheme
@@ -189,161 +194,184 @@ class _SettingsPageState extends State<SettingsPage> {
                       // _isKeyboardVisible: _isKeyboardVisible, //NOTE: Need Key sa navbar para gumana
                     ),
 
-              body: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    MySettingsButton(
-                      text: 'Rate Us',
-                      icon: Icon(
-                        Icons.star_border_outlined,
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      ),
-                      onTap: () {
-                        // print('rate');
-                        // print('Is dialog shown? $_isDialogShown'); // for debuging
+              body: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Column(
+                    children: [
 
-
-                          _rateMyApp.showStarRateDialog(
-                            context,
-                            title: 'Enjoying Archify?',
-                            message: 'Please leave a rating!',
-                            dialogStyle: DialogStyle(
-                              titleAlign: TextAlign.center, // Align the title text
-                              titleStyle: TextStyle(
-                                color: Theme.of(context).colorScheme.inversePrimary, // Set the title color
-                                fontWeight: FontWeight.bold, // Set additional styles if needed
-                                fontSize: 20.0,
-                              ),
-                              messageAlign: TextAlign.center, // Align the message text
-                              messageStyle: TextStyle(
-                                color: Theme.of(context).colorScheme.inversePrimary, // Set the message color
-                                fontSize: 16.0,
-                              ),
-                            ),
-                            actionsBuilder: (context, stars) {
-                              return [
-                                Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('Later', style: TextStyle( color:Theme.of(context).colorScheme.inversePrimary ),),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('Rate Now', style: TextStyle( color: Theme.of(context).colorScheme.inversePrimary),),
-                                    ),
-                                  ],
+                      MySettingsButton(
+                        text: 'Rate Us',
+                        icon: Icon(
+                          Icons.star_border_outlined,
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                        ),
+                        onTap: () {
+                          // print('rate');
+                          // print('Is dialog shown? $_isDialogShown'); // for debuging
+                
+                
+                            _rateMyApp.showStarRateDialog(
+                              context,
+                              title: 'Enjoying Archify?',
+                              message: 'Please leave a rating!',
+                              dialogStyle: DialogStyle(
+                                titleAlign: TextAlign.center, // Align the title text
+                                titleStyle: TextStyle(
+                                  color: Theme.of(context).colorScheme.inversePrimary, // Set the title color
+                                  fontWeight: FontWeight.bold, // Set additional styles if needed
+                                  fontSize: 20.0,
                                 ),
-                              ];
+                                messageAlign: TextAlign.center, // Align the message text
+                                messageStyle: TextStyle(
+                                  color: Theme.of(context).colorScheme.inversePrimary, // Set the message color
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                              actionsBuilder: (context, stars) {
+                                return [
+                                  Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Later', style: TextStyle( color:Theme.of(context).colorScheme.inversePrimary ),),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Rate Now', style: TextStyle( color: Theme.of(context).colorScheme.inversePrimary),),
+                                      ),
+                                    ],
+                                  ),
+                                ];
+                              },
+                            );
+                        },
+                      ),
+                
+                      MySettingsButton(
+                        text: 'Share',
+                        icon: Icon(Icons.share_outlined,
+                            color: Theme.of(context).colorScheme.inversePrimary),
+                        onTap: () async {
+                          //pang share ng link from appstore or google playstore but hindi publish app natin
+                           Share.share('com.archify.app');
+                        },
+                      ),
+                      MySettingsButton(
+                        text: 'Privacy',
+                        icon: Icon(Icons.lock_outline_sharp,
+                            color: Theme.of(context).colorScheme.inversePrimary),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                child: TermsAndConditionsPage(),
+                              );
                             },
                           );
-                      },
-                    ),
-
-                    MySettingsButton(
-                      text: 'Share',
-                      icon: Icon(Icons.share_outlined,
-                          color: Theme.of(context).colorScheme.inversePrimary),
-                      onTap: () async {
-                        //Used to share link from appstore or google playstore but hindi publish app nato
-                         Share.share('com.archify.app');
-                      },
-                    ),
-                    MySettingsButton(
-                      text: 'Privacy',
-                      icon: Icon(Icons.lock_outline_sharp,
-                          color: Theme.of(context).colorScheme.inversePrimary),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Dialog(
-                              child: TermsAndConditionsPage(),
-                            );
-                          },
-                        );
-                    
+                      
+                              },
+                            ),
+                          
+                      
+                      MySettingsButton(
+                        text: 'About',
+                        icon: Icon(Icons.file_present_outlined,
+                            color: Theme.of(context).colorScheme.inversePrimary),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                child: AboutUsPage(),
+                              );
                             },
-                          ),
-                        
-                    
-                    MySettingsButton(
-                      text: 'About',
-                      icon: Icon(Icons.file_present_outlined,
-                          color: Theme.of(context).colorScheme.inversePrimary),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Dialog(
-                              child: AboutUsPage(),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    MySettingsButton(
-                      text: 'Contact',
-                      icon: Icon(Icons.mail_outline_rounded,
-                          color: Theme.of(context).colorScheme.inversePrimary),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('archify.app@gmail.com',  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
-                                  .colorScheme
-                                  .inversePrimary),),
-
-                              content: Text('Feel free to contact us via our email!',  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:Theme.of(context)
-                                  .colorScheme
-                                  .inversePrimary),),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context); // Close the dialog
-                                  },
-                                  child: Center(
-                                    child: Text('Close', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary),),
+                          );
+                        },
+                      ),
+                      MySettingsButton(
+                        text: 'Contact',
+                        icon: Icon(Icons.mail_outline_rounded,
+                            color: Theme.of(context).colorScheme.inversePrimary),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('archify.app@gmail.com',  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary),),
+                
+                                content: Text('Feel free to contact us via our email!',  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary),),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context); // Close the dialog
+                                    },
+                                    child: Center(
+                                      child: Text('Close', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary),),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                
+                      MySettingsButton(
+                        text: 'Feedback',
+                        icon: Icon(Icons.feedback_outlined,
+                            color: Theme.of(context).colorScheme.inversePrimary),
+                        onTap: () {
 
-                    MySettingsButton(
-                      text: 'Feedback',
-                      icon: Icon(Icons.feedback_outlined,
-                          color: Theme.of(context).colorScheme.inversePrimary),
-                      onTap: () {
-                        print('feedback');
-                      },
-                    ),
-                    MySettingsButton(
-                      text: 'Logout',
-                      icon: Icon(Icons.logout,
-                          color: Theme.of(context).colorScheme.inversePrimary),
-                      onTap: () {
-                        _logout();
-                        print('logout');
-                      },
-                    ),
-                  ],
+                          String? encodeQueryParameters(Map<String, String> params) {
+                            return params.entries
+                                .map((MapEntry<String, String> e) =>
+                            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                                .join('&');
+                          }
+
+                          final Uri emailLaunchUri = Uri(
+                            scheme: 'mailto',
+                            path: 'archify.app@gmail.com',
+                            query: encodeQueryParameters(<String, String>{
+                              'subject': subject, //from text field
+                              'body': body //from textfield
+                            }),
+                          );
+
+                          launchUrl(emailLaunchUri);
+                        },
+                      ),
+
+
+                      MySettingsButton(
+                        text: 'Logout',
+                        icon: Icon(Icons.logout,
+                            color: Theme.of(context).colorScheme.inversePrimary),
+                        onTap: () {
+                          _logout();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ));
     });
   }
 }
+
