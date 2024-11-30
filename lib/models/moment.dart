@@ -5,6 +5,7 @@ class Moment {
   final String imageUrl;
   final String uploadedBy;
   final DateTime uploadedAt;
+  final String dayId;
   late int votes;
   late String nickname;
   late String dayName;
@@ -14,6 +15,7 @@ class Moment {
     required this.imageUrl,
     required this.uploadedBy,
     required this.uploadedAt,
+    required this.dayId,
     this.votes = 0,
     this.dayName = '',
   });
@@ -26,6 +28,7 @@ class Moment {
       uploadedAt: (data['uploadedAt'] as Timestamp).toDate(),
       votes: data['votes'],
       dayName: data['dayName'],
+      dayId: data['dayId'],
     );
   }
 
@@ -37,6 +40,7 @@ class Moment {
       'uploadedAt': uploadedAt,
       'votes': votes,
       'dayName': dayName,
+      'dayId': dayId,
     };
   }
 }

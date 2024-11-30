@@ -5,6 +5,7 @@ import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/auth/auth_service.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,6 +24,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final AuthProvider _authProvider;
+  late final DayProvider _dayProvider;
   late final UserProvider _userProvider;
   late bool _setupNavigationTriggered;
 
@@ -48,6 +50,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   final CarouselController _carouselController = CarouselController();
+  String _currentDayId = '';
   int _currentIndex = 0; // Track the current index
   int realIndex = 0; // To store real index
 
@@ -101,6 +104,7 @@ class _HomePageState extends State<HomePage> {
 
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserProfile();
@@ -137,6 +141,14 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadUserProfile() async {
     await _userProvider.loadUserProfile();
+  }
+
+  Future<void> _sendComment() async {
+    final comment = _commentController.text.trim();
+    if (comment.isEmpty) return;
+    if (_currentDayId.isEmpty) return;
+
+    await _dayProvider.sendComment(comment, _currentDayId);
   }
 
   Future<void> _checkIfNewUser() async {
@@ -325,6 +337,7 @@ class _HomePageState extends State<HomePage> {
                             onPageChanged: (index, reason) {
                               setState(() {
                                 _currentIndex = index;
+                                _currentDayId = days[index].dayId;
                               });
                             },
                           ),
@@ -451,8 +464,9 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                               ),
-                              const SizedBox(
-                                width: 10,
+                              IconButton(
+                                onPressed: _sendComment,
+                                icon: Icon(Icons.send),
                               ),
                             ],
                           ),

@@ -1,3 +1,4 @@
+import 'package:archify/models/comment.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/models/participant.dart';
@@ -120,6 +121,7 @@ class DayService {
         imageUrl: imageUrl,
         uploadedBy: _authService.getCurrentUid(),
         uploadedAt: DateTime.now(),
+        dayId: dayId,
       );
 
       final docRef =
@@ -383,11 +385,12 @@ class DayService {
 
       final dayDoc = await _db.collection('Days').doc(dayId).get();
       final day = Day.fromDocument(dayDoc);
-      final now = DateTime.now().add(Duration(hours: 8));
-      final votingDeadline = day.votingDeadline.add(Duration(hours: 8));
-      final active = votingDeadline.isAfter(now);
+      // Adjusting for the timezone difference to ensure the correct comparison
+      final now = DateTime.now().add(const Duration(hours: 8));
+      final votingDeadline = day.votingDeadline.add(const Duration(hours: 8));
+      final isVotingActive = votingDeadline.isAfter(now);
 
-      if (!active) {
+      if (!isVotingActive) {
         await getWinnerFromFirebase(dayId);
       }
 
@@ -395,10 +398,32 @@ class DayService {
         return true;
       }
 
-      return !active;
+      return !isVotingActive;
     } catch (ex) {
       _logger.severe(ex.toString());
       return false;
+    }
+  }
+
+  Future<void> sendCommentToFirebase(String comment, String dayId) async {
+    try {
+      final uid = _authService.getCurrentUid();
+      final now = DateTime.now().add(const Duration(hours: 8));
+      final commentModel = Comment(
+        commentId: '',
+        dayId: dayId,
+        uid: uid,
+        date: now,
+        content: comment,
+      );
+
+      final commentRef =
+          _db.collection('Days').doc(dayId).collection('Comments').doc();
+
+      commentModel.commentId = commentRef.id;
+      await commentRef.set(commentModel.toMap());
+    } catch (ex) {
+      _logger.severe(ex.toString());
     }
   }
 }

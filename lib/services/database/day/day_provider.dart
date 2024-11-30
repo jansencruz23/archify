@@ -166,4 +166,14 @@ class DayProvider extends ChangeNotifier {
     notifyListeners();
     return expired;
   }
+
+  Future<void> sendComment(String comment, String dayId) async {
+    final userMoments = _userProvider.moments;
+    final momentExists = userMoments.any((moment) => moment.dayId == dayId);
+    if (!momentExists) return;
+
+    await _dayService.sendCommentToFirebase(comment, dayId);
+    _userProvider.loadUserMoments();
+    notifyListeners();
+  }
 }
