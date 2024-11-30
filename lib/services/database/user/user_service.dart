@@ -137,8 +137,12 @@ class UserService {
     try {
       final moments = List<Moment>.empty(growable: true);
       final uid = _authService.getCurrentUid();
-      final joinedDays =
-          await _db.collection('Users').doc(uid).collection('JoinedDays').get();
+      final joinedDays = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('JoinedDays')
+          .orderBy('date', descending: true)
+          .get();
 
       for (final day in joinedDays.docs) {
         final dayId = day.data()['dayId'];
