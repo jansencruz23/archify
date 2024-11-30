@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:archify/pages/about_us_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,17 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
+
+class DoNotOpenAgainCondition {
+  bool? doNotOpenAgain; // Nullable to avoid LateInitializationError
+
+  void saveToPreferences() {
+    // Ensure that doNotOpenAgain is set before accessing
+    doNotOpenAgain ??= false; // Default value if not set already
+    // Your save logic here
+  }
+}
+
 class _SettingsPageState extends State<SettingsPage> {
   late final AuthProvider _authProvider;
   late final UserProvider _userProvider;
@@ -31,9 +43,9 @@ class _SettingsPageState extends State<SettingsPage> {
   int _selectedIndex = 0;
   bool _showVerticalBar = false;
   bool _isRotated = false;
-  bool _isDialogShown = false;
 
-  final RateMyApp _rateMyApp = RateMyApp(
+
+  late final RateMyApp _rateMyApp = RateMyApp(
     preferencesPrefix: 'rateMyApp_',
     minDays: 0,
     minLaunches: 0,
@@ -55,6 +67,8 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -73,6 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
     @override
     void dispose() {
       super.dispose();
+
     }
 
     Future<void> _loadUserProfile() async {
@@ -107,10 +122,12 @@ class _SettingsPageState extends State<SettingsPage> {
     await AuthService().logoutInFirebase();
     if (mounted) goRootPage(context);
   }
-  
+
+  // for rating pop up
   void initializeDate() {
-    minimumDate = DateTime.now();  // Ensure this is done before access.
+    minimumDate = DateTime.now();
   }
+
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
@@ -184,7 +201,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       onTap: () {
                         // print('rate');
-                        print('Is dialog shown? $_isDialogShown'); // for debuging
+                        // print('Is dialog shown? $_isDialogShown'); // for debuging
 
 
                           _rateMyApp.showStarRateDialog(
@@ -265,6 +282,15 @@ class _SettingsPageState extends State<SettingsPage> {
                           color: Theme.of(context).colorScheme.inversePrimary),
                       onTap: () {
                         print('about');
+
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              child: AboutUsPage(),
+                            );
+                          },
+                        );
                       },
                     ),
                     MySettingsButton(
