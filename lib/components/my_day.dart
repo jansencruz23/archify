@@ -1,5 +1,6 @@
 import 'package:archify/models/moment.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MyDay extends StatefulWidget {
   final Moment moment;
@@ -13,6 +14,9 @@ class MyDay extends StatefulWidget {
 class _MyDayState extends State<MyDay> {
   @override
   Widget build(BuildContext context) {
+    final adjustedDate = widget.moment.uploadedAt.add(Duration(hours: 8));
+    final formattedDate = DateFormat('MMMM d, yyyy').format(adjustedDate);
+
     return Stack(
       children: [
         // Container Image
@@ -43,70 +47,70 @@ class _MyDayState extends State<MyDay> {
 
         // Text and date
         // if (widget.isMainPhoto)
-          Positioned(
-            bottom: 30,
-            left: 10,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Text(
-                widget.moment.dayName,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 16,
-                ),
+        Positioned(
+          bottom: 30,
+          left: 10,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Text(
+              widget.moment.dayName,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 16,
               ),
             ),
           ),
+        ),
 
         //date
         // if (widget.isMainPhoto)
-          Positioned(
-            bottom: 5,
-            left: 10,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Text(
-                widget.moment.uploadedAt.add(Duration(hours: 8)).toString(),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.tertiaryContainer,
-                  fontSize: 12,
-                ),
+        Positioned(
+          bottom: 5,
+          left: 10,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Text(
+              formattedDate,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.tertiaryContainer,
+                fontSize: 12,
               ),
             ),
           ),
+        ),
 
         //heart and save button
         // if (widget.isMainPhoto)
-          Positioned(
-            bottom: 0,
-            right: 10,
-            child: Row(
-              mainAxisSize:
-                  MainAxisSize.min, // To make buttons not take up full space
-              mainAxisAlignment: MainAxisAlignment
-                  .start, // Al // To make buttons not take up full space
-              children: [
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  icon: Icon(Icons.favorite_border,
-                      color: Theme.of(context).colorScheme.tertiaryContainer),
-                  onPressed: () {
-                    // Handle the heart button press
-                  },
+        Positioned(
+          bottom: 0,
+          right: 10,
+          child: Row(
+            mainAxisSize:
+                MainAxisSize.min, // To make buttons not take up full space
+            mainAxisAlignment: MainAxisAlignment
+                .start, // Al // To make buttons not take up full space
+            children: [
+              IconButton(
+                padding: EdgeInsets.zero,
+                icon: Icon(Icons.favorite_border,
+                    color: Theme.of(context).colorScheme.tertiaryContainer),
+                onPressed: () {
+                  // Handle the heart button press
+                },
+              ),
+              IconButton(
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  Icons.bookmark_border,
+                  color: Theme.of(context).colorScheme.tertiaryContainer,
                 ),
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  icon: Icon(
-                    Icons.bookmark_border,
-                    color: Theme.of(context).colorScheme.tertiaryContainer,
-                  ),
-                  onPressed: () {
-                    // Handle the save button press
-                  },
-                ),
-              ],
-            ),
+                onPressed: () {
+                  // Handle the save button press
+                },
+              ),
+            ],
           ),
+        ),
       ],
     );
   }
