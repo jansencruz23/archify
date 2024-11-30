@@ -162,14 +162,22 @@ class UserService {
         final moment = Moment.fromDocument(momentDoc.data()!);
         moment.dayName = dayMoments.data()!['name'];
 
-        final comments = await _db
+        final commentsRef = await _db
             .collection('Days')
             .doc(dayId)
             .collection('Comments')
             .get();
 
-        moment.comments =
-            comments.docs.map((e) => Comment.fromDocument(e.data())).toList();
+        final comments = commentsRef.docs;
+
+        for (var commentRef in comments) {
+          final comment = Comment.fromDocument(commentRef.data());
+          final userDoc = await _db.collection('Users').doc(comment.uid).get();
+          final user = userDoc.data();
+          comment.profilePictureUrl = user?['pictureUrl'] ?? '';
+          moment.comments.add(comment);
+        }
+
         moments.add(moment);
       }
 

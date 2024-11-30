@@ -21,8 +21,8 @@ class Moment {
     this.votes = 0,
     this.dayName = '',
     this.nickname = '',
-    this.comments = const [],
-  });
+    List<Comment>? comments,
+  }) : comments = comments ?? [];
 
   factory Moment.fromDocument(Map<String, dynamic> data) {
     return Moment(

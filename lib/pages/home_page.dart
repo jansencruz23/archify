@@ -56,43 +56,6 @@ class _HomePageState extends State<HomePage> {
   int realIndex = 0; // To store real index
   bool _isInitialLoad = true;
 
-// Sample data for carousel images and dates
-  final List<Map<String, String>> carouselData = [
-    {
-      'image': 'lib/assets/images/Book_img.png',
-      'date': '2024-11-17',
-      'description': 'let’s read...',
-    },
-    {
-      'image': 'lib/assets/images/sample_Image2.jpg',
-      'date': '2024-11-16',
-      'description': 'City of stars',
-    },
-    {
-      'image': 'lib/assets/images/sample_Image3.jpg',
-      'date': '2024-11-15',
-      'description': 'Lagay tayo maximum input text',
-    },
-  ];
-//Sample data sa commentss
-  final List<Map<String, dynamic>> _dummyComments = [
-    {
-      "name": "AAlfonso",
-      "comment": "WOWOWOWOW bookworm",
-      'avatar': 'lib/assets/images/AAlfonso_img.png',
-    },
-    {
-      "name": "JSalem",
-      "comment": "Da best 'to!",
-      'avatar': 'lib/assets/images/JSalem_img.png',
-    },
-    {
-      "name": "JCruz",
-      "comment": "ganda ng shottt",
-      'avatar': 'lib/assets/images/JCruz_img.png',
-    },
-  ];
-
   late final TextEditingController _commentController;
   late final FocusNode _fieldComment;
 
@@ -383,56 +346,41 @@ class _HomePageState extends State<HomePage> {
                         //Comment Section
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: _dummyComments.map((comment) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    // Avatar
-                                    GFImageOverlay(
-                                      image: AssetImage(
-                                        comment['avatar'] ??
-                                            'assets/user_icon.png',
+                          child: days.isEmpty
+                              ? const Center(
+                                  child: Text('No comments available.'),
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true, // Add this line
+                                  itemCount:
+                                      (days[_currentIndex].comments ?? [])
+                                          .length,
+                                  itemBuilder: (context, index) {
+                                    final comment =
+                                        days[_currentIndex].comments[index];
+                                    return ListTile(
+                                      leading: GFImageOverlay(
+                                        image: Image.network(
+                                                comment.profilePictureUrl)
+                                            .image,
+                                        shape: BoxShape.circle,
+                                        height: 36,
+                                        width: 36,
                                       ),
-                                      shape: BoxShape.circle,
-                                      height: 24,
-                                      width: 24,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    // Comment Text
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // If want with name ang comments
-                                          // Text(
-                                          //   comment['name'] ?? 'Unknown',
-                                          //   style: TextStyle(
-                                          //     fontWeight: FontWeight.bold,
-                                          //     fontSize: 14,
-                                          //   ),
-                                          // ),
-                                          SizedBox(height: 5),
-                                          Text(
-                                            comment['comment'] ??
-                                                'No comment available.',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .inversePrimary,
-                                            ),
-                                          ),
-                                        ],
+                                      title: Text(
+                                        comment.content,
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary,
+                                          fontFamily: 'Sora',
+                                          fontSize: _getClampedFontSize(
+                                              context, 0.04),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    );
+                                  },
                                 ),
-                              );
-                            }).toList(),
-                          ),
                         ),
 
                         const SizedBox(
