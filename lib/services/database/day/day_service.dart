@@ -2,6 +2,7 @@ import 'package:archify/models/comment.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/models/participant.dart';
+import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';

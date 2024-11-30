@@ -24,7 +24,6 @@ class Comment {
       uid: data['uid'],
       date: (data['date'] as Timestamp).toDate(),
       content: data['content'],
-      profilePictureUrl: data['profilePictureUrl'],
     );
   }
 
@@ -35,7 +34,6 @@ class Comment {
       'uid': uid,
       'date': date,
       'content': content,
-      'profilePictureUrl': profilePictureUrl,
     };
   }
 }
