@@ -16,14 +16,12 @@ import 'package:share_plus/share_plus.dart';
 import 'package:archify/pages/terms_and_condition_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
-
 
 class DoNotOpenAgainCondition {
   bool? doNotOpenAgain; // Nullable to avoid LateInitializationError
@@ -47,8 +45,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   String subject = '';
   String body = '';
-  String? _email;//how to get email
-
+  String? _email; //how to get email
+  bool _isDialogShown = false;
 
   late final RateMyApp _rateMyApp = RateMyApp(
     preferencesPrefix: 'rateMyApp_',
@@ -72,8 +70,6 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -85,7 +81,6 @@ class _SettingsPageState extends State<SettingsPage> {
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
 
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // _loadUserProfile();
       // _checkIfNewUser();
@@ -93,7 +88,6 @@ class _SettingsPageState extends State<SettingsPage> {
     @override
     void dispose() {
       super.dispose();
-
     }
 
     Future<void> _loadUserProfile() async {
@@ -139,7 +133,6 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-
   // for rating pop up
   void initializeDate() {
     minimumDate = DateTime.now();
@@ -166,7 +159,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Row(
                           children: [
-
                             Icon(Icons.settings,
                                 color: Theme.of(context)
                                     .colorScheme
@@ -223,65 +215,66 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         onTap: () {
                           // print('rate');
-                          // print('Is dialog shown? $_isDialogShown'); // for debuging
-                
-                
-                            _rateMyApp.showStarRateDialog(
-                              context,
-                              title: 'Enjoying Archify?',
-                              message: 'Please leave a rating!',
-                              dialogStyle: DialogStyle(
-                                titleAlign: TextAlign.center, // Align the title text
-                                titleStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.inversePrimary, // Set the title color
-                                  fontWeight: FontWeight.bold, // Set additional styles if needed
-                                  fontSize: 20.0,
-                                ),
-                                messageAlign: TextAlign.center, // Align the message text
-                                messageStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.inversePrimary, // Set the message color
-                                  fontSize: 16.0,
-                                ),
+                          print('Is dialog shown? $_isDialogShown'); // for debuging
+
+
+                          _rateMyApp.showStarRateDialog(
+                            context,
+                            title: 'Enjoying Archify?',
+                            message: 'Please leave a rating!',
+                            dialogStyle: DialogStyle(
+                              titleAlign: TextAlign.center, // Align the title text
+                              titleStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.inversePrimary, // Set the title color
+                                fontWeight: FontWeight.bold, // Set additional styles if needed
+                                fontSize: 20.0,
                               ),
-                              actionsBuilder: (context, stars) {
-                                return [
-                                  Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('Later', style: TextStyle( color:Theme.of(context).colorScheme.inversePrimary ),),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('Rate Now', style: TextStyle( color: Theme.of(context).colorScheme.inversePrimary),),
-                                      ),
-                                    ],
-                                  ),
-                                ];
-                              },
-                            );
+                              messageAlign: TextAlign.center, // Align the message text
+                              messageStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.inversePrimary, // Set the message color
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            actionsBuilder: (context, stars) {
+                              return [
+                                Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Later', style: TextStyle( color:Theme.of(context).colorScheme.inversePrimary ),),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Rate Now', style: TextStyle( color: Theme.of(context).colorScheme.inversePrimary),),
+                                    ),
+                                  ],
+                                ),
+                              ];
+                            },
+                          );
                         },
                       ),
-                
                       MySettingsButton(
                         text: 'Share',
                         icon: Icon(Icons.share_outlined,
-                            color: Theme.of(context).colorScheme.inversePrimary),
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary),
                         onTap: () async {
                           //pang share ng link from appstore or google playstore but hindi publish app natin
-                           Share.share('com.archify.app');
+                          Share.share('com.archify.app');
                         },
                       ),
                       MySettingsButton(
                         text: 'Privacy',
                         icon: Icon(Icons.lock_outline_sharp,
-                            color: Theme.of(context).colorScheme.inversePrimary),
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary),
                         onTap: () {
                           showDialog(
                             context: context,
@@ -291,15 +284,13 @@ class _SettingsPageState extends State<SettingsPage> {
                               );
                             },
                           );
-                      
-                              },
-                            ),
-                          
-                      
+                        },
+                      ),
                       MySettingsButton(
                         text: 'About',
                         icon: Icon(Icons.file_present_outlined,
-                            color: Theme.of(context).colorScheme.inversePrimary),
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary),
                         onTap: () {
                           showDialog(
                             context: context,
@@ -314,28 +305,47 @@ class _SettingsPageState extends State<SettingsPage> {
                       MySettingsButton(
                         text: 'Contact',
                         icon: Icon(Icons.mail_outline_rounded,
-                            color: Theme.of(context).colorScheme.inversePrimary),
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary),
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('archify.app@gmail.com',  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary),),
-                
-                                content: Text('Feel free to contact us via our email!',  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary),),
+                                title: Text(
+                                  'archify.app@gmail.com',
+                                  style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary),
+                                ),
+                                content: Text(
+                                  'Feel free to contact us via our email!',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary),
+                                ),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pop(context); // Close the dialog
+                                      Navigator.pop(
+                                          context); // Close the dialog
                                     },
                                     child: Center(
-                                      child: Text('Close', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary),),
+                                      child: Text(
+                                        'Close',
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -344,18 +354,18 @@ class _SettingsPageState extends State<SettingsPage> {
                           );
                         },
                       ),
-                
                       MySettingsButton(
                         text: 'Feedback',
                         icon: Icon(Icons.feedback_outlined,
-                            color: Theme.of(context).colorScheme.inversePrimary),
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary),
                         onTap: () {
-
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return Dialog(
-                                child: MyFeedbackForm(onSubmit: (String subject, String body){
+                                child: MyFeedbackForm(
+                                    onSubmit: (String subject, String body) {
                                   debugPrint('Subject: $subject');
                                   debugPrint('Body: $body');
                                 }),
@@ -364,12 +374,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           );
                         },
                       ),
-
-
                       MySettingsButton(
                         text: 'Logout',
                         icon: Icon(Icons.logout,
-                            color: Theme.of(context).colorScheme.inversePrimary),
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary),
                         onTap: () {
                           _logout();
                         },
@@ -382,4 +391,3 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 }
-
