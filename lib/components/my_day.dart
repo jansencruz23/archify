@@ -42,7 +42,7 @@ class _MyDayState extends State<MyDay> {
         ),
 
         // Text and date
-        if (widget.isMainPhoto)
+        // if (widget.isMainPhoto)
           Positioned(
             bottom: 30,
             left: 10,
@@ -59,7 +59,7 @@ class _MyDayState extends State<MyDay> {
           ),
 
         //date
-        if (widget.isMainPhoto)
+        // if (widget.isMainPhoto)
           Positioned(
             bottom: 5,
             left: 10,
@@ -76,7 +76,7 @@ class _MyDayState extends State<MyDay> {
           ),
 
         //heart and save button
-        if (widget.isMainPhoto)
+        // if (widget.isMainPhoto)
           Positioned(
             bottom: 0,
             right: 10,
