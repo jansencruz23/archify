@@ -1,3 +1,4 @@
+import 'package:archify/models/comment.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/joined_day.dart';
 import 'package:archify/models/moment.dart';
@@ -157,6 +158,14 @@ class UserService {
         final moment = Moment.fromDocument(momentDoc.data()!);
         moment.dayName = dayMoments.data()!['name'];
 
+        final comments = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Comments')
+            .get();
+
+        moment.comments =
+            comments.docs.map((e) => Comment.fromDocument(e.data())).toList();
         moments.add(moment);
       }
 

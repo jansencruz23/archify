@@ -26,18 +26,18 @@ class Day {
   });
 
   // Firebase -> App
-  factory Day.fromDocument(DocumentSnapshot doc) {
+  factory Day.fromDocument(DocumentSnapshot data) {
     return Day(
-      id: doc['id'],
-      hostId: doc['hostId'],
-      name: doc['name'],
-      description: doc['description'],
-      maxParticipants: doc['maxParticipants'],
-      votingDeadline: (doc['votingDeadline'] as Timestamp).toDate(),
-      code: doc['code'],
-      createdAt: (doc['createdAt'] as Timestamp).toDate(),
-      status: doc['status'],
-      winnerId: doc['winnerId'],
+      id: data['id'],
+      hostId: data['hostId'],
+      name: data['name'],
+      description: data['description'],
+      maxParticipants: data['maxParticipants'],
+      votingDeadline: (data['votingDeadline'] as Timestamp).toDate(),
+      code: data['code'],
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      status: data['status'],
+      winnerId: data['winnerId'],
     );
   }
 

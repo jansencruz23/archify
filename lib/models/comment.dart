@@ -6,6 +6,7 @@ class Comment {
   final String uid;
   final DateTime date;
   final String content;
+  late String profilePictureUrl;
 
   Comment({
     required this.commentId,
@@ -13,6 +14,7 @@ class Comment {
     required this.uid,
     required this.date,
     required this.content,
+    this.profilePictureUrl = '',
   });
 
   factory Comment.fromDocument(Map<String, dynamic> data) {
@@ -22,6 +24,7 @@ class Comment {
       uid: data['uid'],
       date: (data['date'] as Timestamp).toDate(),
       content: data['content'],
+      profilePictureUrl: data['profilePictureUrl'],
     );
   }
 
@@ -32,6 +35,7 @@ class Comment {
       'uid': uid,
       'date': date,
       'content': content,
+      'profilePictureUrl': profilePictureUrl,
     };
   }
 }

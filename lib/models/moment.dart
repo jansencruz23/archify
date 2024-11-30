@@ -1,3 +1,4 @@
+import 'package:archify/models/comment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Moment {
@@ -9,6 +10,7 @@ class Moment {
   late int votes;
   late String nickname;
   late String dayName;
+  late List<Comment> comments;
 
   Moment({
     required this.momentId,
@@ -18,6 +20,8 @@ class Moment {
     required this.dayId,
     this.votes = 0,
     this.dayName = '',
+    this.nickname = '',
+    this.comments = const [],
   });
 
   factory Moment.fromDocument(Map<String, dynamic> data) {

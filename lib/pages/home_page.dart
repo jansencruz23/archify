@@ -3,6 +3,7 @@ import 'package:archify/components/my_day.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/database/day/day_provider.dart';
@@ -53,6 +54,7 @@ class _HomePageState extends State<HomePage> {
   String _currentDayId = '';
   int _currentIndex = 0; // Track the current index
   int realIndex = 0; // To store real index
+  bool _isInitialLoad = true;
 
 // Sample data for carousel images and dates
   final List<Map<String, String>> carouselData = [
@@ -92,15 +94,14 @@ class _HomePageState extends State<HomePage> {
   ];
 
   late final TextEditingController _commentController;
-
   late final FocusNode _fieldComment;
 
   @override
   void initState() {
     super.initState();
     _setupNavigationTriggered = false;
-
     _fieldComment = FocusNode();
+    _commentController = TextEditingController();
 
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -111,8 +112,6 @@ class _HomePageState extends State<HomePage> {
       _loadUserMoments();
       _checkIfNewUser();
     });
-
-    _commentController = TextEditingController();
 
     _fieldComment.addListener(() {
       setState(() {
@@ -180,6 +179,9 @@ class _HomePageState extends State<HomePage> {
     final listeningProvider = Provider.of<UserProvider>(context);
     final userProfile = listeningProvider.userProfile;
     final days = listeningProvider.moments;
+    if (_isInitialLoad && days.isNotEmpty) {
+      _currentDayId = days.isEmpty ? '' : days[0].dayId;
+    }
 
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
@@ -338,6 +340,7 @@ class _HomePageState extends State<HomePage> {
                               setState(() {
                                 _currentIndex = index;
                                 _currentDayId = days[index].dayId;
+                                _isInitialLoad = false;
                               });
                             },
                           ),

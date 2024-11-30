@@ -426,4 +426,30 @@ class DayService {
       _logger.severe(ex.toString());
     }
   }
+
+  Future<List<Comment>> getCommentsFromFirebase(String dayId) async {
+    try {
+      final commentsDoc = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Comments')
+          .orderBy('date', descending: true)
+          .get();
+
+      final comments = commentsDoc.docs
+          .map((doc) => Comment.fromDocument(doc.data()))
+          .toList();
+
+      for (var comment in comments) {
+        final userDoc = await _db.collection('Users').doc(comment.uid).get();
+        final user = userDoc.data();
+        comment.profilePictureUrl = user?['pictureUrl'] ?? '';
+      }
+
+      return comments;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return [];
+    }
+  }
 }
