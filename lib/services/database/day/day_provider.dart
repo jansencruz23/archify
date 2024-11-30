@@ -2,6 +2,7 @@ import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/database/day/day_service.dart';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/services/database/user/user_service.dart';
 import 'package:archify/services/storage/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class DayProvider extends ChangeNotifier {
 
   final _dayService = DayService();
   final _userService = UserService();
+  late UserProvider _userProvider;
   final _authService = AuthService();
   final _storageService = StorageService();
 
@@ -29,6 +31,11 @@ class DayProvider extends ChangeNotifier {
   List<Moment>? get moments => _moments;
 
   bool? _hasUploaded;
+
+  void update(UserProvider userProvider) {
+    _userProvider = userProvider;
+  }
+
   bool get hasUploaded => _hasUploaded ?? false;
 
   Future<void> loadDay(String dayId) async {
@@ -155,7 +162,7 @@ class DayProvider extends ChangeNotifier {
 
   Future<bool> hasVotingDeadlineExpired(String dayCode) async {
     final expired = await _dayService.hasVotingDeadlineExpired(dayCode);
-    await loadMoments(dayCode);
+    _userProvider.loadUserMoments();
     notifyListeners();
     return expired;
   }

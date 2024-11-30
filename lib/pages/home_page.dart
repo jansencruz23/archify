@@ -163,13 +163,6 @@ class _HomePageState extends State<HomePage> {
     return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
   }
 
-  //Add a comment
-  // void addComment(String commentText){
-  //   FirebaseFirestore.instance.collection("User Posts").doc(widget.postId).collection("Comments").add({
-  //     "CommentText": commentText,
-  //     // "CommentedBy": current.
-  //   });
-  // }
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
@@ -308,14 +301,14 @@ class _HomePageState extends State<HomePage> {
 
                         //Carousel
                         CarouselSlider.builder(
-                          itemCount: listeningProvider.moments.length,
+                          itemCount: days.length,
                           itemBuilder: (context, index, realIndex) {
-                            if (listeningProvider.moments.isEmpty) {
+                            if (days.isEmpty) {
                               return const Center(
                                 child: Text('No moments available.'),
                               );
                             }
-                            final moment = listeningProvider.moments[index];
+                            final moment = days[index];
                             bool isMainPhoto = this.realIndex ==
                                 index; //Gamiting Index yung Day
 
