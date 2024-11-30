@@ -111,6 +111,7 @@ class _HomePageState extends State<HomePage> {
     if (_currentDayId.isEmpty) return;
 
     await _dayProvider.sendComment(comment, _currentDayId);
+    _commentController.clear();
   }
 
   Future<void> _checkIfNewUser() async {

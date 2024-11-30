@@ -147,11 +147,15 @@ class UserService {
       for (final day in joinedDays.docs) {
         final dayId = day.data()['dayId'];
         final dayMoments = await _db.collection('Days').doc(dayId).get();
-        final validDay = dayMoments.data()!['winnerId'] != "";
+        final dayData = dayMoments.data();
+        if (dayData == null) continue;
+        final validDay = dayData['winnerId'] != "";
 
         if (!validDay) continue;
 
-        final winnerId = dayMoments.data()!['winnerId'];
+        final winnerId = dayMoments.data()?['winnerId'];
+        if (winnerId == null || winnerId.isEmpty) continue;
+
         final momentDoc = await _db
             .collection('Days')
             .doc(dayId)
@@ -166,6 +170,7 @@ class UserService {
             .collection('Days')
             .doc(dayId)
             .collection('Comments')
+            .orderBy('date')
             .get();
 
         final comments = commentsRef.docs;
