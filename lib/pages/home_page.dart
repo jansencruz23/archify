@@ -309,18 +309,25 @@ class _HomePageState extends State<HomePage> {
                               );
                             }
                             final moment = days[index];
-                            bool isMainPhoto = this.realIndex ==
-                                index; //Gamiting Index yung Day
+                            bool isMainPhoto = this.realIndex == index;
 
                             return MyDay(
                                 moment: moment, isMainPhoto: isMainPhoto);
                           },
                           options: CarouselOptions(
-                              enlargeCenterPage: true,
-                              height: MediaQuery.of(context).size.height *
-                                  0.4, // Set the height for the carousel
-                              autoPlay: false,
-                              viewportFraction: 0.7),
+                            enlargeCenterPage: true,
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            autoPlay: false,
+                            viewportFraction: 0.7,
+                            enableInfiniteScroll: false,
+                            reverse: true,
+                            scrollDirection: Axis.horizontal,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                _currentIndex = index;
+                              });
+                            },
+                          ),
                         ),
 
                         //View Comment Icon
