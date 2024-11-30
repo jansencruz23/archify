@@ -5,7 +5,9 @@ class AboutUsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('About Us', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        title: Text('About Us', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color:Theme.of(context)
+            .colorScheme
+            .inversePrimary),),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
@@ -14,19 +16,23 @@ class AboutUsPage extends StatelessWidget {
           children: [
             Text(
               'Our Story',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
+                  .colorScheme
+                  .inversePrimary),
             ),
             SizedBox(height: 16.0),
             Text(
-              'Welcome to [App Name]! Our app was created with the mission of [briefly explain the mission and purpose of the app]. The idea came to life when [briefly explain the inspiration behind the app].\n\n'
-                  'We believe that [key values or beliefs that the app represents, e.g., user-centric design, innovation, community-building, etc.]. Our team is passionate about [mention any key areas of expertise, such as technology, user experience, etc.], and we are dedicated to providing you with the best experience possible.\n\n'
+              'Archify, our app was created with the mission to foster deeper, more meaningful connections between friends and loved ones by creating an interactive platform that makes sharing moments more personal and engaging, while encouraging friendly competition.\n\n'
+                  'We believe that the only way to fight technology that disrupt relationships is through another technological tool. Our team is passionate about creating technologies to benefit our social lives, and we are dedicated to providing you with the best experience possible.\n\n'
                   'Thank you for being part of our journey and helping us grow!',
               style: TextStyle(fontSize: 16, color: Colors.black87),
             ),
             SizedBox(height: 32.0),
             Text(
               'Meet the Team',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
+                  .colorScheme
+                  .inversePrimary),
             ),
             SizedBox(height: 16.0),
             Column(
@@ -49,9 +55,11 @@ class AboutUsPage extends StatelessWidget {
                     SizedBox(width: 16.0),
                     Expanded(
                       child: Text(
-                        '1. [Team Member Name] - [Role]\n'
-                            '[Brief description about the team member, their contribution to the app, or interesting fact].',
-                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                        '1. Jansen Cruz - Developer\n'
+                            'This dev is like the Sherlock Holmes of the team. They find problems so fast, it’s almost scary.',
+                        style: TextStyle(fontSize: 16, color:Theme.of(context)
+                            .colorScheme
+                            .inversePrimary),
                       ),
                     ),
                   ],
@@ -74,9 +82,11 @@ class AboutUsPage extends StatelessWidget {
                     SizedBox(width: 16.0),
                     Expanded(
                       child: Text(
-                        '2. [Team Member Name] - [Role]\n'
-                            '[Brief description about the team member, their contribution to the app, or interesting fact].',
-                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                        '2. Aljunalei Alfonso - Developer\n'
+                            'This dev will spend hours making sure that button looks just right and that every pixel is perfectly aligned.',
+                        style: TextStyle(fontSize: 16, color:Theme.of(context)
+                            .colorScheme
+                            .inversePrimary),
                       ),
                     ),
                   ],
@@ -99,9 +109,11 @@ class AboutUsPage extends StatelessWidget {
                     SizedBox(width: 16.0),
                     Expanded(
                       child: Text(
-                        '3. [Team Member Name] - [Role]\n'
-                            '[Brief description about the team member, their contribution to the app, or interesting fact].',
-                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                        '3. Jamaica Salem - Developer\n'
+                            'This dev can crank out features faster than anyone else, but they’re the person who writes code like they’re trying to win a sprint race.',
+                        style: TextStyle(fontSize: 16, color:Theme.of(context)
+                            .colorScheme
+                            .inversePrimary),
                       ),
                     ),
                   ],
