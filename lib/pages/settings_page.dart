@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:archify/pages/about_us_page.dart';
+import 'package:archify/pages/my_feedback_form.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   String subject = '';
   String body = '';
-  late String _email;//how to get email
+  String? _email;//how to get email
 
 
   late final RateMyApp _rateMyApp = RateMyApp(
@@ -128,6 +129,7 @@ class _SettingsPageState extends State<SettingsPage> {
     if (mounted) goRootPage(context);
   }
 
+  //fetching ng email -AAlfonso
   Future<void> _fetchUserEmail() async {
     final user = AuthService().getCurrentUser();
     debugPrint('User: $user');
@@ -348,25 +350,18 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: Icon(Icons.feedback_outlined,
                             color: Theme.of(context).colorScheme.inversePrimary),
                         onTap: () {
-                          print(_email);
 
-                          String? encodeQueryParameters(Map<String, String> params) {
-                            return params.entries
-                                .map((MapEntry<String, String> e) =>
-                            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-                                .join('&');
-                          }
-
-                          final Uri emailLaunchUri = Uri(
-                            scheme: 'mailto',
-                            path: 'archify.app@gmail.com',
-                            query: encodeQueryParameters(<String, String>{
-                              'subject': subject, //from text field
-                              'body': body //from textfield
-                            }),
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                child: MyFeedbackForm(onSubmit: (String subject, String body){
+                                  debugPrint('Subject: $subject');
+                                  debugPrint('Body: $body');
+                                }),
+                              );
+                            },
                           );
-
-                          launchUrl(emailLaunchUri);
                         },
                       ),
 
