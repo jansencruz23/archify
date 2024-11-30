@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   String subject = '';
   String body = '';
-  String email = _email;//how to get email
+  late String _email;//how to get email
 
 
   late final RateMyApp _rateMyApp = RateMyApp(
@@ -78,6 +78,8 @@ class _SettingsPageState extends State<SettingsPage> {
     // TODO: implement initState
     super.initState();
     _setupNavigationTriggered = false;
+
+    _email = "";
 
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -125,6 +127,16 @@ class _SettingsPageState extends State<SettingsPage> {
     await AuthService().logoutInFirebase();
     if (mounted) goRootPage(context);
   }
+
+  Future<void> _fetchUserEmail() async {
+    final user = AuthService().getCurrentUser();
+    debugPrint('User: $user');
+    debugPrint('User Email: ${user?.email}');
+    setState(() {
+      _email = user?.email ?? 'Email not available';
+    });
+  }
+
 
   // for rating pop up
   void initializeDate() {
@@ -336,6 +348,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: Icon(Icons.feedback_outlined,
                             color: Theme.of(context).colorScheme.inversePrimary),
                         onTap: () {
+                          print(_email);
 
                           String? encodeQueryParameters(Map<String, String> params) {
                             return params.entries
