@@ -135,60 +135,71 @@ class UserService {
 
   Future<List<Moment>> getUserMomentsFromFirebase() async {
     try {
-      final moments = List<Moment>.empty(growable: true);
+      final moments = <Moment>[];
       final uid = _authService.getCurrentUid();
-      final joinedDays = await _db
+
+      // Fetch joined days
+      final joinedDaysSnapshot = await _db
           .collection('Users')
           .doc(uid)
           .collection('JoinedDays')
           .orderBy('date', descending: true)
           .get();
 
-      for (final day in joinedDays.docs) {
-        final dayId = day.data()['dayId'];
-        final dayMoments = await _db.collection('Days').doc(dayId).get();
-        final dayData = dayMoments.data();
-        if (dayData == null) continue;
-        final validDay = dayData['winnerId'] != "";
+      // Check if there are joined days
+      if (joinedDaysSnapshot.docs.isEmpty) return moments;
 
-        if (!validDay) continue;
+      // Fetch days and moments in parallel
+      final dayFutures = joinedDaysSnapshot.docs.map((dayDoc) async {
+        final dayId = dayDoc.data()['dayId'];
+        final daySnapshot = await _db.collection('Days').doc(dayId).get();
+        final dayData = daySnapshot.data();
 
-        final winnerId = dayMoments.data()?['winnerId'];
-        if (winnerId == null || winnerId.isEmpty) continue;
+        if (dayData == null ||
+            dayData['winnerId'] == null ||
+            dayData['winnerId'].isEmpty) return null;
 
-        final momentDoc = await _db
+        final winnerId = dayData['winnerId'];
+        final momentSnapshot = await _db
             .collection('Days')
             .doc(dayId)
             .collection('Moments')
             .doc(winnerId)
             .get();
 
-        final moment = Moment.fromDocument(momentDoc.data()!);
-        moment.dayName = dayMoments.data()!['name'];
+        if (!momentSnapshot.exists) return null;
 
-        final commentsRef = await _db
+        final moment = Moment.fromDocument(momentSnapshot.data()!);
+        moment.dayName = dayData['name'];
+
+        // Fetch comments in parallel
+        final commentsSnapshot = await _db
             .collection('Days')
             .doc(dayId)
             .collection('Comments')
             .orderBy('date')
             .get();
 
-        final comments = commentsRef.docs;
-
-        for (var commentRef in comments) {
-          final comment = Comment.fromDocument(commentRef.data());
-          final userDoc = await _db.collection('Users').doc(comment.uid).get();
-          final user = userDoc.data();
+        final commentFutures = commentsSnapshot.docs.map((commentDoc) async {
+          final comment = Comment.fromDocument(commentDoc.data());
+          final userSnapshot =
+              await _db.collection('Users').doc(comment.uid).get();
+          final user = userSnapshot.data();
           comment.profilePictureUrl = user?['pictureUrl'] ?? '';
-          moment.comments.add(comment);
-        }
+          return comment;
+        });
 
-        moments.add(moment);
-      }
+        moment.comments = await Future.wait(commentFutures);
+        return moment;
+      }).toList();
+
+      // Wait for all moments to be fetched
+      final fetchedMoments = await Future.wait(dayFutures);
+      moments.addAll(fetchedMoments.whereType<Moment>());
 
       return moments;
     } catch (ex) {
-      logger.severe(ex.toString());
+      logger.severe('Error fetching user moments: ${ex.toString()}');
       return [];
     }
   }
