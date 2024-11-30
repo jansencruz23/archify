@@ -261,8 +261,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: Icon(Icons.lock_outline_sharp,
                           color: Theme.of(context).colorScheme.inversePrimary),
                       onTap: () {
-                        print('privacy');
-
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -281,8 +279,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: Icon(Icons.file_present_outlined,
                           color: Theme.of(context).colorScheme.inversePrimary),
                       onTap: () {
-                        print('about');
-
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -298,9 +294,35 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: Icon(Icons.mail_outline_rounded,
                           color: Theme.of(context).colorScheme.inversePrimary),
                       onTap: () {
-                        print('contact');
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('archify.app@gmail.com',  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
+                                  .colorScheme
+                                  .inversePrimary),),
+
+                              content: Text('Feel free to contact us via our email!',  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:Theme.of(context)
+                                  .colorScheme
+                                  .inversePrimary),),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context); // Close the dialog
+                                  },
+                                  child: Center(
+                                    child: Text('Close', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color:Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary),),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
+
                     MySettingsButton(
                       text: 'Feedback',
                       icon: Icon(Icons.feedback_outlined,
