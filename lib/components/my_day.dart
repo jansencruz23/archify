@@ -22,6 +22,7 @@ class _MyDayState extends State<MyDay> {
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
+    final userProfle = listeningProvider.userProfile;
     final favoriteDayIds = listeningProvider.favoriteDaysIds;
     final adjustedDate = widget.moment.uploadedAt;
     final formattedDate = DateFormat('MMMM d, yyyy').format(adjustedDate);
@@ -101,11 +102,11 @@ class _MyDayState extends State<MyDay> {
             children: [
               IconButton(
                 padding: EdgeInsets.zero,
-                icon: Icon(Icons.favorite_border,
-                    color: Theme.of(context).colorScheme.tertiaryContainer),
-                onPressed: () {
-                  // Handle the heart button press
-                },
+                icon: widget.moment.voterIds.contains(userProfle!.uid)
+                    ? Icon(Icons.favorite, color: Colors.red)
+                    : Icon(Icons.favorite_border,
+                        color: Theme.of(context).colorScheme.tertiary),
+                onPressed: () {},
               ),
               IconButton(
                   padding: EdgeInsets.zero,

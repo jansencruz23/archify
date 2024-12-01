@@ -11,6 +11,7 @@ class Moment {
   late String nickname;
   late String dayName;
   late List<Comment> comments;
+  late List<String> voterIds;
 
   Moment({
     required this.momentId,
@@ -22,7 +23,9 @@ class Moment {
     this.dayName = '',
     this.nickname = '',
     List<Comment>? comments,
-  }) : comments = comments ?? [];
+    List<String>? voterIds,
+  })  : comments = comments ?? [],
+        voterIds = voterIds ?? [];
 
   factory Moment.fromDocument(Map<String, dynamic> data) {
     return Moment(

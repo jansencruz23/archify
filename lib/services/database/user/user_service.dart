@@ -176,6 +176,18 @@ class UserService {
         final moment = Moment.fromDocument(momentSnapshot.data()!);
         moment.dayName = dayData['name'];
 
+        final votersSnapshot = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(winnerId)
+            .collection('Likes')
+            .get();
+
+        final voterIds = <String>[];
+        voterIds.addAll(votersSnapshot.docs.map((doc) => doc.id));
+        moment.voterIds = voterIds;
+
         // Fetch comments in parallel
         final commentsSnapshot = await _db
             .collection('Days')
