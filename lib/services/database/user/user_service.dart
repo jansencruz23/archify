@@ -120,7 +120,7 @@ class UserService {
         return null;
       }
 
-      final joinedDay = JoinedDay.fromDocument(joined.docs.first.data());
+      final joinedDay = JoinedDay.fromDocument(joined.docs.first);
       final dayDate = joinedDay.date;
 
       if (dayDate.isBefore(todayStart) || dayDate.isAfter(todayEnd)) {
@@ -170,7 +170,7 @@ class UserService {
 
         if (!momentSnapshot.exists) return null;
 
-        final moment = Moment.fromDocument(momentSnapshot.data()!);
+        final moment = Moment.fromDocument(momentSnapshot);
         moment.dayName = dayData['name'];
 
         // Fetch comments in parallel
@@ -182,7 +182,7 @@ class UserService {
             .get();
 
         final commentFutures = commentsSnapshot.docs.map((commentDoc) async {
-          final comment = Comment.fromDocument(commentDoc.data());
+          final comment = Comment.fromDocument(commentDoc);
           final userSnapshot =
               await _db.collection('Users').doc(comment.uid).get();
           final user = userSnapshot.data();
@@ -237,6 +237,41 @@ class UserService {
       }
     } catch (ex) {
       _logger.severe(ex.toString());
+    }
+  }
+
+  Future<List<Day>> getFavoriteDaysFromFirebase() async {
+    try {
+      final days = <Day>[];
+      final uid = _authService.getCurrentUid();
+
+      final favoriteDaysSnapshot = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('FavoriteDays')
+          .orderBy('date', descending: true)
+          .get();
+
+      if (favoriteDaysSnapshot.docs.isEmpty) return days;
+
+      final dayFutures = favoriteDaysSnapshot.docs.map((dayDoc) async {
+        final dayId = dayDoc.data()['dayId'];
+        final daySnapshot = await _db.collection('Days').doc(dayId).get();
+        final dayData = daySnapshot.data();
+
+        if (dayData == null) return null;
+
+        final day = Day.fromDocument(daySnapshot);
+        days.add(day);
+        return day;
+      }).toList();
+
+      await Future.wait(dayFutures);
+
+      return days;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return [];
     }
   }
 }

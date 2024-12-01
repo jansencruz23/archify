@@ -9,7 +9,7 @@ class JoinedDay {
     required this.date,
   });
 
-  factory JoinedDay.fromDocument(Map<String, dynamic> data) {
+  factory JoinedDay.fromDocument(DocumentSnapshot data) {
     return JoinedDay(
       dayId: data['dayId'],
       date: (data['date'] as Timestamp).toDate(),

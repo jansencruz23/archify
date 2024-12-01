@@ -13,7 +13,7 @@ class Participant {
     required this.hasUploaded,
   });
 
-  factory Participant.fromDocument(Map<String, dynamic> data) {
+  factory Participant.fromDocument(DocumentSnapshot data) {
     return Participant(
         uid: data['uid'],
         role: data['role'],

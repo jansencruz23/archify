@@ -24,7 +24,7 @@ class Moment {
     List<Comment>? comments,
   }) : comments = comments ?? [];
 
-  factory Moment.fromDocument(Map<String, dynamic> data) {
+  factory Moment.fromDocument(DocumentSnapshot data) {
     return Moment(
       momentId: data['momentId'],
       imageUrl: data['imageUrl'],

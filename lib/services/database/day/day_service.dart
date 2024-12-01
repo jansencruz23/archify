@@ -114,7 +114,7 @@ class DayService {
         return;
       }
 
-      final participant = Participant.fromDocument(participantDoc.data()!);
+      final participant = Participant.fromDocument(participantDoc);
       participant.hasUploaded = true;
 
       final moment = Moment(
@@ -207,9 +207,8 @@ class DayService {
           .orderBy('uploadedAt', descending: true)
           .get();
 
-      final moments = momentsDoc.docs
-          .map((doc) => Moment.fromDocument(doc.data()))
-          .toList();
+      final moments =
+          momentsDoc.docs.map((doc) => Moment.fromDocument(doc)).toList();
 
       for (var moment in moments) {
         final participantDoc = await getParticipantsFromFirebase(dayId);
@@ -243,7 +242,7 @@ class DayService {
           .get();
 
       final participants = participantsDoc.docs
-          .map((doc) => Participant.fromDocument(doc.data()))
+          .map((doc) => Participant.fromDocument(doc))
           .toList();
       return participants;
     } catch (ex) {
@@ -279,7 +278,7 @@ class DayService {
             .collection('Moments')
             .doc(imageId)
             .get();
-        final moment = Moment.fromDocument(momentDoc.data()!);
+        final moment = Moment.fromDocument(momentDoc);
         moment.votes -= 1;
 
         await momentDoc.reference.update({'votes': moment.votes});
@@ -300,7 +299,7 @@ class DayService {
             .collection('Moments')
             .doc(imageId)
             .get();
-        final moment = Moment.fromDocument(momentDoc.data()!);
+        final moment = Moment.fromDocument(momentDoc);
         moment.votes += 1;
 
         await momentDoc.reference.update({'votes': moment.votes});
@@ -346,7 +345,7 @@ class DayService {
 
       if (!participantDoc.exists) return false;
 
-      final participant = Participant.fromDocument(participantDoc.data()!);
+      final participant = Participant.fromDocument(participantDoc);
       return participant.hasUploaded;
     } catch (ex) {
       _logger.severe(ex.toString());
@@ -368,7 +367,7 @@ class DayService {
 
       if (moments.docs.isNotEmpty) {
         final winner = moments.docs.first;
-        final moment = Moment.fromDocument(winner.data());
+        final moment = Moment.fromDocument(winner);
         await _db
             .collection('Days')
             .doc(dayId)
@@ -437,9 +436,8 @@ class DayService {
           .orderBy('date', descending: true)
           .get();
 
-      final comments = commentsDoc.docs
-          .map((doc) => Comment.fromDocument(doc.data()))
-          .toList();
+      final comments =
+          commentsDoc.docs.map((doc) => Comment.fromDocument(doc)).toList();
 
       for (var comment in comments) {
         final userDoc = await _db.collection('Users').doc(comment.uid).get();
