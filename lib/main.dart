@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: lightMode,
       initialRoute: '/',
-      routes: {'/': (context) => const EditProfilePage()},
+      routes: {'/': (context) => const AuthGate()},
     );
   }
 }

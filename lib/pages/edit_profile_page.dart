@@ -43,7 +43,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final File imageFile = File(pickedFile.path);
 
       // Call your provider method to upload and update the profile picture
-      await _userProvider.updateUserProfilePicture(imageFile);
+     // await _userProvider.updateUserProfilePicture(imageFile);
 
       setState(() {
         // This will trigger a UI update after the image has been uploaded

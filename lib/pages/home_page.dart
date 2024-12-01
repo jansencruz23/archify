@@ -311,7 +311,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                         ),
                         title: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 8.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,22 +320,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               Text(
                                 'Welcome back,',
                                 style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary,
-                                    fontSize: 16),
+                                  fontFamily: 'Sora',
+                                  color: Theme.of(context).colorScheme.inversePrimary,
+                                  fontSize: 16,
+                                ),
                               ),
                               // User's name text
                               Text(
-                                userProfile == null
-                                    ? 'Loading'
-                                    : userProfile.name,
+                                userProfile == null ? 'Loading' : userProfile.name,
                                 style: TextStyle(
+                                  fontFamily: 'Sora',
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary,
+                                  color: Theme.of(context).colorScheme.inversePrimary,
                                 ),
                               ),
                             ],
@@ -366,19 +363,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-
-                    //AAlfonso notes, updated para invisible navbar when typing
-                    bottomNavigationBar: _isKeyboardVisible
-                        ? null // Hide navbar when keyboard is visible
-                        : MyNavbar(
-                            selectedIndex: _selectedIndex,
-                            onItemTapped: _onItemTapped,
-                            showVerticalBar: _showVerticalBar,
-                            isRotated: _isRotated,
-                            toggleRotation: _toggleRotation,
-                            showEnterDayCodeDialog: _showEnterDayCodeDialog,
-                            // _isKeyboardVisible: _isKeyboardVisible, //NOTE: Need Key sa navbar para gumana
-                          ),
 
                     //Main Body
                     body: Stack(
@@ -699,79 +683,107 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               //   onPressed: () => goSetup(context),
                               //   icon: const Icon(Icons.home),
                               // ),
-                            ],
-                          ),
-                        ),
-                        if (_showVerticalBar)
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: SlideTransition(
-                              position: _slideAnimation,
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 500),
-                                height: (_menuItems.length * 50).toDouble() + 100, // adjust bar height
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFFF6F61),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
+
+                              if (!_isKeyboardVisible)
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: MyNavbar(
+                                    selectedIndex: _selectedIndex,
+                                    onItemTapped: _onItemTapped,
+                                    showVerticalBar: _showVerticalBar,
+                                    isRotated: _isRotated,
+                                    toggleRotation: _toggleRotation,
+                                    showEnterDayCodeDialog: _showEnterDayCodeDialog,
                                   ),
                                 ),
-                                child: Column(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: IconButton(
-                                        icon: const Icon(Icons.keyboard_arrow_down,
-                                            size: 30, color: Colors.white),
-                                        onPressed: () {
-                                          setState(() {
-                                            _animationController.reverse();
-                                            _showVerticalBar = false;
-                                          });
-                                        },
+
+                              if (_showVerticalBar)
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: SlideTransition(
+                                    position: _slideAnimation,
+                                    child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 500),
+                                      height: (_menuItems.length * 50).toDouble() + 100,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFFF6F61),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20),
+                                        ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: _menuItems.length,
-                                        itemBuilder: (BuildContext context, int index) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              if (index == 0) {
-                                                _showEnterDayCodeDialog(context);
-                                              }
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 10, horizontal: 16),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    _menuItems[index]['icon'],
-                                                    color: Colors.white,
-                                                  ),
-                                                  const SizedBox(width: 20),
-                                                  Text(
-                                                    _menuItems[index]['title'],
-                                                    style: const TextStyle(
-                                                        fontSize: 18,
-                                                        fontFamily: 'Sora', color: Colors.white),
-                                                  ),
-                                                ],
-                                              ),
+                                      child: Column(
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: IconButton(
+                                              icon: const Icon(Icons.keyboard_arrow_down,
+                                                  size: 30, color: Colors.white),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _animationController.reverse();
+                                                  _showVerticalBar = false;
+                                                });
+                                              },
                                             ),
-                                          );
-                                        },
+                                          ),
+                                          Expanded(
+                                            child: ListView.builder(
+                                              itemCount: _menuItems.length,
+                                              itemBuilder: (context, index) {
+                                                final item = _menuItems[index];
+                                                return MouseRegion(
+                                                  onEnter: (_) {
+                                                    setState(() {
+                                                      _hoveredIndex = index;
+                                                    });
+                                                  },
+                                                  onExit: (_) {
+                                                    setState(() {
+                                                      _hoveredIndex = -1;
+                                                    });
+                                                  },
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      if (item['title'] == 'Enter a day code') {
+                                                        _showEnterDayCodeDialog(context);
+                                                      }
+                                                    },
+                                                    child: ListTile(
+                                                      leading: Icon(
+                                                        item['icon'],
+                                                        color: Colors.white,
+                                                      ),
+                                                      title: Text(
+                                                        item['title'],
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Sora',
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
+                            ],
+
+
                           ),
+
+                        ),
+
+
                       ],
                     )),
               );
