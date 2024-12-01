@@ -137,6 +137,30 @@ class UserService {
     }
   }
 
+  Future<List<Comment>> getCommentsForDay(String dayId) async {
+    try {
+      final commentsSnapshot = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Comments')
+          .orderBy('date')
+          .get();
+      final comments =
+          await Future.wait(commentsSnapshot.docs.map((commentDoc) async {
+        final comment = Comment.fromDocument(commentDoc.data());
+        final userSnapshot =
+            await _db.collection('Users').doc(comment.uid).get();
+        final user = userSnapshot.data();
+        comment.profilePictureUrl = user?['pictureUrl'] ?? '';
+        return comment;
+      }));
+      return comments;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return [];
+    }
+  }
+
   Future<List<Moment>> getUserMomentsFromFirebase() async {
     try {
       final moments = <Moment>[];
@@ -161,7 +185,9 @@ class UserService {
 
         if (dayData == null ||
             dayData['winnerId'] == null ||
-            dayData['winnerId'].isEmpty) return null;
+            dayData['winnerId'].isEmpty) {
+          return null;
+        }
 
         final winnerId = dayData['winnerId'];
         final momentSnapshot = await _db
@@ -188,24 +214,9 @@ class UserService {
         voterIds.addAll(votersSnapshot.docs.map((doc) => doc.id));
         moment.voterIds = voterIds;
 
-        // Fetch comments in parallel
-        final commentsSnapshot = await _db
-            .collection('Days')
-            .doc(dayId)
-            .collection('Comments')
-            .orderBy('date')
-            .get();
+        // Fetch comments separately
+        moment.comments = await getCommentsForDay(dayId);
 
-        final commentFutures = commentsSnapshot.docs.map((commentDoc) async {
-          final comment = Comment.fromDocument(commentDoc.data());
-          final userSnapshot =
-              await _db.collection('Users').doc(comment.uid).get();
-          final user = userSnapshot.data();
-          comment.profilePictureUrl = user?['pictureUrl'] ?? '';
-          return comment;
-        });
-
-        moment.comments = await Future.wait(commentFutures);
         return moment;
       }).toList();
 

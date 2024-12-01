@@ -146,12 +146,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final listeningProvider = Provider.of<UserProvider>(context);
-    final userProfile = listeningProvider.userProfile;
-    final days = listeningProvider.moments;
+    final userListeningProvider = Provider.of<UserProvider>(context);
+    final dayListeningProvider = Provider.of<DayProvider>(context);
+    final userProfile = userListeningProvider.userProfile;
+    final days = userListeningProvider.moments;
     if (_isInitialLoad && days.isNotEmpty) {
       _currentDayId = days.isEmpty ? '' : days[0].dayId;
     }
+    dayListeningProvider.listenToComments(_currentDayId);
+    final comments = dayListeningProvider.commentsByDayId;
 
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
@@ -356,17 +359,17 @@ class _HomePageState extends State<HomePage> {
                         //Comment Section
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: days.isEmpty
+                          child: comments[_currentDayId] == null ||
+                                  comments[_currentDayId]!.isEmpty
                               ? const Center(
                                   child: Text('No comments available.'),
                                 )
                               : ListView.builder(
                                   shrinkWrap: true, // Add this line
-                                  itemCount:
-                                      (days[_currentIndex].comments).length,
+                                  itemCount: comments[_currentDayId]!.length,
                                   itemBuilder: (context, index) {
                                     final comment =
-                                        days[_currentIndex].comments[index];
+                                        comments[_currentDayId]![index];
                                     return ListTile(
                                       leading: GFImageOverlay(
                                         image: Image.network(

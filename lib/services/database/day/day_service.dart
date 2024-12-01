@@ -242,25 +242,29 @@ class DayService {
         .collection('Moments')
         .orderBy('uploadedAt', descending: true)
         .snapshots()
-        .asyncMap((snapshot) async {
-      final moments =
-          snapshot.docs.map((doc) => Moment.fromDocument(doc.data())).toList();
-      for (var moment in moments) {
-        final participantDoc = await getParticipantsFromFirebase(dayId);
-        final participant = participantDoc.firstWhere(
-          (element) => element.uid == moment.uploadedBy,
-          orElse: () => Participant(
-            uid: '',
-            role: '',
-            nickname: '',
-            fcmToken: '',
-            hasUploaded: false,
-          ),
-        );
-        moment.nickname = participant.nickname;
-      }
-      return moments;
-    });
+        .asyncMap(
+      (snapshot) async {
+        final moments = snapshot.docs
+            .map((doc) => Moment.fromDocument(doc.data()))
+            .toList();
+
+        for (var moment in moments) {
+          final participantDoc = await getParticipantsFromFirebase(dayId);
+          final participant = participantDoc.firstWhere(
+            (element) => element.uid == moment.uploadedBy,
+            orElse: () => Participant(
+              uid: '',
+              role: '',
+              nickname: '',
+              fcmToken: '',
+              hasUploaded: false,
+            ),
+          );
+          moment.nickname = participant.nickname;
+        }
+        return moments;
+      },
+    );
   }
 
   Future<List<Participant>> getParticipantsFromFirebase(String dayId) async {
@@ -493,6 +497,31 @@ class DayService {
     } catch (ex) {
       _logger.severe(ex.toString());
       return [];
+    }
+  }
+
+  Stream<List<Comment>> commentsStream(String dayId) {
+    try {
+      return _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Comments')
+          .orderBy('date')
+          .snapshots()
+          .asyncMap((snapshot) async {
+        return Future.wait(snapshot.docs.map((doc) async {
+          final comment = Comment.fromDocument(doc.data());
+          final userSnapshot =
+              await _db.collection('Users').doc(comment.uid).get();
+          final user = userSnapshot.data();
+          comment.profilePictureUrl = user?['pictureUrl'] ?? '';
+
+          return comment;
+        }).toList());
+      });
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return Stream.empty();
     }
   }
 }
