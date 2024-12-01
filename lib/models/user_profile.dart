@@ -23,7 +23,7 @@ class UserProfile {
   }) : favoriteDays = favoriteDays ?? [];
 
   // Firebase -> App
-  factory UserProfile.fromDocument(DocumentSnapshot doc) {
+  factory UserProfile.fromDocument(Map<String, dynamic> doc) {
     return UserProfile(
       uid: doc['uid'],
       name: doc['name'],

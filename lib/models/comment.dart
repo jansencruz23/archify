@@ -17,7 +17,7 @@ class Comment {
     this.profilePictureUrl = '',
   });
 
-  factory Comment.fromDocument(DocumentSnapshot data) {
+  factory Comment.fromDocument(Map<String, dynamic> data) {
     return Comment(
       commentId: data['commentId'],
       dayId: data['momentId'],

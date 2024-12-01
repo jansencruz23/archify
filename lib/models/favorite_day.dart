@@ -9,7 +9,7 @@ class FavoriteDay {
     required this.date,
   });
 
-  factory FavoriteDay.fromDocument(DocumentSnapshot data) {
+  factory FavoriteDay.fromDocument(Map<String, dynamic> data) {
     return FavoriteDay(
       dayId: data['dayId'],
       date: (data['date'] as Timestamp).toDate(),

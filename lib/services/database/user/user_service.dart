@@ -38,7 +38,8 @@ class UserService {
   Future<UserProfile?> getUserFromFirebase(String uid) async {
     try {
       final userDoc = await _db.collection('Users').doc(uid).get();
-      final user = UserProfile.fromDocument(userDoc);
+      if (!userDoc.exists) return null;
+      final user = UserProfile.fromDocument(userDoc.data()!);
       user.favoriteDays = await getFavoriteDaysFromFirebase();
       return user;
     } catch (ex) {
@@ -56,7 +57,7 @@ class UserService {
           .limit(1)
           .get();
 
-      return UserProfile.fromDocument(userDoc.docs.first);
+      return UserProfile.fromDocument(userDoc.docs.first.data());
     } catch (ex) {
       _logger.severe(ex.toString());
       return null;
@@ -122,7 +123,7 @@ class UserService {
         return null;
       }
 
-      final joinedDay = JoinedDay.fromDocument(joined.docs.first);
+      final joinedDay = JoinedDay.fromDocument(joined.docs.first.data());
       final dayDate = joinedDay.date;
 
       if (dayDate.isBefore(todayStart) || dayDate.isAfter(todayEnd)) {
@@ -172,7 +173,7 @@ class UserService {
 
         if (!momentSnapshot.exists) return null;
 
-        final moment = Moment.fromDocument(momentSnapshot);
+        final moment = Moment.fromDocument(momentSnapshot.data()!);
         moment.dayName = dayData['name'];
 
         // Fetch comments in parallel
@@ -184,7 +185,7 @@ class UserService {
             .get();
 
         final commentFutures = commentsSnapshot.docs.map((commentDoc) async {
-          final comment = Comment.fromDocument(commentDoc);
+          final comment = Comment.fromDocument(commentDoc.data());
           final userSnapshot =
               await _db.collection('Users').doc(comment.uid).get();
           final user = userSnapshot.data();
@@ -242,12 +243,12 @@ class UserService {
     }
   }
 
-  // enhance
   Future<List<Moment>> getFavoriteDaysFromFirebase() async {
     try {
       final moments = <Moment>[];
       final uid = _authService.getCurrentUid();
 
+      // Fetch favorite days
       final favoriteDaysSnapshot = await _db
           .collection('Users')
           .doc(uid)
@@ -257,29 +258,62 @@ class UserService {
 
       if (favoriteDaysSnapshot.docs.isEmpty) return moments;
 
+      // Fetch all day documents in parallel
       final dayFutures = favoriteDaysSnapshot.docs.map((dayDoc) async {
         final dayId = dayDoc.data()['dayId'];
-        final daySnapshot = await _db.collection('Days').doc(dayId).get();
+        return _db.collection('Days').doc(dayId).get();
+      }).toList();
 
-        if (!daySnapshot.exists) return null;
+      final daySnapshots = await Future.wait(dayFutures);
+
+      // Filter out non-existing days
+      final validDaySnapshots =
+          daySnapshots.where((snapshot) => snapshot.exists).toList();
+
+      // Fetch all moments in parallel
+      final momentFutures = validDaySnapshots.map((daySnapshot) async {
+        final dayData = daySnapshot.data()!;
+        final winnerId = dayData['winnerId'];
+        if (winnerId == null || winnerId.isEmpty) return null;
 
         final momentDoc = await _db
             .collection('Days')
-            .doc(dayId)
+            .doc(daySnapshot.id)
             .collection('Moments')
-            .doc(daySnapshot.data()!['winnerId'])
+            .doc(winnerId)
             .get();
-        final moment = Moment.fromDocument(momentDoc);
+        if (!momentDoc.exists) return null;
 
-        moments.add(moment);
+        final moment = Moment.fromDocument(momentDoc.data()!);
+        moment.dayName = dayData['name'];
+
+        // Fetch comments in parallel
+        final commentsSnapshot = await _db
+            .collection('Days')
+            .doc(daySnapshot.id)
+            .collection('Comments')
+            .orderBy('date')
+            .get();
+
+        final commentFutures = commentsSnapshot.docs.map((commentDoc) async {
+          final comment = Comment.fromDocument(commentDoc.data());
+          final userSnapshot =
+              await _db.collection('Users').doc(comment.uid).get();
+          final user = userSnapshot.data();
+          comment.profilePictureUrl = user?['pictureUrl'] ?? '';
+          return comment;
+        }).toList();
+
+        moment.comments = await Future.wait(commentFutures);
         return moment;
       }).toList();
 
-      await Future.wait(dayFutures);
+      final fetchedMoments = await Future.wait(momentFutures);
+      moments.addAll(fetchedMoments.whereType<Moment>());
 
       return moments;
     } catch (ex) {
-      _logger.severe(ex.toString());
+      _logger.severe('Error fetching favorite days: ${ex.toString()}');
       return [];
     }
   }

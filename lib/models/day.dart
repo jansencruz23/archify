@@ -26,7 +26,7 @@ class Day {
   });
 
   // Firebase -> App
-  factory Day.fromDocument(DocumentSnapshot data) {
+  factory Day.fromDocument(Map<String, dynamic> data) {
     return Day(
       id: data['id'],
       hostId: data['hostId'],

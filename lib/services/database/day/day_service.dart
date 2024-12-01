@@ -34,7 +34,9 @@ class DayService {
   Future<Day?> getDayFromFirebase(String dayId) async {
     try {
       final dayDoc = await _db.collection('Days').doc(dayId).get();
-      return Day.fromDocument(dayDoc);
+      if (!dayDoc.exists || dayDoc.data() == null) return null;
+
+      return Day.fromDocument(dayDoc.data()!);
     } catch (ex) {
       _logger.severe(ex.toString());
       return null;
@@ -45,9 +47,8 @@ class DayService {
   Future<void> startDayInFirebase(String dayCode, String nickname) async {
     try {
       final day = await getDayByCodeFromFirebase(dayCode);
-      if (day == null) {
-        return;
-      }
+      if (day == null) return;
+
       final currentUserId = _authService.getCurrentUid();
       final fcmToken = await FirebaseMessaging.instance.getToken();
 
@@ -114,7 +115,7 @@ class DayService {
         return;
       }
 
-      final participant = Participant.fromDocument(participantDoc);
+      final participant = Participant.fromDocument(participantDoc.data()!);
       participant.hasUploaded = true;
 
       final moment = Moment(
@@ -144,7 +145,7 @@ class DayService {
         return false;
       }
 
-      final day = Day.fromDocument(dayDoc.docs.first);
+      final day = Day.fromDocument(dayDoc.docs.first.data());
 
       if (day.status == false) {
         return false;
@@ -170,7 +171,7 @@ class DayService {
         return '';
       }
 
-      final day = Day.fromDocument(dayDoc.docs.first);
+      final day = Day.fromDocument(dayDoc.docs.first.data());
       return day.id;
     } catch (ex) {
       _logger.severe(ex.toString());
@@ -186,7 +187,7 @@ class DayService {
         return null;
       }
 
-      return Day.fromDocument(dayDoc.docs.first);
+      return Day.fromDocument(dayDoc.docs.first.data());
     } catch (ex) {
       _logger.severe(ex.toString());
       return null;
@@ -207,8 +208,9 @@ class DayService {
           .orderBy('uploadedAt', descending: true)
           .get();
 
-      final moments =
-          momentsDoc.docs.map((doc) => Moment.fromDocument(doc)).toList();
+      final moments = momentsDoc.docs
+          .map((doc) => Moment.fromDocument(doc.data()))
+          .toList();
 
       for (var moment in moments) {
         final participantDoc = await getParticipantsFromFirebase(dayId);
@@ -242,7 +244,7 @@ class DayService {
           .get();
 
       final participants = participantsDoc.docs
-          .map((doc) => Participant.fromDocument(doc))
+          .map((doc) => Participant.fromDocument(doc.data()))
           .toList();
       return participants;
     } catch (ex) {
@@ -278,7 +280,10 @@ class DayService {
             .collection('Moments')
             .doc(imageId)
             .get();
-        final moment = Moment.fromDocument(momentDoc);
+
+        if (!momentDoc.exists) return;
+
+        final moment = Moment.fromDocument(momentDoc.data()!);
         moment.votes -= 1;
 
         await momentDoc.reference.update({'votes': moment.votes});
@@ -299,7 +304,10 @@ class DayService {
             .collection('Moments')
             .doc(imageId)
             .get();
-        final moment = Moment.fromDocument(momentDoc);
+
+        if (!momentDoc.exists) return;
+
+        final moment = Moment.fromDocument(momentDoc.data()!);
         moment.votes += 1;
 
         await momentDoc.reference.update({'votes': moment.votes});
@@ -345,7 +353,7 @@ class DayService {
 
       if (!participantDoc.exists) return false;
 
-      final participant = Participant.fromDocument(participantDoc);
+      final participant = Participant.fromDocument(participantDoc.data()!);
       return participant.hasUploaded;
     } catch (ex) {
       _logger.severe(ex.toString());
@@ -367,7 +375,9 @@ class DayService {
 
       if (moments.docs.isNotEmpty) {
         final winner = moments.docs.first;
-        final moment = Moment.fromDocument(winner);
+        if (winner.data().isEmpty) return;
+
+        final moment = Moment.fromDocument(winner.data());
         await _db
             .collection('Days')
             .doc(dayId)
@@ -384,7 +394,9 @@ class DayService {
       if (dayId.isEmpty) return true;
 
       final dayDoc = await _db.collection('Days').doc(dayId).get();
-      final day = Day.fromDocument(dayDoc);
+      if (!dayDoc.exists) return true;
+
+      final day = Day.fromDocument(dayDoc.data()!);
       // Adjusting for the timezone difference to ensure the correct comparison
       final now = DateTime.now();
       final votingDeadline = day.votingDeadline;
@@ -424,31 +436,6 @@ class DayService {
       await commentRef.set(commentModel.toMap());
     } catch (ex) {
       _logger.severe(ex.toString());
-    }
-  }
-
-  Future<List<Comment>> getCommentsFromFirebase(String dayId) async {
-    try {
-      final commentsDoc = await _db
-          .collection('Days')
-          .doc(dayId)
-          .collection('Comments')
-          .orderBy('date', descending: true)
-          .get();
-
-      final comments =
-          commentsDoc.docs.map((doc) => Comment.fromDocument(doc)).toList();
-
-      for (var comment in comments) {
-        final userDoc = await _db.collection('Users').doc(comment.uid).get();
-        final user = userDoc.data();
-        comment.profilePictureUrl = user?['pictureUrl'] ?? '';
-      }
-
-      return comments;
-    } catch (ex) {
-      _logger.severe(ex.toString());
-      return [];
     }
   }
 }
