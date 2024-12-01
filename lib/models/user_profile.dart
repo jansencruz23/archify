@@ -8,6 +8,7 @@ class UserProfile {
   final String bio;
   final String pictureUrl;
   final bool isNew;
+  late List<String> favoriteDays;
 
   UserProfile({
     required this.uid,
@@ -17,7 +18,8 @@ class UserProfile {
     required this.bio,
     required this.pictureUrl,
     required this.isNew,
-  });
+    List<String>? favoriteDays,
+  }) : favoriteDays = favoriteDays ?? [];
 
   // Firebase -> App
   factory UserProfile.fromDocument(DocumentSnapshot doc) {
