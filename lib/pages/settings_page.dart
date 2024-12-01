@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:archify/pages/about_us_page.dart';
 import 'package:archify/pages/my_feedback_form.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:archify/services/auth/auth_provider.dart';
@@ -46,6 +45,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String subject = '';
   String body = '';
   String? _email; //how to get email
+  bool _isDialogShown = false;
 
   late final RateMyApp _rateMyApp = RateMyApp(
     preferencesPrefix: 'rateMyApp_',
@@ -213,7 +213,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         onTap: () {
                           // print('rate');
-                          // print('Is dialog shown? $_isDialogShown'); // for debuging
+                          print(
+                              'Is dialog shown? $_isDialogShown'); // for debuging
 
                           _rateMyApp.showStarRateDialog(
                             context,
