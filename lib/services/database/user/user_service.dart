@@ -210,9 +210,10 @@ class UserService {
 
   Future<void> addToFavoritesInFirebase(String dayId) async {
     try {
-      final day = await _db.collection('Days').doc(dayId).get();
-      if (!day.exists) return;
+      final dayRef = await _db.collection('Days').doc(dayId).get();
+      if (!dayRef.exists) return;
 
+      final day = Day.fromDocument(dayRef.data()!);
       final uid = _authService.getCurrentUid();
       final favoriteDoc = await _db
           .collection('Users')
@@ -227,7 +228,7 @@ class UserService {
       } else {
         final favoriteDay = FavoriteDay(
           dayId: dayId,
-          date: DateTime.now(),
+          date: day.createdAt,
         );
 
         // User has not faved the image, so we add to the favoriteDays collection

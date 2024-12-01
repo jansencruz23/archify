@@ -253,7 +253,7 @@ class DayService {
     }
   }
 
-  Future<void> likeImageInFirebase(String dayCode, String imageId) async {
+  Future<void> toggleVoteInFirebase(String dayCode, String imageId) async {
     try {
       final dayId = await getDayIdFromFirebase(dayCode);
       if (dayId.isEmpty) {
@@ -271,7 +271,7 @@ class DayService {
           .get();
 
       if (likeDoc.exists) {
-        // User has already liked the image, so we remove the like
+        // User has already voted the image, so we remove the like
         await likeDoc.reference.delete();
 
         final momentDoc = await _db
@@ -436,6 +436,35 @@ class DayService {
       await commentRef.set(commentModel.toMap());
     } catch (ex) {
       _logger.severe(ex.toString());
+    }
+  }
+
+  Future<List<String>> getVotedMomentIdsFromFirebase(String dayCode) async {
+    try {
+      final dayId = await getDayIdFromFirebase(dayCode);
+      final uid = _authService.getCurrentUid();
+      final likesDoc =
+          await _db.collection('Days').doc(dayId).collection('Moments').get();
+
+      final votedMomentIds = <String>[];
+      for (var moment in likesDoc.docs) {
+        final likes = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(moment.id)
+            .collection('Likes')
+            .get();
+
+        if (likes.docs.any((like) => like.id == uid)) {
+          votedMomentIds.add(moment.id);
+        }
+      }
+
+      return votedMomentIds;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return [];
     }
   }
 }

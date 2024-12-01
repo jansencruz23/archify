@@ -1,4 +1,5 @@
 import 'package:archify/components/my_input_alert_box.dart';
+import 'package:archify/components/my_moment_tile.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
@@ -97,8 +98,8 @@ class _DaySpacePageState extends State<DaySpacePage> {
     );
   }
 
-  Future<void> _likeImage(String momentId) async {
-    await _dayProvider.likeImage(widget.dayCode, momentId);
+  Future<void> _toggleVote(String momentId) async {
+    await _dayProvider.toggleVote(widget.dayCode, momentId);
   }
 
   @override
@@ -145,67 +146,11 @@ class _DaySpacePageState extends State<DaySpacePage> {
                         itemBuilder: (context, index) {
                           final moment = moments![index];
 
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (moment.nickname.isNotEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          ClipOval(
-                                            child: Image.network(
-                                              moment.imageUrl,
-                                              height: 40,
-                                              width: 40,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          Text(
-                                            moment.nickname,
-                                            style: TextStyle(
-                                                fontFamily: 'Sora',
-                                                fontSize: 16),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  Stack(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () => _showImageDialog(moment),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(16.0),
-                                          child: Image.network(
-                                            moment.imageUrl,
-                                            width: double.infinity,
-                                            height:
-                                                (index % 3 == 0) ? 180 : 230,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                          child: IconButton(
-                                        onPressed: () =>
-                                            _likeImage(moment.momentId),
-                                        icon: Icon(Icons.favorite_rounded),
-                                      )),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                          return MyMomentTile(
+                            moment: moment,
+                            onTap: _showImageDialog,
+                            index: index,
+                            toggleVote: _toggleVote,
                           );
                         },
                       ),

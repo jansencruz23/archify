@@ -30,6 +30,9 @@ class DayProvider extends ChangeNotifier {
   List<Moment>? _moments;
   List<Moment>? get moments => _moments;
 
+  late List<String> _votedMomentIds = [];
+  List<String> get votedMomentIds => _votedMomentIds;
+
   bool? _hasUploaded;
 
   void update(UserProvider userProvider) {
@@ -144,6 +147,8 @@ class DayProvider extends ChangeNotifier {
 
   Future<void> loadMoments(String dayCode) async {
     final moments = await _dayService.getMomentsFromFirebase(dayCode);
+    _votedMomentIds = await _dayService.getVotedMomentIdsFromFirebase(dayCode);
+
     if (moments.isEmpty) {
       _moments = [];
     }
@@ -152,8 +157,14 @@ class DayProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> likeImage(String dayCode, String momentId) async {
-    await _dayService.likeImageInFirebase(dayCode, momentId);
+  Future<void> toggleVote(String dayCode, String momentId) async {
+    if (_votedMomentIds.contains(momentId)) {
+      _votedMomentIds.remove(momentId);
+    } else {
+      _votedMomentIds.add(momentId);
+    }
+    await _dayService.toggleVoteInFirebase(dayCode, momentId);
+    notifyListeners();
   }
 
   Future<bool> isParticipant(String dayCode) async {
@@ -167,7 +178,11 @@ class DayProvider extends ChangeNotifier {
 
   Future<bool> hasVotingDeadlineExpired(String dayCode) async {
     final expired = await _dayService.hasVotingDeadlineExpired(dayCode);
-    _userProvider.loadUserMoments();
+    if (expired) {
+      _votedMomentIds = [];
+      _userProvider.loadUserMoments();
+    }
+
     notifyListeners();
     return expired;
   }
