@@ -26,6 +26,12 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _bodyController = TextEditingController();
 
+  //Text field focus
+   final FocusNode _fieldSubject = FocusNode();
+   final FocusNode _fieldBody = FocusNode();
+
+
+
   Future<void> _fetchUserEmail() async {
     final user = AuthService().getCurrentUser();
     debugPrint('User: $user');
@@ -38,6 +44,13 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;
     return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
+  }
+
+  @override
+  void dispose() {
+    _fieldSubject.dispose();
+    _fieldBody.dispose();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -73,12 +86,15 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
 
 
                 ),
-                child: TextField(
+                child: TextField(focusNode: _fieldSubject,
 
                   controller: _subjectController,
                   decoration: InputDecoration(labelText: 'Subject', border: new OutlineInputBorder(
                       borderSide: new BorderSide(color: Colors.teal)
                   ),),
+                  onSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(_fieldBody);
+                  },
                   style: TextStyle(color: Theme.of(context)
                       .colorScheme
                       .inversePrimary,),
@@ -100,11 +116,15 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
             //       .inversePrimary,
             // ), textAlign: TextAlign.left,),
             TextField(
+              focusNode: _fieldBody,
               controller: _bodyController,
               decoration: InputDecoration(labelText: 'Body',  border: new OutlineInputBorder(
-                  borderSide: new BorderSide(color: Colors.teal)
+                  borderSide: BorderSide(color: Colors.teal)
               ),),
               maxLines: 5,
+              onSubmitted: (_) {
+                FocusScope.of(context).unfocus();
+              },
               style: TextStyle(color: Theme.of(context)
                   .colorScheme
                   .inversePrimary,),
@@ -118,7 +138,6 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
               widget.onSubmit(subject, body);
               Navigator.pop(context);
 
-              print(_email);
 
               String? encodeQueryParameters(Map<String, String> params) {
                 return params.entries
