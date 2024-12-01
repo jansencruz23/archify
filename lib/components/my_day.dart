@@ -1,16 +1,18 @@
 import 'package:archify/models/moment.dart';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MyDay extends StatefulWidget {
-  final void Function() addToFavorites;
+  final void Function() toggleFavorites;
   final Moment moment;
   final bool isMainPhoto;
   const MyDay(
       {super.key,
       required this.moment,
       required this.isMainPhoto,
-      required this.addToFavorites});
+      required this.toggleFavorites});
 
   @override
   State<MyDay> createState() => _MyDayState();
@@ -19,6 +21,8 @@ class MyDay extends StatefulWidget {
 class _MyDayState extends State<MyDay> {
   @override
   Widget build(BuildContext context) {
+    final listeningProvider = Provider.of<UserProvider>(context);
+    final favoriteDayIds = listeningProvider.favoriteDaysIds;
     final adjustedDate = widget.moment.uploadedAt;
     final formattedDate = DateFormat('MMMM d, yyyy').format(adjustedDate);
 
@@ -105,11 +109,17 @@ class _MyDayState extends State<MyDay> {
               ),
               IconButton(
                   padding: EdgeInsets.zero,
-                  icon: Icon(
-                    Icons.bookmark_border,
-                    color: Theme.of(context).colorScheme.tertiaryContainer,
-                  ),
-                  onPressed: widget.addToFavorites),
+                  icon: favoriteDayIds.contains(widget.moment.dayId)
+                      ? Icon(
+                          Icons.bookmark,
+                          color: Colors.yellow,
+                        )
+                      : Icon(
+                          Icons.bookmark_border,
+                          color:
+                              Theme.of(context).colorScheme.tertiaryContainer,
+                        ),
+                  onPressed: widget.toggleFavorites),
             ],
           ),
         ),

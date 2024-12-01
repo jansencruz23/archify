@@ -114,10 +114,10 @@ class _HomePageState extends State<HomePage> {
     _commentController.clear();
   }
 
-  Future<void> _addToFavorites() async {
+  Future<void> _toggleFavorites() async {
     if (_currentDayId.isEmpty) return;
 
-    await _userProvider.addToFavorites(_currentDayId);
+    await _userProvider.toggleFavorites(_currentDayId);
   }
 
   Future<void> _checkIfNewUser() async {
@@ -298,7 +298,7 @@ class _HomePageState extends State<HomePage> {
                             return MyDay(
                               moment: moment,
                               isMainPhoto: isMainPhoto,
-                              addToFavorites: _addToFavorites,
+                              toggleFavorites: _toggleFavorites,
                             );
                           },
                           options: CarouselOptions(
