@@ -1,6 +1,9 @@
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -15,6 +18,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _bioController = TextEditingController();
 
   late final UserProvider _userProvider;
+  final ImagePicker _picker = ImagePicker(); // Image picker instance
 
   @override
   void initState() {
@@ -29,6 +33,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (userProfile != null) {
       _nameController.text = userProfile.name;
       _bioController.text = userProfile.bio;
+    }
+  }
+
+  Future<void> _changeProfilePicture() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final File imageFile = File(pickedFile.path);
+
+      // Call your provider method to upload and update the profile picture
+      await _userProvider.updateUserProfilePicture(imageFile);
+
+      setState(() {
+        // This will trigger a UI update after the image has been uploaded
+      });
     }
   }
 
@@ -49,9 +68,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  Future<File?> openImagePicker() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    }
+    return null;
+  }
+
   void _cancelEdit() {
     Navigator.pop(context);
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +131,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     );
                   }),
                   FloatingActionButton.small(
-                    onPressed: () {},
+                    onPressed: _changeProfilePicture, // Trigger profile picture change
                     backgroundColor: const Color(0xFFFF6F61),
                     child: const Icon(Icons.edit, size: 18, color: Colors.white),
                   ),

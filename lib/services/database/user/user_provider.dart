@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:io';
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/database/user/user_service.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserProvider extends ChangeNotifier {
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -15,9 +17,9 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  final _authService = AuthService();
-  final _userService = UserService();
-  final _storageService = StorageService();
+  final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
+  final StorageService _storageService = StorageService();
 
   // Properties to call in the UI
   late String _picturePath = '';
@@ -92,20 +94,45 @@ class UserProvider extends ChangeNotifier {
   }
 
   // Open gallery and get the profile picture path
-  Future<String> openImagePicker() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    _picturePath = image == null ? '' : image.path;
-
-    notifyListeners();
-    return _picturePath;
+  Future<File?> openImagePicker() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    }
+    return null;
   }
 
   // Upload profile picture to Firebase Storage
-  Future<String> uploadProfilePicture(String path) async {
-    _picturePath = await _storageService.uploadProfilePicture(path);
-    return _picturePath;
+  Future<String?> uploadProfilePicture(File image) async {
+    try {
+      // Create a reference to Firebase Storage
+      final storageRef = _storage.ref().child('profile_pictures/${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+      // Upload the image
+      final uploadTask = storageRef.putFile(image);
+      final snapshot = await uploadTask.whenComplete(() {});
+
+      // Get the download URL
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
   }
+
+  // Update the profile picture
+  Future<void> updateUserProfilePicture(String pictureUrl) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final userRef = _firestore.collection('users').doc(user.uid);
+      await userRef.update({
+        'pictureUrl': pictureUrl,
+      });
+    }
+  }
+
 
   // Update user profile
   Future<void> updateUserProfile({required String name, required String bio}) async {
@@ -126,6 +153,8 @@ class UserProvider extends ChangeNotifier {
     setLoading(false);
     notifyListeners();
   }
+
+
 
 }
 
