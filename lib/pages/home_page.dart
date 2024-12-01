@@ -114,6 +114,12 @@ class _HomePageState extends State<HomePage> {
     _commentController.clear();
   }
 
+  Future<void> _addToFavorites() async {
+    if (_currentDayId.isEmpty) return;
+
+    await _userProvider.addToFavorites(_currentDayId);
+  }
+
   Future<void> _checkIfNewUser() async {
     if (_setupNavigationTriggered) return;
 
@@ -290,7 +296,10 @@ class _HomePageState extends State<HomePage> {
                             bool isMainPhoto = this.realIndex == index;
 
                             return MyDay(
-                                moment: moment, isMainPhoto: isMainPhoto);
+                              moment: moment,
+                              isMainPhoto: isMainPhoto,
+                              addToFavorites: _addToFavorites,
+                            );
                           },
                           options: CarouselOptions(
                             enlargeCenterPage: true,

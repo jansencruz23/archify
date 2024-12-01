@@ -139,4 +139,8 @@ class UserProvider extends ChangeNotifier {
 
     return dayCode.code;
   }
+
+  Future<void> addToFavorites(String dayId) async {
+    await _userService.addToFavoritesInFirebase(dayId);
+  }
 }

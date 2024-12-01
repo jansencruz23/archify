@@ -64,9 +64,14 @@ class DayProvider extends ChangeNotifier {
     required int maxParticipants,
     required TimeOfDay votingDeadline,
   }) async {
-    final now = DateTime.now().toUtc().add(Duration(hours: 8));
-    final deadline = DateTime(now.year, now.month, now.day,
-        (votingDeadline.hour - 8), votingDeadline.minute);
+    final now = DateTime.now();
+    final deadline = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      votingDeadline.hour,
+      votingDeadline.minute,
+    );
     final uuid = Uuid();
     final uid = _authService.getCurrentUid();
 

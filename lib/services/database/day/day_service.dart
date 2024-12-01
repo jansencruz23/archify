@@ -387,8 +387,8 @@ class DayService {
       final dayDoc = await _db.collection('Days').doc(dayId).get();
       final day = Day.fromDocument(dayDoc);
       // Adjusting for the timezone difference to ensure the correct comparison
-      final now = DateTime.now().add(const Duration(hours: 8));
-      final votingDeadline = day.votingDeadline.add(const Duration(hours: 8));
+      final now = DateTime.now();
+      final votingDeadline = day.votingDeadline;
       final isVotingActive = votingDeadline.isAfter(now);
 
       if (!isVotingActive) {
@@ -409,7 +409,7 @@ class DayService {
   Future<void> sendCommentToFirebase(String comment, String dayId) async {
     try {
       final uid = _authService.getCurrentUid();
-      final now = DateTime.now().add(const Duration(hours: 8));
+      final now = DateTime.now();
       final commentModel = Comment(
         commentId: '',
         dayId: dayId,

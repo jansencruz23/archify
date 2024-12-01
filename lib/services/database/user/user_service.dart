@@ -1,5 +1,6 @@
 import 'package:archify/models/comment.dart';
 import 'package:archify/models/day.dart';
+import 'package:archify/models/favorite_day.dart';
 import 'package:archify/models/joined_day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/models/user_profile.dart';
@@ -13,7 +14,7 @@ class UserService {
   final _authService = AuthService();
   final _storage = FirebaseStorage.instance;
 
-  final logger = Logger('UserService');
+  final _logger = Logger('UserService');
 
   // Save user profile in Firebase
   Future<void> saveUserInFirebase(String email) async {
@@ -39,7 +40,7 @@ class UserService {
       final userDoc = await _db.collection('Users').doc(uid).get();
       return UserProfile.fromDocument(userDoc);
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return null;
     }
   }
@@ -55,7 +56,7 @@ class UserService {
 
       return UserProfile.fromDocument(userDoc.docs.first);
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return null;
     }
   }
@@ -71,7 +72,7 @@ class UserService {
         'isNew': false,
       });
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
     }
   }
 
@@ -88,7 +89,7 @@ class UserService {
         return;
       }
 
-      final day = JoinedDay(dayId: dayId, date: DateTime.now().toUtc());
+      final day = JoinedDay(dayId: dayId, date: DateTime.now());
 
       await _db
           .collection('Users')
@@ -97,14 +98,14 @@ class UserService {
           .doc(dayId)
           .set(day.toMap());
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
     }
   }
 
   Future<String?> getJoinedDayIdToday() async {
     try {
       final uid = _authService.getCurrentUid();
-      final now = DateTime.now().add(Duration(hours: 8));
+      final now = DateTime.now();
       final todayStart = DateTime(now.year, now.month, now.day, 0, 0, 0);
       final todayEnd = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
@@ -120,7 +121,7 @@ class UserService {
       }
 
       final joinedDay = JoinedDay.fromDocument(joined.docs.first.data());
-      final dayDate = joinedDay.date.add(Duration(hours: 8));
+      final dayDate = joinedDay.date;
 
       if (dayDate.isBefore(todayStart) || dayDate.isAfter(todayEnd)) {
         return null;
@@ -128,7 +129,7 @@ class UserService {
 
       return joinedDay.dayId;
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return null;
     }
   }
@@ -199,8 +200,43 @@ class UserService {
 
       return moments;
     } catch (ex) {
-      logger.severe('Error fetching user moments: ${ex.toString()}');
+      _logger.severe('Error fetching user moments: ${ex.toString()}');
       return [];
+    }
+  }
+
+  Future<void> addToFavoritesInFirebase(String dayId) async {
+    try {
+      final day = await _db.collection('Days').doc(dayId).get();
+      if (!day.exists) return;
+
+      final uid = _authService.getCurrentUid();
+      final favoriteDoc = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('FavoriteDays')
+          .doc(dayId)
+          .get();
+
+      if (favoriteDoc.exists) {
+        // User has already favorited the day, so we remove it
+        await favoriteDoc.reference.delete();
+      } else {
+        final favoriteDay = FavoriteDay(
+          dayId: dayId,
+          date: DateTime.now(),
+        );
+
+        // User has not faved the image, so we add to the favoriteDays collection
+        await _db
+            .collection('Users')
+            .doc(uid)
+            .collection('FavoriteDays')
+            .doc(dayId)
+            .set(favoriteDay.toMap());
+      }
+    } catch (ex) {
+      _logger.severe(ex.toString());
     }
   }
 }

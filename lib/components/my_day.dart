@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MyDay extends StatefulWidget {
+  final void Function() addToFavorites;
   final Moment moment;
   final bool isMainPhoto;
-  const MyDay({super.key, required this.moment, required this.isMainPhoto});
+  const MyDay(
+      {super.key,
+      required this.moment,
+      required this.isMainPhoto,
+      required this.addToFavorites});
 
   @override
   State<MyDay> createState() => _MyDayState();
@@ -14,7 +19,7 @@ class MyDay extends StatefulWidget {
 class _MyDayState extends State<MyDay> {
   @override
   Widget build(BuildContext context) {
-    final adjustedDate = widget.moment.uploadedAt.add(Duration(hours: 8));
+    final adjustedDate = widget.moment.uploadedAt;
     final formattedDate = DateFormat('MMMM d, yyyy').format(adjustedDate);
 
     return Stack(
@@ -99,15 +104,12 @@ class _MyDayState extends State<MyDay> {
                 },
               ),
               IconButton(
-                padding: EdgeInsets.zero,
-                icon: Icon(
-                  Icons.bookmark_border,
-                  color: Theme.of(context).colorScheme.tertiaryContainer,
-                ),
-                onPressed: () {
-                  // Handle the save button press
-                },
-              ),
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    Icons.bookmark_border,
+                    color: Theme.of(context).colorScheme.tertiaryContainer,
+                  ),
+                  onPressed: widget.addToFavorites),
             ],
           ),
         ),
