@@ -2,6 +2,7 @@ import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/database/day/day_service.dart';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/services/database/user/user_service.dart';
 import 'package:archify/services/storage/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class DayProvider extends ChangeNotifier {
 
   final _dayService = DayService();
   final _userService = UserService();
+  late UserProvider _userProvider;
   final _authService = AuthService();
   final _storageService = StorageService();
 
@@ -28,7 +30,15 @@ class DayProvider extends ChangeNotifier {
   List<Moment>? _moments;
   List<Moment>? get moments => _moments;
 
+  late List<String> _votedMomentIds = [];
+  List<String> get votedMomentIds => _votedMomentIds;
+
   bool? _hasUploaded;
+
+  void update(UserProvider userProvider) {
+    _userProvider = userProvider;
+  }
+
   bool get hasUploaded => _hasUploaded ?? false;
 
   Future<void> loadDay(String dayId) async {
@@ -57,9 +67,14 @@ class DayProvider extends ChangeNotifier {
     required int maxParticipants,
     required TimeOfDay votingDeadline,
   }) async {
-    final now = DateTime.now().toUtc().add(Duration(hours: 8));
-    final deadline = DateTime(now.year, now.month, now.day,
-        (votingDeadline.hour - 8), votingDeadline.minute);
+    final now = DateTime.now();
+    final deadline = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      votingDeadline.hour,
+      votingDeadline.minute,
+    );
     final uuid = Uuid();
     final uid = _authService.getCurrentUid();
 
@@ -132,6 +147,8 @@ class DayProvider extends ChangeNotifier {
 
   Future<void> loadMoments(String dayCode) async {
     final moments = await _dayService.getMomentsFromFirebase(dayCode);
+    _votedMomentIds = await _dayService.getVotedMomentIdsFromFirebase(dayCode);
+
     if (moments.isEmpty) {
       _moments = [];
     }
@@ -140,8 +157,14 @@ class DayProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> likeImage(String dayCode, String momentId) async {
-    await _dayService.likeImageInFirebase(dayCode, momentId);
+  Future<void> toggleVote(String dayCode, String momentId) async {
+    if (_votedMomentIds.contains(momentId)) {
+      _votedMomentIds.remove(momentId);
+    } else {
+      _votedMomentIds.add(momentId);
+    }
+    await _dayService.toggleVoteInFirebase(dayCode, momentId);
+    notifyListeners();
   }
 
   Future<bool> isParticipant(String dayCode) async {
@@ -155,8 +178,22 @@ class DayProvider extends ChangeNotifier {
 
   Future<bool> hasVotingDeadlineExpired(String dayCode) async {
     final expired = await _dayService.hasVotingDeadlineExpired(dayCode);
-    await loadMoments(dayCode);
+    if (expired) {
+      _votedMomentIds = [];
+      _userProvider.loadUserMoments();
+    }
+
     notifyListeners();
     return expired;
+  }
+
+  Future<void> sendComment(String comment, String dayId) async {
+    final userMoments = _userProvider.moments;
+    final momentExists = userMoments.any((moment) => moment.dayId == dayId);
+    if (!momentExists) return;
+
+    await _dayService.sendCommentToFirebase(comment, dayId);
+    _userProvider.loadUserMoments();
+    notifyListeners();
   }
 }

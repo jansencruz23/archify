@@ -39,7 +39,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
   }
 
   Future<void> pickTime() async {
-    final now = TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 8)));
+    final now = TimeOfDay.fromDateTime(DateTime.now());
     final endOfDay = const TimeOfDay(hour: 23, minute: 59);
 
     final pickedTime = await showTimePicker(

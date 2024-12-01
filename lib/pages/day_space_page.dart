@@ -1,7 +1,9 @@
 import 'package:archify/components/my_input_alert_box.dart';
+import 'package:archify/components/my_moment_tile.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
+import 'package:archify/pages/no_moment_uploaded_page.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,18 +44,24 @@ class _DaySpacePageState extends State<DaySpacePage> {
     return await _dayProvider.isParticipant(widget.dayCode);
   }
 
-  void _showImageDialog(Moment moment) {
+  void _showImageDialog(Moment moment, int index) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        content: Container(
-          width: 200,
-          height: 200,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(moment.imageUrl),
-              fit: BoxFit.cover,
-            ),
+      builder: (context) => Dialog(
+        child: IntrinsicHeight(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: InteractiveViewer(
+                  child: MyMomentTile(
+                    moment: moment,
+                    index: index,
+                    toggleVote: _toggleVote,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -97,8 +105,8 @@ class _DaySpacePageState extends State<DaySpacePage> {
     );
   }
 
-  Future<void> _likeImage(String momentId) async {
-    await _dayProvider.likeImage(widget.dayCode, momentId);
+  Future<void> _toggleVote(String momentId) async {
+    await _dayProvider.toggleVote(widget.dayCode, momentId);
   }
 
   @override
@@ -118,7 +126,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                    'Deadline: ${day == null ? 'Loading' : day!.votingDeadline.add(Duration(hours: 8)).toString()}'),
+                    'Deadline: ${day == null ? 'Loading' : day!.votingDeadline.toString()}'),
                 IconButton(
                   onPressed: _cameraUploadClicked,
                   icon: Icon(Icons.camera_alt_rounded),
@@ -145,67 +153,11 @@ class _DaySpacePageState extends State<DaySpacePage> {
                         itemBuilder: (context, index) {
                           final moment = moments![index];
 
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (moment.nickname.isNotEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          ClipOval(
-                                            child: Image.network(
-                                              moment.imageUrl,
-                                              height: 40,
-                                              width: 40,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          Text(
-                                            moment.nickname,
-                                            style: TextStyle(
-                                                fontFamily: 'Sora',
-                                                fontSize: 16),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  Stack(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () => _showImageDialog(moment),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(16.0),
-                                          child: Image.network(
-                                            moment.imageUrl,
-                                            width: double.infinity,
-                                            height:
-                                                (index % 3 == 0) ? 180 : 230,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                          child: IconButton(
-                                        onPressed: () =>
-                                            _likeImage(moment.momentId),
-                                        icon: Icon(Icons.favorite_rounded),
-                                      )),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                          return MyMomentTile(
+                            moment: moment,
+                            onTap: _showImageDialog,
+                            index: index,
+                            toggleVote: _toggleVote,
                           );
                         },
                       ),
@@ -213,18 +165,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
                   ],
                 ),
               )
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('You haven\'t uploaded a moment yet!'),
-                    ElevatedButton(
-                      onPressed: _imageUploadClicked,
-                      child: Text('Upload a moment'),
-                    ),
-                  ],
-                ),
-              ),
+            : NoMomentUploadedPage(imageUploadClicked: _imageUploadClicked),
       ),
     );
   }

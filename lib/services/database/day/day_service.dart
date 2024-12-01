@@ -1,6 +1,8 @@
+import 'package:archify/models/comment.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/models/participant.dart';
+import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -32,7 +34,9 @@ class DayService {
   Future<Day?> getDayFromFirebase(String dayId) async {
     try {
       final dayDoc = await _db.collection('Days').doc(dayId).get();
-      return Day.fromDocument(dayDoc);
+      if (!dayDoc.exists || dayDoc.data() == null) return null;
+
+      return Day.fromDocument(dayDoc.data()!);
     } catch (ex) {
       _logger.severe(ex.toString());
       return null;
@@ -43,9 +47,8 @@ class DayService {
   Future<void> startDayInFirebase(String dayCode, String nickname) async {
     try {
       final day = await getDayByCodeFromFirebase(dayCode);
-      if (day == null) {
-        return;
-      }
+      if (day == null) return;
+
       final currentUserId = _authService.getCurrentUid();
       final fcmToken = await FirebaseMessaging.instance.getToken();
 
@@ -120,6 +123,7 @@ class DayService {
         imageUrl: imageUrl,
         uploadedBy: _authService.getCurrentUid(),
         uploadedAt: DateTime.now(),
+        dayId: dayId,
       );
 
       final docRef =
@@ -141,7 +145,7 @@ class DayService {
         return false;
       }
 
-      final day = Day.fromDocument(dayDoc.docs.first);
+      final day = Day.fromDocument(dayDoc.docs.first.data());
 
       if (day.status == false) {
         return false;
@@ -167,7 +171,7 @@ class DayService {
         return '';
       }
 
-      final day = Day.fromDocument(dayDoc.docs.first);
+      final day = Day.fromDocument(dayDoc.docs.first.data());
       return day.id;
     } catch (ex) {
       _logger.severe(ex.toString());
@@ -183,7 +187,7 @@ class DayService {
         return null;
       }
 
-      return Day.fromDocument(dayDoc.docs.first);
+      return Day.fromDocument(dayDoc.docs.first.data());
     } catch (ex) {
       _logger.severe(ex.toString());
       return null;
@@ -249,7 +253,7 @@ class DayService {
     }
   }
 
-  Future<void> likeImageInFirebase(String dayCode, String imageId) async {
+  Future<void> toggleVoteInFirebase(String dayCode, String imageId) async {
     try {
       final dayId = await getDayIdFromFirebase(dayCode);
       if (dayId.isEmpty) {
@@ -267,7 +271,7 @@ class DayService {
           .get();
 
       if (likeDoc.exists) {
-        // User has already liked the image, so we remove the like
+        // User has already voted the image, so we remove the like
         await likeDoc.reference.delete();
 
         final momentDoc = await _db
@@ -276,6 +280,9 @@ class DayService {
             .collection('Moments')
             .doc(imageId)
             .get();
+
+        if (!momentDoc.exists) return;
+
         final moment = Moment.fromDocument(momentDoc.data()!);
         moment.votes -= 1;
 
@@ -297,6 +304,9 @@ class DayService {
             .collection('Moments')
             .doc(imageId)
             .get();
+
+        if (!momentDoc.exists) return;
+
         final moment = Moment.fromDocument(momentDoc.data()!);
         moment.votes += 1;
 
@@ -365,6 +375,8 @@ class DayService {
 
       if (moments.docs.isNotEmpty) {
         final winner = moments.docs.first;
+        if (winner.data().isEmpty) return;
+
         final moment = Moment.fromDocument(winner.data());
         await _db
             .collection('Days')
@@ -382,12 +394,15 @@ class DayService {
       if (dayId.isEmpty) return true;
 
       final dayDoc = await _db.collection('Days').doc(dayId).get();
-      final day = Day.fromDocument(dayDoc);
-      final now = DateTime.now().add(Duration(hours: 8));
-      final votingDeadline = day.votingDeadline.add(Duration(hours: 8));
-      final active = votingDeadline.isAfter(now);
+      if (!dayDoc.exists) return true;
 
-      if (!active) {
+      final day = Day.fromDocument(dayDoc.data()!);
+      // Adjusting for the timezone difference to ensure the correct comparison
+      final now = DateTime.now();
+      final votingDeadline = day.votingDeadline;
+      final isVotingActive = votingDeadline.isAfter(now);
+
+      if (!isVotingActive) {
         await getWinnerFromFirebase(dayId);
       }
 
@@ -395,10 +410,61 @@ class DayService {
         return true;
       }
 
-      return !active;
+      return !isVotingActive;
     } catch (ex) {
       _logger.severe(ex.toString());
       return false;
+    }
+  }
+
+  Future<void> sendCommentToFirebase(String comment, String dayId) async {
+    try {
+      final uid = _authService.getCurrentUid();
+      final now = DateTime.now();
+      final commentModel = Comment(
+        commentId: '',
+        dayId: dayId,
+        uid: uid,
+        date: now,
+        content: comment,
+      );
+
+      final commentRef =
+          _db.collection('Days').doc(dayId).collection('Comments').doc();
+
+      commentModel.commentId = commentRef.id;
+      await commentRef.set(commentModel.toMap());
+    } catch (ex) {
+      _logger.severe(ex.toString());
+    }
+  }
+
+  Future<List<String>> getVotedMomentIdsFromFirebase(String dayCode) async {
+    try {
+      final dayId = await getDayIdFromFirebase(dayCode);
+      final uid = _authService.getCurrentUid();
+      final likesDoc =
+          await _db.collection('Days').doc(dayId).collection('Moments').get();
+
+      final votedMomentIds = <String>[];
+      for (var moment in likesDoc.docs) {
+        final likes = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(moment.id)
+            .collection('Likes')
+            .get();
+
+        if (likes.docs.any((like) => like.id == uid)) {
+          votedMomentIds.add(moment.id);
+        }
+      }
+
+      return votedMomentIds;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return [];
     }
   }
 }

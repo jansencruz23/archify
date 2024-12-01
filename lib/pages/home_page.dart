@@ -3,8 +3,10 @@ import 'package:archify/components/my_day.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/auth/auth_service.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,6 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final AuthProvider _authProvider;
+  late final DayProvider _dayProvider;
   late final UserProvider _userProvider;
   late bool _setupNavigationTriggered;
 
@@ -48,67 +51,30 @@ class _HomePageState extends State<HomePage> {
   }
 
   final CarouselController _carouselController = CarouselController();
+  String _currentDayId = '';
   int _currentIndex = 0; // Track the current index
   int realIndex = 0; // To store real index
-
-// Sample data for carousel images and dates
-  final List<Map<String, String>> carouselData = [
-    {
-      'image': 'lib/assets/images/Book_img.png',
-      'date': '2024-11-17',
-      'description': 'let’s read...',
-    },
-    {
-      'image': 'lib/assets/images/sample_Image2.jpg',
-      'date': '2024-11-16',
-      'description': 'City of stars',
-    },
-    {
-      'image': 'lib/assets/images/sample_Image3.jpg',
-      'date': '2024-11-15',
-      'description': 'Lagay tayo maximum input text',
-    },
-  ];
-//Sample data sa commentss
-  final List<Map<String, dynamic>> _dummyComments = [
-    {
-      "name": "AAlfonso",
-      "comment": "WOWOWOWOW bookworm",
-      'avatar': 'lib/assets/images/AAlfonso_img.png',
-    },
-    {
-      "name": "JSalem",
-      "comment": "Da best 'to!",
-      'avatar': 'lib/assets/images/JSalem_img.png',
-    },
-    {
-      "name": "JCruz",
-      "comment": "ganda ng shottt",
-      'avatar': 'lib/assets/images/JCruz_img.png',
-    },
-  ];
+  bool _isInitialLoad = true;
 
   late final TextEditingController _commentController;
-
   late final FocusNode _fieldComment;
 
   @override
   void initState() {
     super.initState();
     _setupNavigationTriggered = false;
-
     _fieldComment = FocusNode();
+    _commentController = TextEditingController();
 
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserProfile();
       _loadUserMoments();
       _checkIfNewUser();
     });
-
-    _commentController = TextEditingController();
 
     _fieldComment.addListener(() {
       setState(() {
@@ -139,6 +105,21 @@ class _HomePageState extends State<HomePage> {
     await _userProvider.loadUserProfile();
   }
 
+  Future<void> _sendComment() async {
+    final comment = _commentController.text.trim();
+    if (comment.isEmpty) return;
+    if (_currentDayId.isEmpty) return;
+
+    await _dayProvider.sendComment(comment, _currentDayId);
+    _commentController.clear();
+  }
+
+  Future<void> _toggleFavorites() async {
+    if (_currentDayId.isEmpty) return;
+
+    await _userProvider.toggleFavorites(_currentDayId);
+  }
+
   Future<void> _checkIfNewUser() async {
     if (_setupNavigationTriggered) return;
 
@@ -163,18 +144,14 @@ class _HomePageState extends State<HomePage> {
     return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
   }
 
-  //Add a comment
-  // void addComment(String commentText){
-  //   FirebaseFirestore.instance.collection("User Posts").doc(widget.postId).collection("Comments").add({
-  //     "CommentText": commentText,
-  //     // "CommentedBy": current.
-  //   });
-  // }
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
     final userProfile = listeningProvider.userProfile;
     final days = listeningProvider.moments;
+    if (_isInitialLoad && days.isNotEmpty) {
+      _currentDayId = days.isEmpty ? '' : days[0].dayId;
+    }
 
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
@@ -308,26 +285,38 @@ class _HomePageState extends State<HomePage> {
 
                         //Carousel
                         CarouselSlider.builder(
-                          itemCount: listeningProvider.moments.length,
+                          itemCount: days.length,
                           itemBuilder: (context, index, realIndex) {
-                            if (listeningProvider.moments.isEmpty) {
+                            if (days.isEmpty) {
                               return const Center(
                                 child: Text('No moments available.'),
                               );
                             }
-                            final moment = listeningProvider.moments[index];
-                            bool isMainPhoto = this.realIndex ==
-                                index; //Gamiting Index yung Day
+                            final moment = days[index];
+                            bool isMainPhoto = this.realIndex == index;
 
                             return MyDay(
-                                moment: moment, isMainPhoto: isMainPhoto);
+                              moment: moment,
+                              isMainPhoto: isMainPhoto,
+                              toggleFavorites: _toggleFavorites,
+                            );
                           },
                           options: CarouselOptions(
-                              enlargeCenterPage: true,
-                              height: MediaQuery.of(context).size.height *
-                                  0.4, // Set the height for the carousel
-                              autoPlay: false,
-                              viewportFraction: 0.7),
+                            enlargeCenterPage: true,
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            autoPlay: false,
+                            viewportFraction: 0.7,
+                            enableInfiniteScroll: false,
+                            reverse: true,
+                            scrollDirection: Axis.horizontal,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                _currentIndex = index;
+                                _currentDayId = days[index].dayId;
+                                _isInitialLoad = false;
+                              });
+                            },
+                          ),
                         ),
 
                         //View Comment Icon
@@ -367,56 +356,40 @@ class _HomePageState extends State<HomePage> {
                         //Comment Section
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: _dummyComments.map((comment) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    // Avatar
-                                    GFImageOverlay(
-                                      image: AssetImage(
-                                        comment['avatar'] ??
-                                            'assets/user_icon.png',
+                          child: days.isEmpty
+                              ? const Center(
+                                  child: Text('No comments available.'),
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true, // Add this line
+                                  itemCount:
+                                      (days[_currentIndex].comments).length,
+                                  itemBuilder: (context, index) {
+                                    final comment =
+                                        days[_currentIndex].comments[index];
+                                    return ListTile(
+                                      leading: GFImageOverlay(
+                                        image: Image.network(
+                                                comment.profilePictureUrl)
+                                            .image,
+                                        shape: BoxShape.circle,
+                                        height: 36,
+                                        width: 36,
                                       ),
-                                      shape: BoxShape.circle,
-                                      height: 24,
-                                      width: 24,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    // Comment Text
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // If want with name ang comments
-                                          // Text(
-                                          //   comment['name'] ?? 'Unknown',
-                                          //   style: TextStyle(
-                                          //     fontWeight: FontWeight.bold,
-                                          //     fontSize: 14,
-                                          //   ),
-                                          // ),
-                                          SizedBox(height: 5),
-                                          Text(
-                                            comment['comment'] ??
-                                                'No comment available.',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .inversePrimary,
-                                            ),
-                                          ),
-                                        ],
+                                      title: Text(
+                                        comment.content,
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary,
+                                          fontFamily: 'Sora',
+                                          fontSize: _getClampedFontSize(
+                                              context, 0.04),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    );
+                                  },
                                 ),
-                              );
-                            }).toList(),
-                          ),
                         ),
 
                         const SizedBox(
@@ -451,8 +424,9 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                               ),
-                              const SizedBox(
-                                width: 10,
+                              IconButton(
+                                onPressed: _sendComment,
+                                icon: Icon(Icons.send),
                               ),
                             ],
                           ),
@@ -465,6 +439,10 @@ class _HomePageState extends State<HomePage> {
                                 bottom:
                                     MediaQuery.of(context).viewInsets.bottom)),
 
+                        ElevatedButton(
+                          onPressed: () => goProfile(context),
+                          child: const Text('Profile'),
+                        ),
                         ElevatedButton(
                           onPressed: () {
                             goDayGate(context);

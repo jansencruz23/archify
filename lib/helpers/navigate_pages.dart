@@ -6,6 +6,7 @@ import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/join_or_create_page.dart';
 import 'package:archify/pages/join_page.dart';
+import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/setup_page.dart';
 import 'package:archify/services/database/day/day_gate.dart';
 import 'package:flutter/material.dart';
@@ -67,16 +68,16 @@ void goJoinOrCreate(BuildContext context) {
   );
 }
 
-void goEmptyDay(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const EmptyDayPage()),
-  );
-}
-
 void goDayGate(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => const DayGate()),
+  );
+}
+
+void goProfile(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const ProfilePage()),
   );
 }

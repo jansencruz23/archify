@@ -51,6 +51,7 @@ dependencies:
   rate_my_app: ^2.1.0
   share_plus: ^10.1.2
   url_launcher: ^6.3.1
+  intl: ^0.20.1
 
 
 dev_dependencies:

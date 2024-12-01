@@ -24,7 +24,11 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
-        ChangeNotifierProvider(create: (context) => DayProvider()),
+        ChangeNotifierProxyProvider<UserProvider, DayProvider>(
+          create: (context) => DayProvider(),
+          update: (context, userProvider, dayProvider) =>
+              dayProvider!..update(userProvider),
+        ),
       ],
       child: const MyApp(),
     ),

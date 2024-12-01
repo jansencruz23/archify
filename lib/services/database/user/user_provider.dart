@@ -39,6 +39,9 @@ class UserProvider extends ChangeNotifier {
   late List<Moment> _moments = [];
   List<Moment> get moments => _moments;
 
+  late List<String> _favoriteDaysIds = [];
+  List<String> get favoriteDaysIds => _favoriteDaysIds;
+
   // Gets current user's profile
   Future<UserProfile?> getCurrentUserProfile() async {
     final uid = _authService.getCurrentUid();
@@ -49,9 +52,7 @@ class UserProvider extends ChangeNotifier {
     setLoading(true);
 
     final user = await getCurrentUserProfile();
-    if (user == null) {
-      return;
-    }
+    if (user == null) return;
 
     _userProfile = user;
     _picturePath = user.pictureUrl;
@@ -62,11 +63,10 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> loadUserMoments() async {
     final user = await getCurrentUserProfile();
-    if (user == null) {
-      return;
-    }
+    if (user == null) return;
 
     _moments = await _userService.getUserMomentsFromFirebase();
+    _favoriteDaysIds = user.favoriteDays.map((day) => day.dayId).toList();
     notifyListeners();
   }
 
@@ -138,5 +138,16 @@ class UserProvider extends ChangeNotifier {
     if (dayCode == null) return null;
 
     return dayCode.code;
+  }
+
+  Future<void> toggleFavorites(String dayId) async {
+    if (_favoriteDaysIds.contains(dayId)) {
+      _favoriteDaysIds.remove(dayId);
+    } else {
+      _favoriteDaysIds.add(dayId);
+    }
+    await _userService.addToFavoritesInFirebase(dayId);
+
+    notifyListeners();
   }
 }
