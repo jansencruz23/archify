@@ -1,3 +1,4 @@
+import 'package:archify/models/moment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProfile {
@@ -8,7 +9,7 @@ class UserProfile {
   final String bio;
   final String pictureUrl;
   final bool isNew;
-  late List<String> favoriteDays;
+  late List<Moment> favoriteDays;
 
   UserProfile({
     required this.uid,
@@ -18,7 +19,7 @@ class UserProfile {
     required this.bio,
     required this.pictureUrl,
     required this.isNew,
-    List<String>? favoriteDays,
+    List<Moment>? favoriteDays,
   }) : favoriteDays = favoriteDays ?? [];
 
   // Firebase -> App

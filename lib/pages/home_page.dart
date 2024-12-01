@@ -363,8 +363,7 @@ class _HomePageState extends State<HomePage> {
                               : ListView.builder(
                                   shrinkWrap: true, // Add this line
                                   itemCount:
-                                      (days[_currentIndex].comments ?? [])
-                                          .length,
+                                      (days[_currentIndex].comments).length,
                                   itemBuilder: (context, index) {
                                     final comment =
                                         days[_currentIndex].comments[index];
@@ -440,6 +439,10 @@ class _HomePageState extends State<HomePage> {
                                 bottom:
                                     MediaQuery.of(context).viewInsets.bottom)),
 
+                        ElevatedButton(
+                          onPressed: () => goProfile(context),
+                          child: const Text('Profile'),
+                        ),
                         ElevatedButton(
                           onPressed: () {
                             goDayGate(context);

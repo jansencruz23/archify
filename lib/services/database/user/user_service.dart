@@ -38,7 +38,9 @@ class UserService {
   Future<UserProfile?> getUserFromFirebase(String uid) async {
     try {
       final userDoc = await _db.collection('Users').doc(uid).get();
-      return UserProfile.fromDocument(userDoc);
+      final user = UserProfile.fromDocument(userDoc);
+      user.favoriteDays = await getFavoriteDaysFromFirebase();
+      return user;
     } catch (ex) {
       _logger.severe(ex.toString());
       return null;
@@ -240,9 +242,10 @@ class UserService {
     }
   }
 
-  Future<List<Day>> getFavoriteDaysFromFirebase() async {
+  // enhance
+  Future<List<Moment>> getFavoriteDaysFromFirebase() async {
     try {
-      final days = <Day>[];
+      final moments = <Moment>[];
       final uid = _authService.getCurrentUid();
 
       final favoriteDaysSnapshot = await _db
@@ -252,23 +255,29 @@ class UserService {
           .orderBy('date', descending: true)
           .get();
 
-      if (favoriteDaysSnapshot.docs.isEmpty) return days;
+      if (favoriteDaysSnapshot.docs.isEmpty) return moments;
 
       final dayFutures = favoriteDaysSnapshot.docs.map((dayDoc) async {
         final dayId = dayDoc.data()['dayId'];
         final daySnapshot = await _db.collection('Days').doc(dayId).get();
-        final dayData = daySnapshot.data();
 
-        if (dayData == null) return null;
+        if (!daySnapshot.exists) return null;
 
-        final day = Day.fromDocument(daySnapshot);
-        days.add(day);
-        return day;
+        final momentDoc = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(daySnapshot.data()!['winnerId'])
+            .get();
+        final moment = Moment.fromDocument(momentDoc);
+
+        moments.add(moment);
+        return moment;
       }).toList();
 
       await Future.wait(dayFutures);
 
-      return days;
+      return moments;
     } catch (ex) {
       _logger.severe(ex.toString());
       return [];
