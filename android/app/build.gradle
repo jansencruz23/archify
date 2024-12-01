@@ -7,12 +7,13 @@ plugins {
 
 android {
     namespace = "com.archify.app" // Correct placement for namespace
-    compileSdkVersion 33
+    compileSdkVersion 34
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion // Optional, only if NDK is required
 
     defaultConfig {
         applicationId "com.archify.app"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -30,6 +31,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }
