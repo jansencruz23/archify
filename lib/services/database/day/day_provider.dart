@@ -157,6 +157,15 @@ class DayProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> listenToMoments(String dayCode) async {
+    final dayId = await _dayService.getDayIdFromFirebase(dayCode);
+    if (dayId.isEmpty) return;
+    _dayService.momentsStream(dayId).listen((moments) {
+      _moments = moments;
+      notifyListeners();
+    });
+  }
+
   Future<void> toggleVote(String dayCode, String momentId) async {
     if (_votedMomentIds.contains(momentId)) {
       _votedMomentIds.remove(momentId);

@@ -235,6 +235,34 @@ class DayService {
     }
   }
 
+  Stream<List<Moment>> momentsStream(String dayId) {
+    return _db
+        .collection('Days')
+        .doc(dayId)
+        .collection('Moments')
+        .orderBy('uploadedAt', descending: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      final moments =
+          snapshot.docs.map((doc) => Moment.fromDocument(doc.data())).toList();
+      for (var moment in moments) {
+        final participantDoc = await getParticipantsFromFirebase(dayId);
+        final participant = participantDoc.firstWhere(
+          (element) => element.uid == moment.uploadedBy,
+          orElse: () => Participant(
+            uid: '',
+            role: '',
+            nickname: '',
+            fcmToken: '',
+            hasUploaded: false,
+          ),
+        );
+        moment.nickname = participant.nickname;
+      }
+      return moments;
+    });
+  }
+
   Future<List<Participant>> getParticipantsFromFirebase(String dayId) async {
     try {
       final participantsDoc = await _db
