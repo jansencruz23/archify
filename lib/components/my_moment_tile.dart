@@ -6,14 +6,14 @@ import 'package:provider/provider.dart';
 class MyMomentTile extends StatefulWidget {
   final Moment moment;
   final int index;
-  final void Function(Moment moment) onTap;
+  final void Function(Moment moment, int index)? onTap;
   final void Function(String momentId) toggleVote;
   const MyMomentTile({
     super.key,
     required this.moment,
-    required this.onTap,
-    required this.index,
     required this.toggleVote,
+    required this.index,
+    this.onTap,
   });
 
   @override
@@ -61,7 +61,9 @@ class _MyMomentTileState extends State<MyMomentTile> {
             Stack(
               children: [
                 GestureDetector(
-                  onTap: () => widget.onTap(widget.moment),
+                  onTap: widget.onTap == null
+                      ? () {}
+                      : () => widget.onTap!(widget.moment, widget.index),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
                     child: Image.network(

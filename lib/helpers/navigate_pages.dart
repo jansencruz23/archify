@@ -68,13 +68,6 @@ void goJoinOrCreate(BuildContext context) {
   );
 }
 
-void goEmptyDay(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const EmptyDayPage()),
-  );
-}
-
 void goDayGate(BuildContext context) {
   Navigator.push(
     context,

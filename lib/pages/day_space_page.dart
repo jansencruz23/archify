@@ -3,6 +3,7 @@ import 'package:archify/components/my_moment_tile.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
+import 'package:archify/pages/no_moment_uploaded_page.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,18 +44,24 @@ class _DaySpacePageState extends State<DaySpacePage> {
     return await _dayProvider.isParticipant(widget.dayCode);
   }
 
-  void _showImageDialog(Moment moment) {
+  void _showImageDialog(Moment moment, int index) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        content: Container(
-          width: 200,
-          height: 200,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(moment.imageUrl),
-              fit: BoxFit.cover,
-            ),
+      builder: (context) => Dialog(
+        child: IntrinsicHeight(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: InteractiveViewer(
+                  child: MyMomentTile(
+                    moment: moment,
+                    index: index,
+                    toggleVote: _toggleVote,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -158,18 +165,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
                   ],
                 ),
               )
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('You haven\'t uploaded a moment yet!'),
-                    ElevatedButton(
-                      onPressed: _imageUploadClicked,
-                      child: Text('Upload a moment'),
-                    ),
-                  ],
-                ),
-              ),
+            : NoMomentUploadedPage(imageUploadClicked: _imageUploadClicked),
       ),
     );
   }
