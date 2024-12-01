@@ -92,8 +92,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       return CircleAvatar(
                         radius: 60,
                         backgroundColor: Colors.grey[300],
-                        backgroundImage: provider.userProfile?.profilePictureUrl != null
-                            ? NetworkImage(provider.userProfile!.profilePictureUrl!)
+                        backgroundImage: provider.userProfile?.pictureUrl != null
+                            ? NetworkImage(provider.userProfile!.pictureUrl!)
                             : const AssetImage("assets/placeholder_profile.jpg")
                         as ImageProvider,
                       );
@@ -103,7 +103,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     onPressed: () {
                       // Logic to change profile picture
                     },
-                    backgroundColor: const Color(0xFFFF6F61), // Accent color
+                    backgroundColor: const Color(0xFFFF6F61),
                     child: const Icon(Icons.edit, size: 18, color: Colors.white),
                   ),
                 ],
@@ -117,7 +117,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   labelStyle: const TextStyle(
                     fontFamily: 'Sora',
                     fontSize: 14,
-                    color: Color(0xFF333333), // Dark gray text
+                    color: Color(0xFF333333),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -139,7 +139,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   labelStyle: const TextStyle(
                     fontFamily: 'Sora',
                     fontSize: 14,
-                    color: Color(0xFF333333), // Dark gray text
+                    color: Color(0xFF333333),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -158,7 +158,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ElevatedButton(
                 onPressed: _saveProfile,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF6F61), // Accent color
+                  backgroundColor: const Color(0xFFFF6F61),
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

@@ -106,4 +106,26 @@ class UserProvider extends ChangeNotifier {
     _picturePath = await _storageService.uploadProfilePicture(path);
     return _picturePath;
   }
+
+  // Update user profile
+  Future<void> updateUserProfile({required String name, required String bio}) async {
+    if (_userProfile == null) return;
+
+    setLoading(true);
+
+    // Update the profile locally
+    _userProfile = _userProfile!.copyWith(name: name, bio: bio);
+
+    // Update the profile in Firebase
+    await _userService.updateUserProfileInFirebase(
+      uid: _authService.getCurrentUid(),
+      name: name,
+      bio: bio,
+    );
+
+    setLoading(false);
+    notifyListeners();
+  }
+
 }
+

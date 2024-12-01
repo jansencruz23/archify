@@ -94,4 +94,14 @@ class UserService {
       logger.severe(ex.toString());
     }
   }
+
+  Future<void> updateUserProfileInFirebase({
+    required String uid,
+    required String name,
+    required String bio,
+  }) async {
+    final docRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    await docRef.update({'name': name, 'bio': bio});
+  }
+
 }
