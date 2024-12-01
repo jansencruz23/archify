@@ -49,29 +49,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  void _cancelEdit() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF), // White background
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80.0),
         child: Container(
           decoration: const BoxDecoration(
             color: Colors.white,
             border: Border(
-              bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0), // Light gray border
+              bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0),
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           alignment: Alignment.centerLeft,
           child: const SafeArea(
             child: Text(
-              "Edit Profile", // Updated AppBar text
+              "Edit Profile",
               style: TextStyle(
                 fontFamily: 'Sora',
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: Colors.black, // Black text
+                color: Colors.black,
               ),
             ),
           ),
@@ -83,33 +87,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
           key: _formKey,
           child: Column(
             children: [
-              // Profile picture section
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
-                  Consumer<UserProvider>(
-                    builder: (context, provider, child) {
-                      return CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.grey[300],
-                        backgroundImage: provider.userProfile?.pictureUrl != null
-                            ? NetworkImage(provider.userProfile!.pictureUrl!)
-                            : const AssetImage("assets/placeholder_profile.jpg")
-                        as ImageProvider,
-                      );
-                    },
-                  ),
+                  Consumer<UserProvider>(builder: (context, provider, child) {
+                    return CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.grey[300],
+                      backgroundImage: provider.userProfile?.pictureUrl != null
+                          ? NetworkImage(provider.userProfile!.pictureUrl!)
+                          : const AssetImage("assets/placeholder_profile.jpg")
+                      as ImageProvider,
+                    );
+                  }),
                   FloatingActionButton.small(
-                    onPressed: () {
-                      // Logic to change profile picture
-                    },
+                    onPressed: () {},
                     backgroundColor: const Color(0xFFFF6F61),
                     child: const Icon(Icons.edit, size: 18, color: Colors.white),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              // Name field
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -119,8 +117,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     fontSize: 14,
                     color: Color(0xFF333333),
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  fillColor: const Color(0xFFFAF4E8),
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0xFFFAF4E8), width: 1),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0xFFFAF4E8), width: 2),
+                    borderRadius: BorderRadius.circular(25),
                   ),
                 ),
                 validator: (value) {
@@ -131,7 +136,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
               ),
               const SizedBox(height: 16),
-              // Bio field
               TextFormField(
                 controller: _bioController,
                 decoration: InputDecoration(
@@ -141,8 +145,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     fontSize: 14,
                     color: Color(0xFF333333),
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  fillColor: const Color(0xFFFAF4E8),
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0xFFFAF4E8), width: 1),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0xFFFAF4E8), width: 2),
+                    borderRadius: BorderRadius.circular(25),
                   ),
                 ),
                 maxLines: 3,
@@ -154,25 +165,49 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
               ),
               const SizedBox(height: 24),
-              // Save button
-              ElevatedButton(
-                onPressed: _saveProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF6F61),
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: _cancelEdit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(color: Color(0xFFFF6F61), width: 1),
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(
+                        fontFamily: 'Sora',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Color(0xFFFF6F61),
+                      ),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  "Save",
-                  style: TextStyle(
-                    fontFamily: 'Sora',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.white, // White text
+                  ElevatedButton(
+                    onPressed: _saveProfile,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF6F61),
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    child: const Text(
+                      "Save",
+                      style: TextStyle(
+                        fontFamily: 'Sora',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
