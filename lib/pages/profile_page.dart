@@ -1,5 +1,6 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_profile_picture.dart';
+import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/pages/edit_profile_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
@@ -237,13 +238,7 @@ class _ProfilePageState extends State<ProfilePage>
                         preferredSize: Size.fromHeight(30),
                         child: MyButton(
                           text: 'Edit Profile',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditProfilePage()),
-                            );
-                          },
+                          onTap: () => goEditProfile(context),
                           padding: 8,
                         ),
                       ),
