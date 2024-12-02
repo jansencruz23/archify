@@ -189,7 +189,22 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:
-                      List.generate(2, (index) => buildDot(context, index)),
+                      List.generate(2,
+                              
+                              
+                              (index) => FutureBuilder(future: Future.delayed(Duration(milliseconds: 300 * index)),
+                                  builder: (context, snapshot){
+                                if(snapshot.connectionState == ConnectionState.done){
+                                  return AnimatedOpacity(opacity: 1.0, duration: Duration(milliseconds: 200), child: buildDot(context, index),
+                                  );
+                                }
+                                else {
+                                  return AnimatedOpacity(opacity: 0.0, duration: Duration(milliseconds: 200), child: SizedBox(width: 12),);
+                                }
+                                  })
+
+
+                      ),
                 ),
               ),
               const SizedBox(height: 20),
