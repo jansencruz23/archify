@@ -21,8 +21,8 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
   String? _email;
   late final AuthProvider _authProvider;
   late final UserProvider _userProvider;
-  final TextEditingController _subjectController = TextEditingController();
-  final TextEditingController _bodyController = TextEditingController();
+  late TextEditingController _subjectController = TextEditingController();
+  late TextEditingController _bodyController = TextEditingController();
 
   //Text field focus
   final FocusNode _fieldSubject = FocusNode();
@@ -36,7 +36,13 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
       _email = user?.email ?? 'Email not available';
     });
   }
-
+@override
+  void initState() {
+    // TODO: implement initState
+  _bodyController = TextEditingController();
+  _subjectController = TextEditingController();
+    super.initState();
+  }
   //For Responsiveness
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;
@@ -73,14 +79,16 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
             ),
             //Subject
             //If mas maganda may text na "Subject sa taas"
-            // Text('Subject',                             style: TextStyle(
-            //   fontSize: _getClampedFontSize(context, 0.05),
-            //   fontFamily: 'Sora',
-            //   fontWeight: FontWeight.bold,
-            //   color: Theme.of(context)
-            //       .colorScheme
-            //       .inversePrimary,
-            // ), textAlign: TextAlign.left,),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Subject',                             style: TextStyle(
+                fontSize: _getClampedFontSize(context, 0.05),
+                fontFamily: 'Sora',
+                color: Theme.of(context)
+                    .colorScheme
+                    .inversePrimary,
+              ), textAlign: TextAlign.left,),
+            ),
             Container(
               decoration: BoxDecoration(
                 // border: Border,
@@ -91,8 +99,8 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                 controller: _subjectController,
                 decoration: InputDecoration(
                   labelText: 'Subject',
-                  border: new OutlineInputBorder(
-                      borderSide: new BorderSide(color: Colors.teal)),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.teal)),
                 ),
                 onSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_fieldBody);
@@ -111,20 +119,22 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
             ),
             //Body
             //IF mas maganda pakita na may text na "Body"
-            // Text('Body',                             style: TextStyle(
-            //   fontSize: _getClampedFontSize(context, 0.5),
-            //   fontFamily: 'Sora',
-            //   fontWeight: FontWeight.bold,
-            //   color: Theme.of(context)
-            //       .colorScheme
-            //       .inversePrimary,
-            // ), textAlign: TextAlign.left,),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Body',                             style: TextStyle(
+                fontSize: _getClampedFontSize(context, 0.05),
+                fontFamily: 'Sora',
+                color: Theme.of(context)
+                    .colorScheme
+                    .inversePrimary,
+              ), textAlign: TextAlign.left,),
+            ),
             TextField(
               focusNode: _fieldBody,
               controller: _bodyController,
               decoration: InputDecoration(
                 labelText: 'Body',
-                border: new OutlineInputBorder(
+                border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.teal)),
               ),
               maxLines: 5,
@@ -136,7 +146,7 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
               ),
             ),
             SizedBox(
-              height: 35,
+              height: 50,
             ),
             //submit
             MyButton(
