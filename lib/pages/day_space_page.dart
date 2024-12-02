@@ -115,6 +115,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
     day = listeningProvider.day;
     final moments = listeningProvider.moments;
     final hasUploaded = listeningProvider.hasUploaded;
+    listeningProvider.listenToMoments(widget.dayCode);
 
     return SafeArea(
       child: Scaffold(

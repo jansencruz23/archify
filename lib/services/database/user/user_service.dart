@@ -161,7 +161,9 @@ class UserService {
 
         if (dayData == null ||
             dayData['winnerId'] == null ||
-            dayData['winnerId'].isEmpty) return null;
+            dayData['winnerId'].isEmpty) {
+          return null;
+        }
 
         final winnerId = dayData['winnerId'];
         final momentSnapshot = await _db
@@ -188,24 +190,6 @@ class UserService {
         voterIds.addAll(votersSnapshot.docs.map((doc) => doc.id));
         moment.voterIds = voterIds;
 
-        // Fetch comments in parallel
-        final commentsSnapshot = await _db
-            .collection('Days')
-            .doc(dayId)
-            .collection('Comments')
-            .orderBy('date')
-            .get();
-
-        final commentFutures = commentsSnapshot.docs.map((commentDoc) async {
-          final comment = Comment.fromDocument(commentDoc.data());
-          final userSnapshot =
-              await _db.collection('Users').doc(comment.uid).get();
-          final user = userSnapshot.data();
-          comment.profilePictureUrl = user?['pictureUrl'] ?? '';
-          return comment;
-        });
-
-        moment.comments = await Future.wait(commentFutures);
         return moment;
       }).toList();
 
@@ -300,24 +284,6 @@ class UserService {
         final moment = Moment.fromDocument(momentDoc.data()!);
         moment.dayName = dayData['name'];
 
-        // Fetch comments in parallel
-        final commentsSnapshot = await _db
-            .collection('Days')
-            .doc(daySnapshot.id)
-            .collection('Comments')
-            .orderBy('date')
-            .get();
-
-        final commentFutures = commentsSnapshot.docs.map((commentDoc) async {
-          final comment = Comment.fromDocument(commentDoc.data());
-          final userSnapshot =
-              await _db.collection('Users').doc(comment.uid).get();
-          final user = userSnapshot.data();
-          comment.profilePictureUrl = user?['pictureUrl'] ?? '';
-          return comment;
-        }).toList();
-
-        moment.comments = await Future.wait(commentFutures);
         return moment;
       }).toList();
 

@@ -1,3 +1,4 @@
+import 'package:archify/models/comment.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_service.dart';
@@ -32,6 +33,9 @@ class DayProvider extends ChangeNotifier {
 
   late List<String> _votedMomentIds = [];
   List<String> get votedMomentIds => _votedMomentIds;
+
+  late Map<String, List<Comment>> _commentsByDayId = {};
+  Map<String, List<Comment>> get commentsByDayId => _commentsByDayId;
 
   bool? _hasUploaded;
 
@@ -157,6 +161,15 @@ class DayProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> listenToMoments(String dayCode) async {
+    final dayId = await _dayService.getDayIdFromFirebase(dayCode);
+    if (dayId.isEmpty) return;
+    _dayService.momentsStream(dayId).listen((moments) {
+      _moments = moments;
+      notifyListeners();
+    });
+  }
+
   Future<void> toggleVote(String dayCode, String momentId) async {
     if (_votedMomentIds.contains(momentId)) {
       _votedMomentIds.remove(momentId);
@@ -195,5 +208,12 @@ class DayProvider extends ChangeNotifier {
     await _dayService.sendCommentToFirebase(comment, dayId);
     _userProvider.loadUserMoments();
     notifyListeners();
+  }
+
+  void listenToComments(String dayId) {
+    _dayService.commentsStream(dayId).listen((comments) {
+      _commentsByDayId[dayId] = comments;
+      notifyListeners();
+    });
   }
 }

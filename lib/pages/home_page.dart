@@ -71,8 +71,7 @@ class _HomePageState extends State<HomePage> {
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUserProfile();
-      _loadUserMoments();
+      _loadData();
       _checkIfNewUser();
     });
 
@@ -89,12 +88,11 @@ class _HomePageState extends State<HomePage> {
     _fieldComment.dispose();
 
     super.dispose();
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUserProfile();
-      _loadUserMoments();
-      _checkIfNewUser();
-    });
+  Future<void> _loadData() async {
+    _loadUserProfile();
+    _loadUserMoments();
   }
 
   Future<void> _loadUserMoments() async {
@@ -146,12 +144,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final listeningProvider = Provider.of<UserProvider>(context);
-    final userProfile = listeningProvider.userProfile;
-    final days = listeningProvider.moments;
+    final userListeningProvider = Provider.of<UserProvider>(context);
+    final dayListeningProvider = Provider.of<DayProvider>(context);
+    final userProfile = userListeningProvider.userProfile;
+    final days = userListeningProvider.moments;
     if (_isInitialLoad && days.isNotEmpty) {
       _currentDayId = days.isEmpty ? '' : days[0].dayId;
     }
+    dayListeningProvider.listenToComments(_currentDayId);
+    final comments = dayListeningProvider.commentsByDayId;
 
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
@@ -251,221 +252,227 @@ class _HomePageState extends State<HomePage> {
                         ),
 
                   //Main Body
-                  body: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 10),
-                              GFImageOverlay(
-                                image: AssetImage(
-                                    'lib/assets/images/Bestday_img.png'),
-                                shape: BoxShape.circle,
-                                width: 36,
-                                height: 36,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                'Best of the Day',
-                                style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary,
-                                  fontFamily: 'Sora',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: _getClampedFontSize(context, 0.05),
+                  body: RefreshIndicator(
+                    color: Theme.of(context).colorScheme.secondary,
+                    onRefresh: _loadData,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 10),
+                                GFImageOverlay(
+                                  image: AssetImage(
+                                      'lib/assets/images/Bestday_img.png'),
+                                  shape: BoxShape.circle,
+                                  width: 36,
+                                  height: 36,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Best of the Day',
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                    fontFamily: 'Sora',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        _getClampedFontSize(context, 0.05),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
 
-                        //Carousel
-                        CarouselSlider.builder(
-                          itemCount: days.length,
-                          itemBuilder: (context, index, realIndex) {
-                            if (days.isEmpty) {
-                              return const Center(
-                                child: Text('No moments available.'),
+                          //Carousel
+                          CarouselSlider.builder(
+                            itemCount: days.length,
+                            itemBuilder: (context, index, realIndex) {
+                              if (days.isEmpty) {
+                                return const Center(
+                                  child: Text('No moments available.'),
+                                );
+                              }
+                              final moment = days[index];
+                              bool isMainPhoto = this.realIndex == index;
+
+                              return MyDay(
+                                moment: moment,
+                                isMainPhoto: isMainPhoto,
+                                toggleFavorites: _toggleFavorites,
                               );
-                            }
-                            final moment = days[index];
-                            bool isMainPhoto = this.realIndex == index;
-
-                            return MyDay(
-                              moment: moment,
-                              isMainPhoto: isMainPhoto,
-                              toggleFavorites: _toggleFavorites,
-                            );
-                          },
-                          options: CarouselOptions(
-                            enlargeCenterPage: true,
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            autoPlay: false,
-                            viewportFraction: 0.7,
-                            enableInfiniteScroll: false,
-                            reverse: true,
-                            scrollDirection: Axis.horizontal,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                _currentIndex = index;
-                                _currentDayId = days[index].dayId;
-                                _isInitialLoad = false;
-                              });
                             },
+                            options: CarouselOptions(
+                              enlargeCenterPage: true,
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              autoPlay: false,
+                              viewportFraction: 0.7,
+                              enableInfiniteScroll: false,
+                              reverse: true,
+                              scrollDirection: Axis.horizontal,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  _currentIndex = index;
+                                  _currentDayId = days[index].dayId;
+                                  _isInitialLoad = false;
+                                });
+                              },
+                            ),
                           ),
-                        ),
 
-                        //View Comment Icon
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  // When comment icon is pressed, focus on the comment text field
-                                  FocusScope.of(context)
-                                      .requestFocus(_fieldComment);
-                                },
-                                icon: Icon(
-                                  Icons.comment_outlined,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary,
-                                  size: 24,
+                          //View Comment Icon
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    // When comment icon is pressed, focus on the comment text field
+                                    FocusScope.of(context)
+                                        .requestFocus(_fieldComment);
+                                  },
+                                  icon: Icon(
+                                    Icons.comment_outlined,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                    size: 24,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Comments',
-                                style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary,
-                                  fontFamily: 'Sora',
-                                  fontSize: _getClampedFontSize(context, 0.04),
+                                Text(
+                                  'Comments',
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                    fontFamily: 'Sora',
+                                    fontSize:
+                                        _getClampedFontSize(context, 0.04),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
 
-                        //Comment Section
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: days.isEmpty
-                              ? const Center(
-                                  child: Text('No comments available.'),
-                                )
-                              : ListView.builder(
-                                  shrinkWrap: true, // Add this line
-                                  itemCount:
-                                      (days[_currentIndex].comments).length,
-                                  itemBuilder: (context, index) {
-                                    final comment =
-                                        days[_currentIndex].comments[index];
-                                    return ListTile(
-                                      leading: GFImageOverlay(
-                                        image: Image.network(
-                                                comment.profilePictureUrl)
-                                            .image,
-                                        shape: BoxShape.circle,
-                                        height: 36,
-                                        width: 36,
-                                      ),
-                                      title: Text(
-                                        comment.content,
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary,
-                                          fontFamily: 'Sora',
-                                          fontSize: _getClampedFontSize(
-                                              context, 0.04),
+                          //Comment Section
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: comments[_currentDayId] == null ||
+                                    comments[_currentDayId]!.isEmpty
+                                ? const Center(
+                                    child: Text('No comments available.'),
+                                  )
+                                : ListView.builder(
+                                    shrinkWrap: true, // Add this line
+                                    itemCount: comments[_currentDayId]!.length,
+                                    itemBuilder: (context, index) {
+                                      final comment =
+                                          comments[_currentDayId]![index];
+                                      return ListTile(
+                                        leading: GFImageOverlay(
+                                          image: Image.network(
+                                                  comment.profilePictureUrl)
+                                              .image,
+                                          shape: BoxShape.circle,
+                                          height: 36,
+                                          width: 36,
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                        ),
-
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        //Comment Text Field
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 10),
-                              GFImageOverlay(
-                                image: AssetImage(
-                                    'lib/assets/images/AAlfonso_img.png'),
-                                shape: BoxShape.circle,
-                                height: 36,
-                                width: 36,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: MyCommentTextField(
-                                  focusNode: _fieldComment,
-                                  controller: _commentController,
-                                  hintText: ' Comment...',
-                                  obscureText: false,
-                                  onSubmitted: (value) {
-                                    if (mounted) {
-                                      _fieldComment.unfocus();
-                                    }
-                                  },
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: _sendComment,
-                                icon: Icon(Icons.send),
-                              ),
-                            ],
+                                        title: Text(
+                                          comment.content,
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary,
+                                            fontFamily: 'Sora',
+                                            fontSize: _getClampedFontSize(
+                                                context, 0.04),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                           ),
-                        ),
 
-                        //Bottom Padding
-                        const SizedBox(height: 30),
-                        Padding(
-                            padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom)),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          //Comment Text Field
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 10),
+                                GFImageOverlay(
+                                  image: AssetImage(
+                                      'lib/assets/images/AAlfonso_img.png'),
+                                  shape: BoxShape.circle,
+                                  height: 36,
+                                  width: 36,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: MyCommentTextField(
+                                    focusNode: _fieldComment,
+                                    controller: _commentController,
+                                    hintText: ' Comment...',
+                                    obscureText: false,
+                                    onSubmitted: (value) {
+                                      if (mounted) {
+                                        _fieldComment.unfocus();
+                                      }
+                                    },
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: _sendComment,
+                                  icon: Icon(Icons.send),
+                                ),
+                              ],
+                            ),
+                          ),
 
-                        ElevatedButton(
-                          onPressed: () => goProfile(context),
-                          child: const Text('Profile'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            goDayGate(context);
-                          },
-                          child: const Text('Day'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            goJoinOrCreate(context);
-                          },
-                          child: const Text('Join or Create'),
-                        ),
+                          //Bottom Padding
+                          const SizedBox(height: 30),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context)
+                                      .viewInsets
+                                      .bottom)),
 
-                        // Test Icons
-                        IconButton(
-                          onPressed: _logout,
-                          icon: const Icon(Icons.logout),
-                        ),
-                        IconButton(
-                          onPressed: () => goSetup(context),
-                          icon: const Icon(Icons.home),
-                        ),
-                      ],
+                          ElevatedButton(
+                            onPressed: () => goProfile(context),
+                            child: const Text('Profile'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              goDayGate(context);
+                            },
+                            child: const Text('Day'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              goJoinOrCreate(context);
+                            },
+                            child: const Text('Join or Create'),
+                          ),
+
+                          // Test Icons
+                          IconButton(
+                            onPressed: _logout,
+                            icon: const Icon(Icons.logout),
+                          ),
+                          IconButton(
+                            onPressed: () => goSetup(context),
+                            icon: const Icon(Icons.home),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
