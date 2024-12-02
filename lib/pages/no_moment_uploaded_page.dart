@@ -146,7 +146,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
             titleSpacing: 0,
             leadingWidth: 600,
             leading: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 8.0),
               child: Stack(
                 children: [
                   Text(
@@ -191,7 +191,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'You haven\'t uploaded a moment yet!',
+                      'Oops, no peeking! \nYou haven\'t uploaded a moment yet.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: _getClampedFontSize(context, 0.05),
