@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   bool _isKeyboardVisible =
       false; //For Keyboard to remove navbar visibility -AAlfonso
-  int _selectedIndex = 0;
+  int _selectedIndex = 3;
   bool _showVerticalBar = false;
   bool _isRotated = false;
   int _hoveredIndex = -1;
