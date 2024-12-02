@@ -129,138 +129,155 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color(0xFFFF6F61),
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.sunny,
-                  color: Color(0xFFFF6F61),
-                  size: 30.0,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "Ready for the Challenge?",
-                style: TextStyle(
-                  fontFamily: 'Sora',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 21,
-                  color: Color(0xFF333333),
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 25),
-              MyTextField(
-                controller: _dayNameController,
-                hintText: 'Day',
-                obscureText: false,
-                focusNode: _dayNameFocusNode,
-              ),
-              const SizedBox(height: 12),
-              MyTextField(
-                controller: _dayDescriptionController,
-                hintText: 'Day Description',
-                obscureText: false,
-                focusNode: _dayDescriptionFocusNode,
-              ),
-              const SizedBox(height: 12),
-              MyTextField(
-                controller: _maxParticipantsController,
-                hintText: 'Max Participants',
-                obscureText: false,
-                focusNode: _maxParticipantsFocusNode,
-                inputType: TextInputType.number,
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: ElevatedButton(
-                  onPressed: pickTime,
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(const Color(0xFFFAF1E1)),
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+      body: GestureDetector(
+        onTap: (){
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 50,),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color:  Color(0xFFFF6F61),
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.sunny,
+                      color: Color(0xFFFF6F61),
+                      size: 30.0,
                     ),
-                    elevation: MaterialStateProperty.all(0),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Ready for the Challenge?",
+                    style: TextStyle(
+                      fontFamily: 'Sora',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 21,
+                      color: Color(0xFF333333),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 25),
+                  MyTextField(
+                    controller: _dayNameController,
+                    hintText: 'Day',
+                    obscureText: false,
+                    focusNode: _dayNameFocusNode,
+                    onSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_dayDescriptionFocusNode);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  MyTextField(
+                    controller: _dayDescriptionController,
+                    hintText: 'Day Description',
+                    obscureText: false,
+                    focusNode: _dayDescriptionFocusNode,
+                    onSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_maxParticipantsFocusNode);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  MyTextField(
+                    controller: _maxParticipantsController,
+                    hintText: 'Max Participants',
+                    obscureText: false,
+                    focusNode: _maxParticipantsFocusNode,
+                    inputType: TextInputType.number,
+                    onSubmitted: (_) {
+                      _maxParticipantsFocusNode.unfocus();
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    child: ElevatedButton(
+                      onPressed: pickTime,
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(const Color(0xFFFAF1E1)),
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                        ),
+                        elevation: MaterialStateProperty.all(0),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 12),
+                            child: const Text(
+                              'Pick Voting Deadline',
+                              style: TextStyle(
+                                color: Color(0xFFC8C1B4),
+                                fontFamily: 'Sora',
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: const Icon(
+                              Icons.calendar_today,
+                              color: Color(0xFFC8C1B4),
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: const Text(
-                          'Pick Voting Deadline',
-                          style: TextStyle(
-                            color: Color(0xFFC8C1B4),
-                            fontFamily: 'Sora',
-                            fontSize: 18,
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            side: const BorderSide(color: Color(0xFFFF6F61), width: 1),
+                            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(35),
+                            ),
+                          ),
+                          child: const Text(
+                            "Cancel",
+                            style: TextStyle(
+                              fontFamily: 'Sora',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Color(0xFFFF6F61),
+                            ),
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: const Icon(
-                          Icons.calendar_today,
-                          color: Color(0xFFC8C1B4),
-                          size: 20,
+                      const SizedBox(width: 12),  // Add spacing between buttons
+                      Expanded(
+                        child: MyButton(
+                          onTap: createDay,
+                          text: 'Create Day',
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: Color(0xFFFF6F61), width: 1),
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(35),
-                        ),
-                      ),
-                      child: const Text(
-                        "Cancel",
-                        style: TextStyle(
-                          fontFamily: 'Sora',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Color(0xFFFF6F61),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),  // Add spacing between buttons
-                  Expanded(
-                    child: MyButton(
-                      onTap: createDay,
-                      text: 'Create Day',
-                    ),
-                  ),
+                  )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
         ),
       ),
