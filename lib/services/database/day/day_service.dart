@@ -13,6 +13,7 @@ class DayService {
   final _authService = AuthService();
 
   final _logger = Logger('UserService');
+  final Map<String, Map<String, dynamic>> _userCache = {};
 
   // Save day details in Firebase
   Future<String> createDayInFirebase(Day day) async {
@@ -501,27 +502,42 @@ class DayService {
   }
 
   Stream<List<Comment>> commentsStream(String dayId) {
-    try {
-      return _db
-          .collection('Days')
-          .doc(dayId)
-          .collection('Comments')
-          .orderBy('date')
-          .snapshots()
-          .asyncMap((snapshot) async {
-        return Future.wait(snapshot.docs.map((doc) async {
-          final comment = Comment.fromDocument(doc.data());
-          final userSnapshot =
-              await _db.collection('Users').doc(comment.uid).get();
-          final user = userSnapshot.data();
-          comment.profilePictureUrl = user?['pictureUrl'] ?? '';
+    if (dayId.isEmpty) return Stream.value([]);
+    return _db
+        .collection('Days')
+        .doc(dayId)
+        .collection('Comments')
+        .orderBy('date')
+        .snapshots()
+        .asyncMap((snapshot) async {
+      final userIds = snapshot.docs
+          .map((doc) => doc.data()['uid'])
+          .toSet()
+          .where((uid) => uid != null)
+          .toList();
+      await _fetchUserDataInBulk(userIds);
+      return snapshot.docs.map((doc) {
+        final comment = Comment.fromDocument(doc.data());
+        final user = _userCache[comment.uid];
+        if (user != null) {
+          comment.profilePictureUrl = user['pictureUrl'] ?? '';
+        }
+        return comment;
+      }).toList();
+    });
+  }
 
-          return comment;
-        }).toList());
-      });
-    } catch (ex) {
-      _logger.severe(ex.toString());
-      return Stream.empty();
+  Future<void> _fetchUserDataInBulk(List<dynamic> userIds) async {
+    final userIdsToFetch =
+        userIds.where((uid) => !_userCache.containsKey(uid)).toList();
+    if (userIdsToFetch.isNotEmpty) {
+      final userDocs = await _db
+          .collection('Users')
+          .where(FieldPath.documentId, whereIn: userIdsToFetch)
+          .get();
+      for (var userDoc in userDocs.docs) {
+        _userCache[userDoc.id] = userDoc.data();
+      }
     }
   }
 }

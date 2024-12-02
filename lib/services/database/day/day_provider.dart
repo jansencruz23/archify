@@ -41,6 +41,7 @@ class DayProvider extends ChangeNotifier {
 
   void update(UserProvider userProvider) {
     _userProvider = userProvider;
+    notifyListeners();
   }
 
   bool get hasUploaded => _hasUploaded ?? false;
