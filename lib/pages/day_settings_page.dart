@@ -4,6 +4,7 @@ import 'package:archify/components/my_text_field_form.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class DaySettingsPage extends StatefulWidget {
@@ -14,6 +15,7 @@ class DaySettingsPage extends StatefulWidget {
 }
 
 class _DaySettingsPageState extends State<DaySettingsPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final DayProvider _dayProvider;
   late final TextEditingController _dayNameController;
   late final TextEditingController _dayDescriptionController;
@@ -135,7 +137,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
         ),
       ),
       body: GestureDetector(
-        onTap: (){
+        onTap: () {
           FocusScope.of(context).unfocus();
         },
         child: SingleChildScrollView(
@@ -145,11 +147,13 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 50,),
+                  SizedBox(
+                    height: 50,
+                  ),
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color:  Color(0xFFFF6F61),
+                        color: Color(0xFFFF6F61),
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(8.0),
@@ -173,137 +177,183 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 25),
-
                   Padding(
                     padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
-                    child: Column(
-                      children: [
-                        MyTextFormField(controller: _dayNameController, hintText: 'Day', obscureText: false, focusNode: _dayNameFocusNode, onSubmitted: (_) {
-                          FocusScope.of(context).requestFocus(_dayDescriptionFocusNode);
-                        },),
-                        const SizedBox(height: 12),
-                        MyTextFormField(controller: _dayDescriptionController, hintText: 'Day Description', obscureText: false, focusNode: _dayDescriptionFocusNode, onSubmitted: (_) {
-                          FocusScope.of(context).requestFocus(_maxParticipantsFocusNode);
-                        },),
-                        const SizedBox(height: 12),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
 
 
-                        const SizedBox(height: 12),
-                        MyTextField(
-                          controller: _maxParticipantsController,
-                          hintText: 'Max Participants',
-                          obscureText: false,
-                          focusNode: _maxParticipantsFocusNode,
-                          inputType: TextInputType.number,
-                          onSubmitted: (_) {
-                            FocusScope.of(context).requestFocus(_pickVotingDeadlineFocusNode);
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          focusNode: _pickVotingDeadlineFocusNode,
-                          onPressed: pickTime,
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(const Color(0xFFFAF1E1)),
-                            padding: WidgetStatePropertyAll(
-                              const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                            ),
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                            ),
-                            elevation: WidgetStatePropertyAll(0),
+                          MyTextFormField(
+                            controller: _dayNameController,
+                            hintText: 'Day',
+                            obscureText: false,
+                            focusNode: _dayNameFocusNode,
+                            onSubmitted: (_) {
+                              FocusScope.of(context)
+                                  .requestFocus(_dayDescriptionFocusNode);
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please enter a day name";
+                              }
+                              return null;
+                            },
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Pick Voting Deadline',
-                                style: TextStyle(
+                          const SizedBox(height: 12),
+                          MyTextFormField(
+                            controller: _dayDescriptionController,
+                            hintText: 'Day Description',
+                            obscureText: false,
+                            focusNode: _dayDescriptionFocusNode,
+                            onSubmitted: (_) {
+                              FocusScope.of(context)
+                                  .requestFocus(_maxParticipantsFocusNode);
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please a day description";
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          MyTextFormField(
+                            controller: _maxParticipantsController,
+                            hintText: 'Max Participants',
+                            obscureText: false,
+                            focusNode: _maxParticipantsFocusNode,
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*$'))],
+                            onSubmitted: (_) {
+                              FocusScope.of(context)
+                                  .requestFocus(_pickVotingDeadlineFocusNode);
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please enter max number of participants";
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            focusNode: _pickVotingDeadlineFocusNode,
+                            onPressed: pickTime,
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  WidgetStatePropertyAll(const Color(0xFFFAF1E1)),
+                              padding: WidgetStatePropertyAll(
+                                const EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 20),
+                              ),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25)),
+                              ),
+                              elevation: WidgetStatePropertyAll(0),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Pick Voting Deadline',
+                                  style: TextStyle(
+                                    color: Color(0xFFC8C1B4),
+                                    fontFamily: 'Sora',
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.calendar_today,
                                   color: Color(0xFFC8C1B4),
-                                  fontFamily: 'Sora',
-                                  fontSize: 18,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  side: const BorderSide(
+                                      color: Color(0xFFFF6F61), width: 1),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 50, vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    fontFamily: 'Sora',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Color(0xFFFF6F61),
+                                  ),
                                 ),
                               ),
-                              const Icon(
-                                Icons.calendar_today,
-                                color: Color(0xFFC8C1B4),
-                                size: 20,
+                              // Add spacing between buttons
+                              SizedBox(
+                                width: 24,
+                              ),
+
+                              GestureDetector(
+                                onTap: createDay,
+                                child: MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  onEnter: (PointerEvent details) =>
+                                      setState(() => amIHovering = true),
+
+                                  // callback when your mouse pointer leaves the underlying widget
+                                  onExit: (PointerEvent details) {
+                                    setState(() {
+                                      amIHovering = false;
+                                      // Storing the exit position
+                                      exitFrom = details.localPosition;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(15),
+                                    decoration: BoxDecoration(
+                                      color: amIHovering
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .secondaryContainer
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                      borderRadius: BorderRadius.circular(35),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Create Day',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Sora',
+                                            fontSize: 18),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                side: const BorderSide(color: Color(0xFFFF6F61), width: 1),
-                                padding:  EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                              ),
-                              child: const Text(
-                                "Cancel",
-                                style: TextStyle(
-                                  fontFamily: 'Sora',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                  color: Color(0xFFFF6F61),
-                                ),
-                              ),
-                            ),
-                            // Add spacing between buttons
-                            SizedBox(width: 24,),
-
-              GestureDetector(
-                onTap: createDay,
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  onEnter: (PointerEvent details) => setState(() => amIHovering = true),
-
-                  // callback when your mouse pointer leaves the underlying widget
-                  onExit: (PointerEvent details) {
-                    setState(() {
-                      amIHovering = false;
-                      // Storing the exit position
-                      exitFrom = details.localPosition;
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: amIHovering
-                          ? Theme.of(context).colorScheme.secondaryContainer
-                          : Theme.of(context).colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(35),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Create Day',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Sora',
-                            fontSize: 18),
+                          )
+                        ],
                       ),
                     ),
                   ),
-                ),
-              ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-
-
                 ],
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MyTextFormField extends StatefulWidget {
   final TextEditingController controller;
@@ -10,7 +11,8 @@ class MyTextFormField extends StatefulWidget {
   final Color? focusColor;
   final ValueChanged<String>? onChanged;
   final TextInputType? inputType;
-  final String? Function(String?)? validator; // Added for form validation
+  final String? Function(String?)? validator;
+  final List<TextInputFormatter>? inputFormatters;
 
   const MyTextFormField({
     this.onChanged,
@@ -24,6 +26,7 @@ class MyTextFormField extends StatefulWidget {
     required this.focusNode,
     this.onSubmitted,
     this.inputType,
+    this.inputFormatters,
   });
 
   @override
@@ -67,6 +70,7 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
         valueListenable: focusNotifier,
         builder: (context, hasFocus, child) {
           return TextFormField(
+
             controller: widget.controller,
             obscureText: widget.obscureText,
             focusNode: widget.focusNode,
@@ -74,6 +78,7 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
             onFieldSubmitted: widget.onSubmitted,
             onChanged: widget.onChanged,
             validator: widget.validator,
+            inputFormatters: widget.inputFormatters,
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
               fontFamily: 'Sora',
