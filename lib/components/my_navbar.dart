@@ -1,4 +1,7 @@
+import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MyNavbar extends StatelessWidget {
   final int selectedIndex;
@@ -140,6 +143,7 @@ class _HomeScreenState extends State<HomeScreen>
   int _hoveredIndex = -1;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  late DayProvider _dayProvider;
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -151,6 +155,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -243,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 String enteredCode = _codeController.text;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(

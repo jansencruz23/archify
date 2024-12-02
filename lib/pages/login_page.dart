@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   late final FocusNode _fieldEmail;
   late final FocusNode _fieldPass;
 
-  int _currentIndex = 1;
+  int _currentIndex = 0;
   @override
   void initState() {
     super.initState();
@@ -166,10 +166,30 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children:
-                      List.generate(3, (index) => buildDot(context, index)),
+                  children: List.generate(
+                    2,
+                        (index) => FutureBuilder(
+                      future: Future.delayed(Duration(milliseconds: 300 * index)),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return AnimatedOpacity(
+                            opacity: 1.0,
+                            duration: Duration(milliseconds: 200),
+                            child: buildDot(context, index),
+                          );
+                        }
+                        return AnimatedOpacity(
+                          opacity: 0.0,
+                          duration: Duration(milliseconds: 200),
+                          child: SizedBox(width: 12),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
+
+
 
               const SizedBox(height: 20),
 
