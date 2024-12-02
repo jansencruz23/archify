@@ -160,42 +160,39 @@ class _DayExpiredPageState extends State<DayExpiredPage>
         child: AppBar(
           titleSpacing: 0,
           leadingWidth: 600,
-          leading: SizedBox(
-            height: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Stack(
-                children: [
-                  Text(
-                    'Let’s keep the moment,',
+          leading: Padding(
+            padding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 8.0),
+            child: Stack(
+              children: [
+                Text(
+                  'Let’s keep the moment,',
+                  style: TextStyle(
+                    fontSize: _getClampedFontSize(context, 0.03),
+                    fontFamily: 'Sora',
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+                Positioned(
+                  bottom: -5,
+                  left: 0,
+                  child: Text(
+                    'Pick the best shot!',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.01),
+                      fontSize: _getClampedFontSize(context, 0.05),
                       fontFamily: 'Sora',
+                      fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.inversePrimary,
                     ),
                   ),
-                  Positioned(
-                    bottom: 10,
-                    left: 0,
-                    child: Text(
-                      'Pick the best shot!',
-                      style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.06),
-                        fontFamily: 'Sora',
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(1),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
             child: Divider(
               height: 2,
-              color: Colors.grey,
+              color: Theme.of(context).colorScheme.outline,
             ),
           ),
         ),
@@ -205,16 +202,16 @@ class _DayExpiredPageState extends State<DayExpiredPage>
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.0),
+                    borderRadius: BorderRadius.circular(10.0),
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'DAY CODE: ${day?.code == null ? 'Join a new day' : day!.code}',
+                      'DAY CODE: ${day?.code == null ? '' : day!.code}',
                       style: TextStyle(
                         fontSize: _getClampedFontSize(context, 0.03),
                         fontFamily: 'Sora',
