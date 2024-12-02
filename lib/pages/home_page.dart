@@ -468,42 +468,52 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                                 //Comment Section
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: comments[_currentDayId] == null ||
-                                          comments[_currentDayId]!.isEmpty
-                                      ? const Center(
-                                          child: Text('No comments available.'),
-                                        )
-                                      : ListView.builder(
-                                          shrinkWrap: true, // Add this line
-                                          itemCount:
-                                              comments[_currentDayId]!.length,
-                                          itemBuilder: (context, index) {
-                                            final comment =
-                                                comments[_currentDayId]![index];
-                                            return ListTile(
-                                              leading: GFImageOverlay(
-                                                image: Image.network(comment
-                                                        .profilePictureUrl)
-                                                    .image,
-                                                shape: BoxShape.circle,
-                                                height: 36,
-                                                width: 36,
+                                  padding: const EdgeInsets.only(right: 35, left: 8.0),
+                                  child: SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.28,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Scrollbar(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(bottom: 8.0, top: 8.0, right: 8.0, left: 0.0),
+                                        child: comments[_currentDayId] == null ||
+                                                comments[_currentDayId]!.isEmpty
+                                            ? const Center(
+                                                child: Text('No comments available.'),
+                                              )
+                                            : ListView.builder(
+                                                shrinkWrap: true, // Add this line
+                                                itemCount:
+                                                    comments[_currentDayId]!.length,
+                                                itemBuilder: (context, index) {
+                                                  final comment =
+                                                      comments[_currentDayId]![index];
+                                                  return ListTile(
+                                                    leading: GFImageOverlay(
+                                                      image: Image.network(comment
+                                                              .profilePictureUrl)
+                                                          .image,
+                                                      shape: BoxShape.circle,
+                                                      height: 36,
+                                                      width: 36,
+                                                    ),
+                                                    title: Text(
+                                                      comment.content,
+                                                      style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .inversePrimary,
+                                                        fontFamily: 'Sora',
+                                                        fontSize: _getClampedFontSize(
+                                                            context, 0.04),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
                                               ),
-                                              title: Text(
-                                                comment.content,
-                                                style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .inversePrimary,
-                                                  fontFamily: 'Sora',
-                                                  fontSize: _getClampedFontSize(
-                                                      context, 0.04),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
 
                                 const SizedBox(
@@ -555,8 +565,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
 
+
+
                                 //Bottom Padding
-                                const SizedBox(height: 50),
+                                const SizedBox(height: 100),
                                 Padding(
                                     padding: EdgeInsets.only(
                                         bottom: MediaQuery.of(context)
