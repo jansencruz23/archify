@@ -410,8 +410,8 @@ class _HomePageState extends State<HomePage> {
                                   image: AssetImage(
                                       'lib/assets/images/AAlfonso_img.png'),
                                   shape: BoxShape.circle,
-                                  height: 36,
-                                  width: 36,
+                                  height: 50,
+                                  width: 50,
                                 ),
                                 const SizedBox(
                                   width: 10,
@@ -429,10 +429,12 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   ),
                                 ),
+                                SizedBox(width: 5,),
                                 IconButton(
                                   onPressed: _sendComment,
-                                  icon: Icon(Icons.send),
+                                  icon: Icon(Icons.send, size: 35,),
                                 ),
+                                SizedBox(width: 5,),
                               ],
                             ),
                           ),
