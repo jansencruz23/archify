@@ -137,30 +137,6 @@ class UserService {
     }
   }
 
-  Future<List<Comment>> getCommentsForDay(String dayId) async {
-    try {
-      final commentsSnapshot = await _db
-          .collection('Days')
-          .doc(dayId)
-          .collection('Comments')
-          .orderBy('date')
-          .get();
-      final comments =
-          await Future.wait(commentsSnapshot.docs.map((commentDoc) async {
-        final comment = Comment.fromDocument(commentDoc.data());
-        final userSnapshot =
-            await _db.collection('Users').doc(comment.uid).get();
-        final user = userSnapshot.data();
-        comment.profilePictureUrl = user?['pictureUrl'] ?? '';
-        return comment;
-      }));
-      return comments;
-    } catch (ex) {
-      _logger.severe(ex.toString());
-      return [];
-    }
-  }
-
   Future<List<Moment>> getUserMomentsFromFirebase() async {
     try {
       final moments = <Moment>[];
@@ -213,9 +189,6 @@ class UserService {
         final voterIds = <String>[];
         voterIds.addAll(votersSnapshot.docs.map((doc) => doc.id));
         moment.voterIds = voterIds;
-
-        // Fetch comments separately
-        moment.comments = await getCommentsForDay(dayId);
 
         return moment;
       }).toList();
@@ -311,24 +284,6 @@ class UserService {
         final moment = Moment.fromDocument(momentDoc.data()!);
         moment.dayName = dayData['name'];
 
-        // Fetch comments in parallel
-        final commentsSnapshot = await _db
-            .collection('Days')
-            .doc(daySnapshot.id)
-            .collection('Comments')
-            .orderBy('date')
-            .get();
-
-        final commentFutures = commentsSnapshot.docs.map((commentDoc) async {
-          final comment = Comment.fromDocument(commentDoc.data());
-          final userSnapshot =
-              await _db.collection('Users').doc(comment.uid).get();
-          final user = userSnapshot.data();
-          comment.profilePictureUrl = user?['pictureUrl'] ?? '';
-          return comment;
-        }).toList();
-
-        moment.comments = await Future.wait(commentFutures);
         return moment;
       }).toList();
 
