@@ -138,9 +138,10 @@ class DayProvider extends ChangeNotifier {
     }
 
     final imageUrl = await uploadImage(image.path);
+
     await _dayService.sendImageToFirebase(imageUrl, dayCode);
-    await loadMoments(dayCode);
     await loadHasUploaded(dayCode);
+    await loadMoments(dayCode);
 
     notifyListeners();
   }

@@ -316,7 +316,10 @@ class UserService {
         return;
       }
 
-      await docRef.update({'name': name, 'bio': bio});
+      await docRef.update({
+        'name': name,
+        'bio': bio,
+      });
     } catch (ex) {
       _logger.severe(ex.toString());
     }
