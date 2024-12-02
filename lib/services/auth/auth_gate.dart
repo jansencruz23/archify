@@ -1,3 +1,4 @@
+import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/join_or_create_page.dart';
 import 'package:archify/pages/settings_page.dart';
@@ -17,7 +18,7 @@ class AuthGate extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const SettingsPage();
+            return const EmptyDayPage();
           } else {
             return const LoginOrRegister();
           }
