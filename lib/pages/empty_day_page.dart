@@ -14,10 +14,9 @@ class EmptyDayPage extends StatefulWidget {
 }
 
 class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMixin {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
-  int _hoveredIndex = -1;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
