@@ -22,9 +22,13 @@ class _ProfilePageState extends State<ProfilePage> {
     _userProvider = Provider.of<UserProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUserProfile();
-      _loadUserMoments();
+      _loadData();
     });
+  }
+
+  Future<void> _loadData() async {
+    await _loadUserProfile();
+    await _loadUserMoments();
   }
 
   Future<void> _loadUserMoments() async {
@@ -103,27 +107,32 @@ class _ProfilePageState extends State<ProfilePage> {
                           )),
                     ),
                   )),
-              body: MasonryGridView.builder(
-                  gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  shrinkWrap: true,
-                  itemCount: favoriteDays.length, //sample
-                  itemBuilder: (context, index) {
-                    final imagePath = favoriteDays[index].imageUrl; //sample
-                    if (imagePath.isEmpty) return SizedBox.shrink();
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16.0),
-                        child: Image.network(
-                          imagePath, //sample
-                          width: double.infinity,
-                          height: (index % 3 == 0) ? 180 : 230,
-                          fit: BoxFit.cover,
+              body: RefreshIndicator(
+                onRefresh: _loadData,
+                color: Theme.of(context).colorScheme.secondary,
+                child: MasonryGridView.builder(
+                    gridDelegate:
+                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
+                    shrinkWrap: true,
+                    itemCount: favoriteDays.length, //sample
+                    itemBuilder: (context, index) {
+                      final imagePath = favoriteDays[index].imageUrl; //sample
+                      if (imagePath.isEmpty) return SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.0),
+                          child: Image.network(
+                            imagePath, //sample
+                            width: double.infinity,
+                            height: (index % 3 == 0) ? 180 : 230,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                    );
-                  }),
+                      );
+                    }),
+              ),
             ));
     });
   }
