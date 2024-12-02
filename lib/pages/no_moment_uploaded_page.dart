@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/pages/day_settings_page.dart';
+import '../models/day.dart';
+import '../services/database/day/day_provider.dart';
+import 'package:provider/provider.dart';
 
 class NoMomentUploadedPage extends StatefulWidget {
   final void Function() imageUploadClicked;
@@ -12,6 +15,7 @@ class NoMomentUploadedPage extends StatefulWidget {
 }
 
 class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with TickerProviderStateMixin {
+  late Day? day;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -138,6 +142,9 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
 
   @override
   Widget build(BuildContext context) {
+    final listeningProvider = Provider.of<DayProvider>(context);
+    day = listeningProvider.day;
+
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
@@ -184,6 +191,31 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
         ),
         body: Stack(
           children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(23.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'DAY CODE: ${day?.code == null ? '' : day!.code}',
+                        style: TextStyle(
+                          fontSize: _getClampedFontSize(context, 0.03),
+                          fontFamily: 'Sora',
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.surface,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(36.0),
