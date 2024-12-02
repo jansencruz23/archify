@@ -51,8 +51,8 @@ class MyGridView extends StatelessWidget {
                       ClipOval(
                         child: Image.network(
                           photo,
-                          width: 40,
-                          height: 40,
+                          width: 30,
+                          height: 30,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -60,7 +60,7 @@ class MyGridView extends StatelessWidget {
                       Text(
                       nickname,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontFamily: 'Sora',
                       ),
                     )
@@ -77,7 +77,7 @@ class MyGridView extends StatelessWidget {
                         photo,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        height: imageHeight, //argugent nito (index % 2 == 0) ? 200 : 300,
+                        height: imageHeight, //argument nito (index % 3 == 0) ? 200 : 300, AALFONSO
                       ),
 
                     ),
