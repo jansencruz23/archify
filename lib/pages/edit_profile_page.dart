@@ -1,3 +1,4 @@
+import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,14 +19,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   late final UserProvider _userProvider;
   final ImagePicker _picker = ImagePicker(); // Image picker instance
+  String _imagePath = '';
 
   @override
   void initState() {
-    super.initState();
-    _userProvider = Provider.of<UserProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeUserData();
     });
+    super.initState();
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
   }
 
   Future<void> _initializeUserData() async {
@@ -34,20 +36,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (userProfile != null) {
       _nameController.text = userProfile.name;
       _bioController.text = userProfile.bio;
+      _imagePath = userProfile.pictureUrl;
     }
   }
 
   Future<void> _changeProfilePicture() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       final File imageFile = File(pickedFile.path);
-
-      // Call your provider method to upload and update the profile picture
-      // await _userProvider.updateUserProfilePicture(imageFile);
-
       setState(() {
-        // This will trigger a UI update after the image has been uploaded
+        _imagePath = imageFile.path;
       });
     }
   }
@@ -60,22 +58,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _saveProfile() async {
-    if (mounted) Navigator.pop(context);
     if (_formKey.currentState!.validate()) {
       await _userProvider.updateUserProfile(
-        _nameController.text,
-        _bioController.text,
+        name: _nameController.text,
+        bio: _bioController.text,
+        imagePath: _imagePath,
       );
-    }
-  }
 
-  Future<File?> openImagePicker() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      return File(pickedFile.path);
+      if (mounted) goProfile(context);
     }
-    return null;
   }
 
   void _cancelEdit() {
@@ -136,13 +127,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             return CircleAvatar(
                               radius: 60,
                               backgroundColor: Colors.grey[300],
-                              backgroundImage:
-                                  provider.userProfile?.pictureUrl != null
-                                      ? NetworkImage(
-                                          provider.userProfile!.pictureUrl!)
-                                      : const AssetImage(
-                                              "assets/placeholder_profile.jpg")
-                                          as ImageProvider,
+                              backgroundImage: _imagePath.startsWith('https')
+                                  ? Image.network(_imagePath).image
+                                  : Image.file(File(_imagePath)).image,
                             );
                           }),
                           FloatingActionButton.small(

@@ -50,7 +50,6 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> loadUserProfile() async {
     setLoading(true);
-
     final user = await getCurrentUserProfile();
     if (user == null) return;
 
@@ -67,7 +66,6 @@ class UserProvider extends ChangeNotifier {
 
     _moments = await _userService.getUserMomentsFromFirebase();
     _favoriteDaysIds = user.favoriteDays.map((day) => day.dayId).toList();
-    notifyListeners();
   }
 
   // Get a user's profile by their id
@@ -151,9 +149,21 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateUserProfile(String name, String bio) async {
-    await _userService.updateUserProfileInFirebase(name, bio);
-    _userProfile = _userProfile!.copyWith(name: name, bio: bio);
+  Future<void> updateUserProfile({
+    required String name,
+    required String bio,
+    required String imagePath,
+  }) async {
+    if (_userProfile == null) return;
+
+    final pictureUrl = await uploadProfilePicture(imagePath);
+    await _userService.updateUserProfileInFirebase(name, bio, pictureUrl);
+
+    _userProfile = _userProfile!.copyWith(
+      name: name,
+      bio: bio,
+      pictureUrl: pictureUrl,
+    );
     notifyListeners();
   }
 }

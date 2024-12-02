@@ -297,10 +297,25 @@ class UserService {
     }
   }
 
-  Future<void> updateUserProfileInFirebase(String name, String bio) async {
+  Future<void> updateUserProfileInFirebase(
+    String name,
+    String bio,
+    String imagePath,
+  ) async {
     try {
       final uid = _authService.getCurrentUid();
       final docRef = _db.collection('Users').doc(uid);
+
+      if (imagePath.isNotEmpty) {
+        await docRef.update({
+          'name': name,
+          'bio': bio,
+          'pictureUrl': imagePath,
+        });
+
+        return;
+      }
+
       await docRef.update({'name': name, 'bio': bio});
     } catch (ex) {
       _logger.severe(ex.toString());

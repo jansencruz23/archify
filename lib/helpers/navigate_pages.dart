@@ -76,7 +76,7 @@ void goDayGate(BuildContext context) {
 }
 
 void goProfile(BuildContext context) {
-  Navigator.push(
+  Navigator.pushReplacement(
     context,
     MaterialPageRoute(builder: (context) => const ProfilePage()),
   );

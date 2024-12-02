@@ -253,7 +253,7 @@ class _ProfilePageState extends State<ProfilePage>
                 body: Stack(
                   children: [
                     RefreshIndicator(
-                      onRefresh: _loadData,
+                      onRefresh: _loadUserMoments,
                       color: Theme.of(context).colorScheme.secondary,
                       child: MasonryGridView.builder(
                           gridDelegate:
