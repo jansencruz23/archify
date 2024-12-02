@@ -272,92 +272,90 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ? const Center(child: CircularProgressIndicator())
             : SafeArea(
                 child: Scaffold(
-                    // AppBar with custom height
-                    appBar: PreferredSize(
-                      preferredSize: Size.fromHeight(70),
-                      child: AppBar(
-                        // Leading section with profile picture and welcome text
-                        titleSpacing: 0,
-                        leadingWidth: 100,
+                  // AppBar with custom height
+                  appBar: PreferredSize(
+                    preferredSize: Size.fromHeight(70),
+                    child: AppBar(
+                      // Leading section with profile picture and welcome text
+                      titleSpacing: 0,
+                      leadingWidth: 100,
 
-                        leading: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              // Profile picture widget
-                              MyProfilePicture(
-                                height: 60,
-                                width: 60,
-                                onProfileTapped: () {},
-                              ),
-                            ],
-                          ),
+                      leading: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // Profile picture widget
+                            MyProfilePicture(
+                              height: 60,
+                              width: 60,
+                              onProfileTapped: () {},
+                            ),
+                          ],
                         ),
-                        title: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 8.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Welcome back text
-                              Text(
-                                'Welcome back,',
-                                style: TextStyle(
-                                  fontFamily: 'Sora',
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              // User's name text
-                              Text(
-                                userProfile == null
-                                    ? 'Loading'
-                                    : userProfile.name,
-                                style: TextStyle(
-                                  fontFamily: 'Sora',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Notification icon button
-                        actions: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 5),
-                            child: IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.notifications_outlined,
+                      ),
+                      title: Padding(
+                        padding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Welcome back text
+                            Text(
+                              'Welcome back,',
+                              style: TextStyle(
+                                fontFamily: 'Sora',
                                 color: Theme.of(context)
                                     .colorScheme
                                     .inversePrimary,
-                                size: 30,
+                                fontSize: 16,
                               ),
                             ),
+                            // User's name text
+                            Text(
+                              userProfile == null
+                                  ? 'Loading'
+                                  : userProfile.name,
+                              style: TextStyle(
+                                fontFamily: 'Sora',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Notification icon button
+                      actions: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.notifications_outlined,
+                              color:
+                                  Theme.of(context).colorScheme.inversePrimary,
+                              size: 30,
+                            ),
                           ),
-                        ],
-                        bottom: PreferredSize(
-                          preferredSize: Size.fromHeight(1),
-                          child: Divider(
-                            height: 2,
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
+                        ),
+                      ],
+                      bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(1),
+                        child: Divider(
+                          height: 2,
+                          color: Theme.of(context).colorScheme.outline,
                         ),
                       ),
                     ),
+                  ),
 
-                    //Main Body
-                    body: RefreshIndicator(
+                  //Main Body
+                  body: RefreshIndicator(
                       color: Theme.of(context).colorScheme.secondary,
                       onRefresh: _loadData,
                       child: Stack(
@@ -468,26 +466,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                                 //Comment Section
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 35, left: 8.0),
+                                  padding: const EdgeInsets.only(
+                                      right: 35, left: 8.0),
                                   child: SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         0.28,
                                     width: MediaQuery.of(context).size.width,
                                     child: Scrollbar(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(bottom: 8.0, top: 8.0, right: 8.0, left: 0.0),
-                                        child: comments[_currentDayId] == null ||
+                                        padding: const EdgeInsets.only(
+                                            bottom: 8.0,
+                                            top: 8.0,
+                                            right: 8.0,
+                                            left: 0.0),
+                                        child: comments[_currentDayId] ==
+                                                    null ||
                                                 comments[_currentDayId]!.isEmpty
                                             ? const Center(
-                                                child: Text('No comments available.'),
+                                                child: Text(
+                                                    'No comments available.'),
                                               )
                                             : ListView.builder(
-                                                shrinkWrap: true, // Add this line
+                                                shrinkWrap:
+                                                    true, // Add this line
                                                 itemCount:
-                                                    comments[_currentDayId]!.length,
+                                                    comments[_currentDayId]!
+                                                        .length,
                                                 itemBuilder: (context, index) {
-                                                  final comment =
-                                                      comments[_currentDayId]![index];
+                                                  final comment = comments[
+                                                      _currentDayId]![index];
                                                   return ListTile(
                                                     leading: GFImageOverlay(
                                                       image: Image.network(comment
@@ -504,8 +511,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             .colorScheme
                                                             .inversePrimary,
                                                         fontFamily: 'Sora',
-                                                        fontSize: _getClampedFontSize(
-                                                            context, 0.04),
+                                                        fontSize:
+                                                            _getClampedFontSize(
+                                                                context, 0.04),
                                                       ),
                                                     ),
                                                   );
@@ -565,133 +573,136 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
 
-                              //Bottom Padding
-                              const SizedBox(height: 100),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context)
-                                          .viewInsets
-                                          .bottom)),
-                              // Test Icons
-                              // IconButton(
-                              //   onPressed: _logout,
-                              //   icon: const Icon(Icons.logout),
-                              // ),
-                              // IconButton(
-                              //   onPressed: () => goSetup(context),
-                              //   icon: const Icon(Icons.home),
-                              // ),
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            color: Colors.white,
-                            child: MyNavbar(
-                              selectedIndex: _selectedIndex,
-                              onItemTapped: _onItemTapped,
-                              showVerticalBar: _showVerticalBar,
-                              isRotated: _isRotated,
-                              toggleRotation: _toggleRotation,
-                              showEnterDayCodeDialog: _showEnterDayCodeDialog,
+                                //Bottom Padding
+                                const SizedBox(height: 100),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: MediaQuery.of(context)
+                                            .viewInsets
+                                            .bottom)),
+                                // Test Icons
+                                // IconButton(
+                                //   onPressed: _logout,
+                                //   icon: const Icon(Icons.logout),
+                                // ),
+                                // IconButton(
+                                //   onPressed: () => goSetup(context),
+                                //   icon: const Icon(Icons.home),
+                                // ),
+                              ],
                             ),
                           ),
-                        ),
-
-                        if (_showVerticalBar)
+                          if (!_isKeyboardVisible)
                           Positioned(
                             bottom: 0,
                             left: 0,
                             right: 0,
-                            child: SlideTransition(
-                              position: _slideAnimation,
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 500),
-                                height:
-                                    (_menuItems.length * 50).toDouble() + 100,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFFF6F61),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: IconButton(
-                                        icon: const Icon(
-                                            Icons.keyboard_arrow_down,
-                                            size: 30,
-                                            color: Colors.white),
-                                        onPressed: () {
-                                          setState(() {
-                                            _animationController.reverse();
-                                            _showVerticalBar = false;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: _menuItems.length,
-                                        itemBuilder: (context, index) {
-                                          final item = _menuItems[index];
-                                          return MouseRegion(
-                                            onEnter: (_) {
-                                              setState(() {
-                                                _hoveredIndex = index;
-                                              });
-                                            },
-                                            onExit: (_) {
-                                              setState(() {
-                                                _hoveredIndex = -1;
-                                              });
-                                            },
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                if (item['title'] ==
-                                                    'Enter a day code') {
-                                                  _showEnterDayCodeDialog(
-                                                      context);
-                                                } else if (item['title'] ==
-                                                'Create a day') {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(builder: (context) => DaySettingsPage()),
-                                                  );
-                                                }
-                                              },
-                                              child: ListTile(
-                                                leading: Icon(
-                                                  item['icon'],
-                                                  color: Colors.white,
-                                                ),
-                                                title: Text(
-                                                  item['title'],
-                                                  style: const TextStyle(
-                                                    fontFamily: 'Sora',
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            child: Container(
+                              color: Colors.white,
+                              child: MyNavbar(
+                                selectedIndex: _selectedIndex,
+                                onItemTapped: _onItemTapped,
+                                showVerticalBar: _showVerticalBar,
+                                isRotated: _isRotated,
+                                toggleRotation: _toggleRotation,
+                                showEnterDayCodeDialog: _showEnterDayCodeDialog,
                               ),
                             ),
                           ),
-                      ],
-                    )),
-              ),);
+                          if (_showVerticalBar)
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: SlideTransition(
+                                position: _slideAnimation,
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 500),
+                                  height:
+                                      (_menuItems.length * 50).toDouble() + 100,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFFF6F61),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                              Icons.keyboard_arrow_down,
+                                              size: 30,
+                                              color: Colors.white),
+                                          onPressed: () {
+                                            setState(() {
+                                              _animationController.reverse();
+                                              _showVerticalBar = false;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: _menuItems.length,
+                                          itemBuilder: (context, index) {
+                                            final item = _menuItems[index];
+                                            return MouseRegion(
+                                              onEnter: (_) {
+                                                setState(() {
+                                                  _hoveredIndex = index;
+                                                });
+                                              },
+                                              onExit: (_) {
+                                                setState(() {
+                                                  _hoveredIndex = -1;
+                                                });
+                                              },
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  if (item['title'] ==
+                                                      'Enter a day code') {
+                                                    _showEnterDayCodeDialog(
+                                                        context);
+                                                  } else if (item['title'] ==
+                                                      'Create a day') {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              DaySettingsPage()),
+                                                    );
+                                                  }
+                                                },
+                                                child: ListTile(
+                                                  leading: Icon(
+                                                    item['icon'],
+                                                    color: Colors.white,
+                                                  ),
+                                                  title: Text(
+                                                    item['title'],
+                                                    style: const TextStyle(
+                                                      fontFamily: 'Sora',
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      )),
+                ),
+              );
       },
     );
   }
