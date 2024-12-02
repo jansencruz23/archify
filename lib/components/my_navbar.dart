@@ -6,7 +6,7 @@ class MyNavbar extends StatelessWidget {
   final bool showVerticalBar;
   final bool isRotated;
   final Function toggleRotation;
-  final Function(BuildContext) showEnterDayCodeDialog;
+  final Function(BuildContext)? showEnterDayCodeDialog;
 
   const MyNavbar({
     Key? key,
@@ -15,7 +15,7 @@ class MyNavbar extends StatelessWidget {
     required this.showVerticalBar,
     required this.isRotated,
     required this.toggleRotation,
-    required this.showEnterDayCodeDialog,
+    this.showEnterDayCodeDialog,
   }) : super(key: key);
 
   static const double navIconSize = 30.0;
@@ -148,8 +148,6 @@ class _HomeScreenState extends State<HomeScreen>
     {'icon': Icons.settings, 'title': 'Settings'},
   ];
 
-
-
   @override
   void initState() {
     super.initState();
@@ -161,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen>
     _slideAnimation =
         Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0))
             .animate(CurvedAnimation(
-            parent: _animationController, curve: Curves.easeInOut));
+                parent: _animationController, curve: Curves.easeInOut));
 
     _animationController.addStatusListener((status) {
       print('Animation status: $status');

@@ -4,11 +4,13 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 
 exports.checkVotingDeadlines = functions.pubsub
-  .schedule("every 1 minutes").onRun(async (context) => {
+  .schedule("every 1 minutes")
+  .onRun(async (context) => {
     const now = admin.firestore.Timestamp.now();
 
     try {
-      const snapshot = await admin.firestore()
+      const snapshot = await admin
+        .firestore()
         .collection("Days")
         .where("votingDeadline", "<=", now)
         .get();
@@ -34,15 +36,14 @@ exports.checkVotingDeadlines = functions.pubsub
           });
         });
 
-        doc.ref.update({notified: true});
+        doc.ref.update({ notified: true });
       });
 
       if (notifications.length > 0) {
         await admin.messaging().sendEach(notifications);
         console.log("Notifications sent.");
-        }}
-
-    catch (error) {
+      }
+    } catch (error) {
       console.error("Error checking deadlines:", error);
     }
 

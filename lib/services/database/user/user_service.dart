@@ -1,3 +1,8 @@
+import 'package:archify/models/comment.dart';
+import 'package:archify/models/day.dart';
+import 'package:archify/models/favorite_day.dart';
+import 'package:archify/models/joined_day.dart';
+import 'package:archify/models/moment.dart';
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +14,7 @@ class UserService {
   final _authService = AuthService();
   final _storage = FirebaseStorage.instance;
 
-  final logger = Logger('UserService');
+  final _logger = Logger('UserService');
 
   // Save user profile in Firebase
   Future<void> saveUserInFirebase(String email) async {
@@ -33,9 +38,12 @@ class UserService {
   Future<UserProfile?> getUserFromFirebase(String uid) async {
     try {
       final userDoc = await _db.collection('Users').doc(uid).get();
-      return UserProfile.fromDocument(userDoc);
+      if (!userDoc.exists) return null;
+      final user = UserProfile.fromDocument(userDoc.data()!);
+      user.favoriteDays = await getFavoriteDaysFromFirebase();
+      return user;
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return null;
     }
   }
@@ -49,9 +57,9 @@ class UserService {
           .limit(1)
           .get();
 
-      return UserProfile.fromDocument(userDoc.docs.first);
+      return UserProfile.fromDocument(userDoc.docs.first.data());
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
       return null;
     }
   }
@@ -67,7 +75,7 @@ class UserService {
         'isNew': false,
       });
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
     }
   }
 
@@ -76,7 +84,7 @@ class UserService {
       final userDays = await _db
           .collection('Users')
           .doc(uid)
-          .collection('DayIds')
+          .collection('JoinedDays')
           .doc(dayId)
           .get();
 
@@ -84,14 +92,208 @@ class UserService {
         return;
       }
 
+      final day = JoinedDay(dayId: dayId, date: DateTime.now());
+
       await _db
           .collection('Users')
           .doc(uid)
-          .collection('DayIds')
+          .collection('JoinedDays')
           .doc(dayId)
-          .set({});
+          .set(day.toMap());
     } catch (ex) {
-      logger.severe(ex.toString());
+      _logger.severe(ex.toString());
+    }
+  }
+
+  Future<String?> getJoinedDayIdToday() async {
+    try {
+      final uid = _authService.getCurrentUid();
+      final now = DateTime.now();
+      final todayStart = DateTime(now.year, now.month, now.day, 0, 0, 0);
+      final todayEnd = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+      final joined = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('JoinedDays')
+          .orderBy('date', descending: true)
+          .get();
+
+      if (joined.docs.isEmpty) {
+        return null;
+      }
+
+      final joinedDay = JoinedDay.fromDocument(joined.docs.first.data());
+      final dayDate = joinedDay.date;
+
+      if (dayDate.isBefore(todayStart) || dayDate.isAfter(todayEnd)) {
+        return null;
+      }
+
+      return joinedDay.dayId;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return null;
+    }
+  }
+
+  Future<List<Moment>> getUserMomentsFromFirebase() async {
+    try {
+      final moments = <Moment>[];
+      final uid = _authService.getCurrentUid();
+
+      // Fetch joined days
+      final joinedDaysSnapshot = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('JoinedDays')
+          .orderBy('date', descending: true)
+          .get();
+
+      // Check if there are joined days
+      if (joinedDaysSnapshot.docs.isEmpty) return moments;
+
+      // Fetch days and moments in parallel
+      final dayFutures = joinedDaysSnapshot.docs.map((dayDoc) async {
+        final dayId = dayDoc.data()['dayId'];
+        final daySnapshot = await _db.collection('Days').doc(dayId).get();
+        final dayData = daySnapshot.data();
+
+        if (dayData == null ||
+            dayData['winnerId'] == null ||
+            dayData['winnerId'].isEmpty) {
+          return null;
+        }
+
+        final winnerId = dayData['winnerId'];
+        final momentSnapshot = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(winnerId)
+            .get();
+
+        if (!momentSnapshot.exists) return null;
+
+        final moment = Moment.fromDocument(momentSnapshot.data()!);
+        moment.dayName = dayData['name'];
+
+        final votersSnapshot = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Moments')
+            .doc(winnerId)
+            .collection('Likes')
+            .get();
+
+        final voterIds = <String>[];
+        voterIds.addAll(votersSnapshot.docs.map((doc) => doc.id));
+        moment.voterIds = voterIds;
+
+        return moment;
+      }).toList();
+
+      // Wait for all moments to be fetched
+      final fetchedMoments = await Future.wait(dayFutures);
+      moments.addAll(fetchedMoments.whereType<Moment>());
+
+      return moments;
+    } catch (ex) {
+      _logger.severe('Error fetching user moments: ${ex.toString()}');
+      return [];
+    }
+  }
+
+  Future<void> addToFavoritesInFirebase(String dayId) async {
+    try {
+      final dayRef = await _db.collection('Days').doc(dayId).get();
+      if (!dayRef.exists) return;
+
+      final day = Day.fromDocument(dayRef.data()!);
+      final uid = _authService.getCurrentUid();
+      final favoriteDoc = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('FavoriteDays')
+          .doc(dayId)
+          .get();
+
+      if (favoriteDoc.exists) {
+        // User has already favorited the day, so we remove it
+        await favoriteDoc.reference.delete();
+      } else {
+        final favoriteDay = FavoriteDay(
+          dayId: dayId,
+          date: day.createdAt,
+        );
+
+        // User has not faved the image, so we add to the favoriteDays collection
+        await _db
+            .collection('Users')
+            .doc(uid)
+            .collection('FavoriteDays')
+            .doc(dayId)
+            .set(favoriteDay.toMap());
+      }
+    } catch (ex) {
+      _logger.severe(ex.toString());
+    }
+  }
+
+  Future<List<Moment>> getFavoriteDaysFromFirebase() async {
+    try {
+      final moments = <Moment>[];
+      final uid = _authService.getCurrentUid();
+
+      // Fetch favorite days
+      final favoriteDaysSnapshot = await _db
+          .collection('Users')
+          .doc(uid)
+          .collection('FavoriteDays')
+          .orderBy('date', descending: true)
+          .get();
+
+      if (favoriteDaysSnapshot.docs.isEmpty) return moments;
+
+      // Fetch all day documents in parallel
+      final dayFutures = favoriteDaysSnapshot.docs.map((dayDoc) async {
+        final dayId = dayDoc.data()['dayId'];
+        return _db.collection('Days').doc(dayId).get();
+      }).toList();
+
+      final daySnapshots = await Future.wait(dayFutures);
+
+      // Filter out non-existing days
+      final validDaySnapshots =
+          daySnapshots.where((snapshot) => snapshot.exists).toList();
+
+      // Fetch all moments in parallel
+      final momentFutures = validDaySnapshots.map((daySnapshot) async {
+        final dayData = daySnapshot.data()!;
+        final winnerId = dayData['winnerId'];
+        if (winnerId == null || winnerId.isEmpty) return null;
+
+        final momentDoc = await _db
+            .collection('Days')
+            .doc(daySnapshot.id)
+            .collection('Moments')
+            .doc(winnerId)
+            .get();
+        if (!momentDoc.exists) return null;
+
+        final moment = Moment.fromDocument(momentDoc.data()!);
+        moment.dayName = dayData['name'];
+
+        return moment;
+      }).toList();
+
+      final fetchedMoments = await Future.wait(momentFutures);
+      moments.addAll(fetchedMoments.whereType<Moment>());
+
+      return moments;
+    } catch (ex) {
+      _logger.severe('Error fetching favorite days: ${ex.toString()}');
+      return [];
     }
   }
 

@@ -10,6 +10,7 @@ class Day {
   final String code;
   final DateTime createdAt;
   final bool status;
+  late String winnerId;
 
   Day({
     required this.id,
@@ -21,20 +22,22 @@ class Day {
     required this.code,
     required this.createdAt,
     required this.status,
+    this.winnerId = '',
   });
 
   // Firebase -> App
-  factory Day.fromDocument(DocumentSnapshot doc) {
+  factory Day.fromDocument(Map<String, dynamic> data) {
     return Day(
-      id: doc['id'],
-      hostId: doc['hostId'],
-      name: doc['name'],
-      description: doc['description'],
-      maxParticipants: doc['maxParticipants'],
-      votingDeadline: (doc['votingDeadline'] as Timestamp).toDate(),
-      code: doc['code'],
-      createdAt: (doc['createdAt'] as Timestamp).toDate(),
-      status: doc['status'],
+      id: data['id'],
+      hostId: data['hostId'],
+      name: data['name'],
+      description: data['description'],
+      maxParticipants: data['maxParticipants'],
+      votingDeadline: (data['votingDeadline'] as Timestamp).toDate(),
+      code: data['code'],
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      status: data['status'],
+      winnerId: data['winnerId'],
     );
   }
 
@@ -50,6 +53,7 @@ class Day {
       'code': code,
       'createdAt': createdAt,
       'status': status,
+      'winnerId': winnerId,
     };
   }
 }

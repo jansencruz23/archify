@@ -6,6 +6,7 @@ import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -151,6 +152,18 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
   @override
   void dispose() {
     _animationController.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  Future<void> _loadData() async {
+    await _loadUserProfile();
+    await _loadUserMoments();
+  }
+
+  Future<void> _loadUserMoments() async {
+    await _userProvider.loadUserMoments();
   }
 
   Future<void> _loadUserProfile() async {
@@ -161,10 +174,20 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
     final userProfile = listeningProvider.userProfile;
+    final favoriteDays = userProfile?.favoriteDays ?? [];
 
     return Consumer<UserProvider>(builder: (context, userProvider, child) {
       return userProvider.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: Container(
+                width: MediaQuery.sizeOf(context).width,
+                height: MediaQuery.sizeOf(context).height,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            )
           : SafeArea(
         child: Scaffold(
           appBar: PreferredSize(
@@ -328,6 +351,87 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
           ),
         ),
       );
+              child: Scaffold(
+              appBar: PreferredSize(
+                  preferredSize: Size.fromHeight(180),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: AppBar(
+                      leadingWidth: 120,
+                      toolbarHeight: 75,
+                      titleSpacing: 0,
+                      leading: MyProfilePicture(
+                        height: 150,
+                        width: 120,
+                        onProfileTapped: () {},
+                        hasBorder: true,
+                      ),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              userProfile == null
+                                  ? 'Loading'
+                                  : userProfile.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                                fontSize: 18,
+                              )),
+                          Text(
+                            userProfile == null ? 'Loading' : userProfile.bio,
+                            maxLines: 3,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  Theme.of(context).colorScheme.inversePrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      bottom: PreferredSize(
+                          preferredSize: Size.fromHeight(30),
+                          child: MyButton(
+                            text: 'Edit Profile',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => EditProfilePage()),
+                              );
+                            },
+                            padding: 8,
+                          )),
+                    ),
+                  )),
+              body: RefreshIndicator(
+                onRefresh: _loadData,
+                color: Theme.of(context).colorScheme.secondary,
+                child: MasonryGridView.builder(
+                    gridDelegate:
+                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
+                    shrinkWrap: true,
+                    itemCount: favoriteDays.length, //sample
+                    itemBuilder: (context, index) {
+                      final imagePath = favoriteDays[index].imageUrl; //sample
+                      if (imagePath.isEmpty) return SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.0),
+                          child: Image.network(
+                            imagePath, //sample
+                            width: double.infinity,
+                            height: (index % 3 == 0) ? 180 : 230,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+            ));
     });
   }
 }

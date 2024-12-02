@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'package:archify/models/moment.dart';
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
+import 'package:archify/services/database/day/day_service.dart';
 import 'package:archify/services/database/user/user_service.dart';
 import 'package:archify/services/storage/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +19,28 @@ class UserProvider extends ChangeNotifier {
 
   final _authService = AuthService();
   final _userService = UserService();
+  final _dayService = DayService();
   final _storageService = StorageService();
 
   // Properties to call in the UI
   late String _picturePath = '';
   String get picturePath => _picturePath;
 
-  late UserProfile? _userProfile;
+  late UserProfile? _userProfile = UserProfile(
+      uid: '',
+      name: '',
+      email: '',
+      username: '',
+      bio: '',
+      pictureUrl: '',
+      isNew: false);
   UserProfile? get userProfile => _userProfile;
+
+  late List<Moment> _moments = [];
+  List<Moment> get moments => _moments;
+
+  late List<String> _favoriteDaysIds = [];
+  List<String> get favoriteDaysIds => _favoriteDaysIds;
 
   // Gets current user's profile
   Future<UserProfile?> getCurrentUserProfile() async {
@@ -36,14 +52,21 @@ class UserProvider extends ChangeNotifier {
     setLoading(true);
 
     final user = await getCurrentUserProfile();
-    if (user == null) {
-      return;
-    }
+    if (user == null) return;
 
     _userProfile = user;
     _picturePath = user.pictureUrl;
 
     setLoading(false);
+    notifyListeners();
+  }
+
+  Future<void> loadUserMoments() async {
+    final user = await getCurrentUserProfile();
+    if (user == null) return;
+
+    _moments = await _userService.getUserMomentsFromFirebase();
+    _favoriteDaysIds = user.favoriteDays.map((day) => day.dayId).toList();
     notifyListeners();
   }
 
@@ -107,24 +130,24 @@ class UserProvider extends ChangeNotifier {
     return _picturePath;
   }
 
-  // Update user profile
-  Future<void> updateUserProfile({required String name, required String bio}) async {
-    if (_userProfile == null) return;
+  Future<String?> getJoinedDayCodeToday() async {
+    final dayId = await _userService.getJoinedDayIdToday();
+    if (dayId == null) return null;
 
-    setLoading(true);
+    final dayCode = await _dayService.getDayFromFirebase(dayId);
+    if (dayCode == null) return null;
 
-    // Update the profile locally
-    _userProfile = _userProfile!.copyWith(name: name, bio: bio);
-
-    // Update the profile in Firebase
-    await _userService.updateUserProfileInFirebase(
-      uid: _authService.getCurrentUid(),
-      name: name,
-      bio: bio,
-    );
-
-    setLoading(false);
-    notifyListeners();
+    return dayCode.code;
   }
 
+  Future<void> toggleFavorites(String dayId) async {
+    if (_favoriteDaysIds.contains(dayId)) {
+      _favoriteDaysIds.remove(dayId);
+    } else {
+      _favoriteDaysIds.add(dayId);
+    }
+    await _userService.addToFavoritesInFirebase(dayId);
+
+    notifyListeners();
+  }
 }

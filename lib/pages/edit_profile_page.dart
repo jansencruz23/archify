@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
-
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
 
@@ -43,7 +42,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final File imageFile = File(pickedFile.path);
 
       // Call your provider method to upload and update the profile picture
-     // await _userProvider.updateUserProfilePicture(imageFile);
+      // await _userProvider.updateUserProfilePicture(imageFile);
 
       setState(() {
         // This will trigger a UI update after the image has been uploaded
@@ -60,10 +59,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _saveProfile() async {
     if (_formKey.currentState!.validate()) {
-      await _userProvider.updateUserProfile(
-        name: _nameController.text,
-        bio: _bioController.text,
-      );
+      // await _userProvider.updateUserProfile(
+      //   name: _nameController.text,
+      //   bio: _bioController.text,
+      // );
       Navigator.pop(context);
     }
   }
@@ -80,8 +79,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void _cancelEdit() {
     Navigator.pop(context);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -127,13 +124,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       backgroundImage: provider.userProfile?.pictureUrl != null
                           ? NetworkImage(provider.userProfile!.pictureUrl!)
                           : const AssetImage("assets/placeholder_profile.jpg")
-                      as ImageProvider,
+                              as ImageProvider,
                     );
                   }),
                   FloatingActionButton.small(
-                    onPressed: _changeProfilePicture, // Trigger profile picture change
+                    onPressed:
+                        _changeProfilePicture, // Trigger profile picture change
                     backgroundColor: const Color(0xFFFF6F61),
-                    child: const Icon(Icons.edit, size: 18, color: Colors.white),
+                    child:
+                        const Icon(Icons.edit, size: 18, color: Colors.white),
                   ),
                 ],
               ),
@@ -150,11 +149,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   fillColor: const Color(0xFFFAF4E8),
                   filled: true,
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0xFFFAF4E8), width: 1),
+                    borderSide:
+                        const BorderSide(color: Color(0xFFFAF4E8), width: 1),
                     borderRadius: BorderRadius.circular(25),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0xFFFAF4E8), width: 2),
+                    borderSide:
+                        const BorderSide(color: Color(0xFFFAF4E8), width: 2),
                     borderRadius: BorderRadius.circular(25),
                   ),
                 ),
@@ -178,11 +179,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   fillColor: const Color(0xFFFAF4E8),
                   filled: true,
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0xFFFAF4E8), width: 1),
+                    borderSide:
+                        const BorderSide(color: Color(0xFFFAF4E8), width: 1),
                     borderRadius: BorderRadius.circular(25),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0xFFFAF4E8), width: 2),
+                    borderSide:
+                        const BorderSide(color: Color(0xFFFAF4E8), width: 2),
                     borderRadius: BorderRadius.circular(25),
                   ),
                 ),
@@ -202,8 +205,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     onPressed: _cancelEdit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      side: const BorderSide(color: Color(0xFFFF6F61), width: 1),
-                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      side:
+                          const BorderSide(color: Color(0xFFFF6F61), width: 1),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
@@ -222,7 +227,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     onPressed: _saveProfile,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF6F61),
-                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
