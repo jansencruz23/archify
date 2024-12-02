@@ -60,7 +60,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
       },
     );
 
-
     if (pickedTime != null) {
       if (pickedTime.hour < now.hour ||
           (pickedTime.hour == now.hour && pickedTime.minute < now.minute)) {
@@ -226,23 +225,42 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              MyButton(
-                onTap: createDay,
-                text: 'Create Day',
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "<- Back",
-                  style: TextStyle(
-                    fontFamily: 'Sora',
-                    fontSize: 14,
-                    color: Color(0xFF333333),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Color(0xFFFF6F61), width: 1),
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                      ),
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(
+                          fontFamily: 'Sora',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Color(0xFFFF6F61),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                  const SizedBox(width: 12),  // Add spacing between buttons
+                  Expanded(
+                    child: MyButton(
+                      onTap: createDay,
+                      text: 'Create Day',
+                    ),
+                  ),
+                ],
+              )
+
             ],
           ),
         ),
