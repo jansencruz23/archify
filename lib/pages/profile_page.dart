@@ -2,6 +2,7 @@ import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/pages/edit_profile_page.dart';
+import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin {
   late final UserProvider _userProvider;
-  int _selectedIndex = 0;
+  int _selectedIndex = 3;
   bool _showVerticalBar = false;
   bool _isRotated = false;
   int _hoveredIndex = -1;
@@ -288,8 +289,16 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
                                   },
                                   child: GestureDetector(
                                     onTap: () {
-                                      if (item['title'] == 'Enter a day code') {
-                                        _showEnterDayCodeDialog(context);
+                                      if (item['title'] ==
+                                          'Enter a day code') {
+                                        _showEnterDayCodeDialog(
+                                            context);
+                                      } else if (item['title'] ==
+                                          'Create a day') {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => DaySettingsPage()),
+                                        );
                                       }
                                     },
                                     child: ListTile(

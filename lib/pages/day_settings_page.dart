@@ -235,7 +235,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                   Navigator.pop(context);
                 },
                 child: const Text(
-                  "<- Back to home",
+                  "<- Back",
                   style: TextStyle(
                     fontFamily: 'Sora',
                     fontSize: 14,
