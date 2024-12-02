@@ -278,13 +278,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: AppBar(
                         // Leading section with profile picture and welcome text
                         titleSpacing: 0,
-                        leadingWidth: 100,
-
+                        leadingWidth: 80,
                         leading: Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.fromLTRB(8.0, 16.0, 0, 16.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Profile picture widget
                               MyProfilePicture(
@@ -297,9 +296,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         ),
                         title: Padding(
                           padding:
-                              const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 8.0),
+                              const EdgeInsets.fromLTRB(0, 12.0, 8.0, 8.0),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Welcome back text
@@ -310,7 +309,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .inversePrimary,
-                                  fontSize: 16,
+                                  fontSize: 13,
                                 ),
                               ),
                               // User's name text
@@ -321,7 +320,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 style: TextStyle(
                                   fontFamily: 'Sora',
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                  fontSize: 16,
                                   color: Theme.of(context)
                                       .colorScheme
                                       .inversePrimary,
@@ -366,7 +365,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             child: Column(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 8.0),
                                   child: Row(
                                     children: [
                                       const SizedBox(width: 10),

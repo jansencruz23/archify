@@ -171,21 +171,3 @@ class _DaySpacePageState extends State<DaySpacePage> {
     );
   }
 }
-//eto sen
-// class ImageDialog extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Dialog(
-//       child: Container(
-//         width: 200,
-//         height: 200,
-//         decoration: BoxDecoration(
-//             image: DecorationImage(
-//                 image: ExactAssetImage('lib/assets/images/sample_Image2.jpg'),
-//                 fit: BoxFit.cover
-//             )
-//         ),
-//       ),
-//     );
-//   }
-// }
