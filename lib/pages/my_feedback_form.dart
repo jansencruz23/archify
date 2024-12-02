@@ -2,6 +2,7 @@ import 'package:archify/components/my_button.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../components/my_text_field.dart';
 import '../services/auth/auth_provider.dart';
 import '../services/auth/auth_service.dart';
 import '../services/database/user/user_provider.dart';
@@ -55,126 +56,141 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
     _fieldBody.dispose();
     super.dispose();
   }
-
+  void _unfocusAllFields() {
+    FocusScope.of(context).unfocus();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Got Feedback? Submit it here.',
-              style: TextStyle(
-                fontSize: _getClampedFontSize(context, 0.08),
-                fontFamily: 'Sora',
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.inversePrimary,
-              ),
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            //Subject
-            //If mas maganda may text na "Subject sa taas"
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Subject',                             style: TextStyle(
-                fontSize: _getClampedFontSize(context, 0.05),
-                fontFamily: 'Sora',
-                color: Theme.of(context)
-                    .colorScheme
-                    .inversePrimary,
-              ), textAlign: TextAlign.left,),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                // border: Border,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: TextField(
-                focusNode: _fieldSubject,
-                controller: _subjectController,
-                decoration: InputDecoration(
-                  labelText: 'Subject',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.teal)),
+      appBar: AppBar(
+        title: Text('Feedback', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color:Theme.of(context)
+            .colorScheme
+            .inversePrimary),),
+      ),
+      body: GestureDetector(
+        onTap: _unfocusAllFields,
+        behavior: HitTestBehavior.translucent,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 30.0, right:  30.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Got Feedback? Submit it here.',
+                  style: TextStyle(
+                    fontSize: _getClampedFontSize(context, 0.08),
+                    fontFamily: 'Sora',
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
                 ),
-                onSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_fieldBody);
-                },
-                style: TextStyle(
+                SizedBox(
+                  height: 24,
+                ),
+                //Subject
+                //If mas maganda may text na "Subject sa taas"
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Subject',                             style: TextStyle(
+                    fontSize: _getClampedFontSize(context, 0.05),
+                    fontFamily: 'Sora',
+                    color: Theme.of(context)
+                        .colorScheme
+                        .inversePrimary,
+                  ), textAlign: TextAlign.left,),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    // border: Border,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: TextField(
+                    focusNode: _fieldSubject,
+                    controller: _subjectController,
+                    decoration: InputDecoration(
+                      labelText: 'Subject',
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.teal)),
+                    ),
+                    onSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_fieldBody);
+                    },
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
+                ),
+
+                SizedBox(
+                  height: 20,
+                ),
+                Divider(
                   color: Theme.of(context).colorScheme.inversePrimary,
                 ),
-              ),
-            ),
+                //Body
+                //IF mas maganda pakita na may text na "Body"
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Body',                             style: TextStyle(
+                    fontSize: _getClampedFontSize(context, 0.05),
+                    fontFamily: 'Sora',
+                    color: Theme.of(context)
+                        .colorScheme
+                        .inversePrimary,
+                  ), textAlign: TextAlign.left,),
+                ),
+                TextField(
+                  focusNode: _fieldBody,
+                  controller: _bodyController,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(16.0),
+                    labelText: 'Body',
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.teal)),
+                  ),
 
-            SizedBox(
-              height: 20,
-            ),
-            Divider(
-              color: Theme.of(context).colorScheme.inversePrimary,
-            ),
-            //Body
-            //IF mas maganda pakita na may text na "Body"
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Body',                             style: TextStyle(
-                fontSize: _getClampedFontSize(context, 0.05),
-                fontFamily: 'Sora',
-                color: Theme.of(context)
-                    .colorScheme
-                    .inversePrimary,
-              ), textAlign: TextAlign.left,),
-            ),
-            TextField(
-              focusNode: _fieldBody,
-              controller: _bodyController,
-              decoration: InputDecoration(
-                labelText: 'Body',
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.teal)),
-              ),
-              maxLines: 5,
-              onSubmitted: (_) {
-                FocusScope.of(context).unfocus();
-              },
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.inversePrimary,
-              ),
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            //submit
-            MyButton(
-                text: 'Submit',
-                onTap: () {
-                  final subject = _subjectController.text;
-                  final body = _bodyController.text;
-                  widget.onSubmit(subject, body);
-                  Navigator.pop(context);
+                  onSubmitted: (_) {
+                    _fieldBody.unfocus();
+                  },
+                  maxLines: 5,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                //submit
+                MyButton(
+                    text: 'Submit',
+                    onTap: () {
+                      final subject = _subjectController.text;
+                      final body = _bodyController.text;
+                      widget.onSubmit(subject, body);
+                      Navigator.pop(context);
 
-                  String? encodeQueryParameters(Map<String, String> params) {
-                    return params.entries
-                        .map((MapEntry<String, String> e) =>
-                            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-                        .join('&');
-                  }
+                      String? encodeQueryParameters(Map<String, String> params) {
+                        return params.entries
+                            .map((MapEntry<String, String> e) =>
+                                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                            .join('&');
+                      }
 
-                  final Uri emailLaunchUri = Uri(
-                    scheme: 'mailto',
-                    path: 'archify.app@gmail.com',
-                    query: encodeQueryParameters(<String, String>{
-                      'subject': subject, //gmail subject
-                      'body': body //gmail
-                    }),
-                  );
-                  launchUrl(emailLaunchUri);
-                })
-          ],
+                      final Uri emailLaunchUri = Uri(
+                        scheme: 'mailto',
+                        path: 'archify.app@gmail.com',
+                        query: encodeQueryParameters(<String, String>{
+                          'subject': subject, //gmail subject
+                          'body': body //gmail
+                        }),
+                      );
+                      launchUrl(emailLaunchUri);
+                    })
+              ],
+            ),
+          ),
         ),
       ),
     );
