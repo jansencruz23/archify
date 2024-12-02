@@ -1,6 +1,7 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/services/database/user/user_provider.dart';
+import 'package:archify/pages/edit_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -102,7 +103,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           preferredSize: Size.fromHeight(30),
                           child: MyButton(
                             text: 'Edit Profile',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => EditProfilePage()),
+                              );
+                            },
                             padding: 8,
                           )),
                     ),

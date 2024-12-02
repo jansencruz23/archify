@@ -6,6 +6,7 @@ class MyNavbar extends StatelessWidget {
   final bool showVerticalBar;
   final bool isRotated;
   final Function toggleRotation;
+  final Function(BuildContext)? showEnterDayCodeDialog;
 
   const MyNavbar({
     Key? key,
@@ -14,6 +15,7 @@ class MyNavbar extends StatelessWidget {
     required this.showVerticalBar,
     required this.isRotated,
     required this.toggleRotation,
+    this.showEnterDayCodeDialog,
   }) : super(key: key);
 
   static const double navIconSize = 30.0;
@@ -136,7 +138,6 @@ class _HomeScreenState extends State<HomeScreen>
   bool _showVerticalBar = false;
   bool _isRotated = false;
   int _hoveredIndex = -1;
-
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
@@ -158,15 +159,21 @@ class _HomeScreenState extends State<HomeScreen>
     _slideAnimation =
         Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0))
             .animate(CurvedAnimation(
-            parent: _animationController, curve: Curves.easeInOut));
+                parent: _animationController, curve: Curves.easeInOut));
+
+    _animationController.addStatusListener((status) {
+      print('Animation status: $status');
+    });
   }
 
   void _onItemTapped(int index) {
     setState(() {
       if (index == 2) {
         if (_showVerticalBar) {
+          print('Reversing animation');
           _animationController.reverse();
         } else {
+          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
@@ -203,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           content: TextField(
             controller: _codeController,
-            cursorColor: Colors.white, // Cursor remains white
+            cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Enter your code',
               hintStyle: TextStyle(
@@ -283,6 +290,7 @@ class _HomeScreenState extends State<HomeScreen>
               showVerticalBar: _showVerticalBar,
               isRotated: _isRotated,
               toggleRotation: _toggleRotation,
+              showEnterDayCodeDialog: _showEnterDayCodeDialog,
             ),
           ),
           if (_showVerticalBar)
@@ -347,13 +355,10 @@ class _HomeScreenState extends State<HomeScreen>
                                   title: Text(
                                     item['title'],
                                     style: const TextStyle(
-                                      color: Colors.white,
                                       fontFamily: 'Sora',
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  tileColor: _hoveredIndex == index
-                                      ? const Color(0xFFF2776B)
-                                      : Colors.transparent,
                                 ),
                               ),
                             );

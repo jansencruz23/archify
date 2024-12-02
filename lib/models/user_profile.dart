@@ -22,6 +22,8 @@ class UserProfile {
     List<Moment>? favoriteDays,
   }) : favoriteDays = favoriteDays ?? [];
 
+
+
   // Firebase -> App
   factory UserProfile.fromDocument(Map<String, dynamic> doc) {
     return UserProfile(
@@ -47,4 +49,25 @@ class UserProfile {
       'isNew': isNew,
     };
   }
+
+  UserProfile copyWith({
+    String? uid,
+    String? name,
+    String? username,
+    String? email,
+    String? bio,
+    String? pictureUrl,
+    bool? isNew,
+  }) {
+    return UserProfile(
+      uid: uid ?? this.uid,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      username: username ?? this.username,
+      bio: bio ?? this.bio,
+      pictureUrl: pictureUrl ?? this.pictureUrl,
+      isNew: isNew ?? this.isNew,
+    );
+  }
+
 }

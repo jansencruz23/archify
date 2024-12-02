@@ -1,13 +1,12 @@
 import 'package:archify/firebase_options.dart';
+import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/home_page.dart';
-import 'package:archify/pages/register_page.dart';
 import 'package:archify/pages/setup_page.dart';
 import 'package:archify/pages/setup_pages/setup_intro_page.dart';
 import 'package:archify/services/auth/auth_gate.dart';
 import 'package:archify/services/auth/auth_provider.dart';
-import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
-import 'package:archify/services/notification/fcm_service.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/themes/light_mode.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,6 @@ void main() async {
   // Firebase setup
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FCMService.setupFCM();
 
   runApp(
     MultiProvider(
@@ -44,7 +42,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: lightMode,
       initialRoute: '/',
-      routes: {'/': (context) => AuthGate()},
+      routes: {'/': (context) => const AuthGate()},
     );
   }
 }
