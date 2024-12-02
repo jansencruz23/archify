@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../components/my_text_field.dart';
+import 'package:archify/pages/day_settings_page.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -45,10 +47,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {
       if (index == 2) {
         if (_showVerticalBar) {
-          print('Reversing animation');
           _animationController.reverse();
         } else {
-          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
@@ -65,7 +65,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void _toggleRotation() {
     setState(() {
       _isRotated = !_isRotated;
-      print('Is Rotated: $_isRotated');
     });
   }
 
@@ -767,6 +766,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                     'Enter a day code') {
                                                   _showEnterDayCodeDialog(
                                                       context);
+                                                } else if (item['title'] ==
+                                                'Create a day') {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => Provider<DayProvider>(
+                                                        create: (_) => DayProvider(),
+                                                        child: DaySettingsPage(),
+                                                      ),
+                                                    ),
+                                                  );
                                                 }
                                               },
                                               child: ListTile(
