@@ -158,10 +158,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Row(
                           children: [
-                            Icon(Icons.settings,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary), //Add ons --AAlfonso
                             SizedBox(width: 8),
                             Text(
                               'Settings',

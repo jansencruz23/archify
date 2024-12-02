@@ -73,7 +73,6 @@ class _MySettingsButtonState extends State<MySettingsButton> {
                     widget.text,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.inversePrimary,
-                      fontWeight: FontWeight.bold,
                       fontFamily: 'Sora',
                       fontSize: 18,
                     ),
