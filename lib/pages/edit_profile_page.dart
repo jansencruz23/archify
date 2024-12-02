@@ -23,7 +23,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     _userProvider = Provider.of<UserProvider>(context, listen: false);
-    _initializeUserData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeUserData();
+    });
   }
 
   Future<void> _initializeUserData() async {
