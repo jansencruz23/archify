@@ -67,6 +67,11 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
       },
     );
 
+    //submission key
+    // void _submitForm() async {
+    //   if (!_formKey.currentState!.validate()) return;
+    // }
+
     if (pickedTime != null) {
       if (pickedTime.hour < now.hour ||
           (pickedTime.hour == now.hour && pickedTime.minute < now.minute)) {
@@ -90,12 +95,15 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
   }
 
   Future<void> createDay() async {
+    if (!_formKey.currentState!.validate()) return;
     final dayName = _dayNameController.text;
     final dayDescription = _dayDescriptionController.text;
     final maxParticipants = int.tryParse(_maxParticipantsController.text);
 
+
     if (dayName.isEmpty || dayDescription.isEmpty || maxParticipants == null) {
       return;
+
     }
 
     final dayId = await _dayProvider.createDay(
@@ -105,13 +113,19 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
       votingDeadline: _votingDeadline,
     );
 
+
+
     goDayCode(context, dayId);
   }
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: Theme.of(context)
+          .colorScheme
+          .primary,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80.0),
         child: Container(
@@ -183,8 +197,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                       key: _formKey,
                       child: Column(
                         children: [
-
-
                           MyTextFormField(
                             controller: _dayNameController,
                             hintText: 'Day',
@@ -238,6 +250,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                           ),
                           const SizedBox(height: 12),
                           ElevatedButton(
+
                             focusNode: _pickVotingDeadlineFocusNode,
                             onPressed: pickTime,
                             style: ButtonStyle(
@@ -272,7 +285,13 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 12),
+                        ],
+
+                    ),
+                    ),
+                  ),
+
+                           const SizedBox(height: 12),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -313,11 +332,12 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                                   onEnter: (PointerEvent details) =>
                                       setState(() => amIHovering = true),
 
-                                  // callback when your mouse pointer leaves the underlying widget
+
+
                                   onExit: (PointerEvent details) {
                                     setState(() {
                                       amIHovering = false;
-                                      // Storing the exit position
+
                                       exitFrom = details.localPosition;
                                     });
                                   },
@@ -350,10 +370,9 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                               ),
                             ],
                           )
-                        ],
-                      ),
-                    ),
-                  ),
+
+
+
                 ],
               ),
             ),

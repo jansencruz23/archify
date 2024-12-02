@@ -13,12 +13,14 @@ class MyTextFormField extends StatefulWidget {
   final TextInputType? inputType;
   final String? Function(String?)? validator;
   final List<TextInputFormatter>? inputFormatters;
+  final InputDecoration? decoration;
 
   const MyTextFormField({
     this.onChanged,
     this.fillColor,
     this.focusColor,
     this.validator,
+    this.decoration,
     super.key,
     required this.controller,
     required this.hintText,
@@ -64,13 +66,31 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
-        color: Theme.of(context).colorScheme.tertiary,
+        color: Theme.of(context).colorScheme.surface,
       ),
       child: ValueListenableBuilder<bool>(
         valueListenable: focusNotifier,
         builder: (context, hasFocus, child) {
-          return TextFormField(
+          final defaultDecoration = InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(
+                width: 0,
+                style: BorderStyle.none,
+              ),
+              borderRadius: BorderRadius.circular(25.0),
+            ),
+            fillColor: hasFocus ? focusColor : fillColor,
+            filled: true,
+            hintText: widget.hintText,
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontFamily: 'Sora',
+              fontSize: 18,
+            ),
+            contentPadding: const EdgeInsets.only(left: 30),
+          );
 
+          return TextFormField(
             controller: widget.controller,
             obscureText: widget.obscureText,
             focusNode: widget.focusNode,
@@ -84,24 +104,12 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
               fontFamily: 'Sora',
               fontSize: 18,
             ),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  width: 0,
-                  style: BorderStyle.none,
-                ),
-                borderRadius: BorderRadius.circular(25.0),
-              ),
-              fillColor: hasFocus ? focusColor : fillColor,
-              filled: true,
-              hintText: widget.hintText,
-              hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontFamily: 'Sora',
-                fontSize: 18,
-              ),
-              contentPadding: const EdgeInsets.only(left: 30),
-            ),
+            decoration: widget.decoration?.copyWith(
+              fillColor: hasFocus
+                  ? widget.decoration?.fillColor ?? focusColor
+                  : widget.decoration?.fillColor ?? fillColor,
+            ) ??
+                defaultDecoration,
           );
         },
       ),
