@@ -770,12 +770,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 'Create a day') {
                                                   Navigator.push(
                                                     context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) => Provider<DayProvider>(
-                                                        create: (_) => DayProvider(),
-                                                        child: DaySettingsPage(),
-                                                      ),
-                                                    ),
+                                                    MaterialPageRoute(builder: (context) => DaySettingsPage()),
                                                   );
                                                 }
                                               },
