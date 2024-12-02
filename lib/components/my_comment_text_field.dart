@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 
 
@@ -72,6 +73,9 @@ class _MyCommentTextFieldState extends State<MyCommentTextField> {
         valueListenable: focusNotifier,
         builder: (context, hasFocus, child) {
           return TextField(
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(25),
+              ],
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
               fontFamily: 'Sora',
