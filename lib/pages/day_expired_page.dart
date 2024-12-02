@@ -91,7 +91,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('DAY CODE: ${day == null ? 'Loading' : day!.votingDeadline.toString()}',style: TextStyle(
+                  child: Text('DAY CODE: ${day?.code == null ? 'Join a new day' : day!.code}',style: TextStyle(
                         fontSize: _getClampedFontSize(context, 0.03),
                         fontFamily: 'Sora',
                         fontWeight: FontWeight.bold,
