@@ -150,4 +150,10 @@ class UserProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<void> updateUserProfile(String name, String bio) async {
+    await _userService.updateUserProfileInFirebase(name, bio);
+    _userProfile = _userProfile!.copyWith(name: name, bio: bio);
+    notifyListeners();
+  }
 }

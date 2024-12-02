@@ -156,6 +156,7 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   void dispose() {
+    super.dispose();
     _animationController.dispose();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();

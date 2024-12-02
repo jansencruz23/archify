@@ -297,13 +297,13 @@ class UserService {
     }
   }
 
-  Future<void> updateUserProfileInFirebase({
-    required String uid,
-    required String name,
-    required String bio,
-  }) async {
-    final docRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    await docRef.update({'name': name, 'bio': bio});
+  Future<void> updateUserProfileInFirebase(String name, String bio) async {
+    try {
+      final uid = _authService.getCurrentUid();
+      final docRef = _db.collection('Users').doc(uid);
+      await docRef.update({'name': name, 'bio': bio});
+    } catch (ex) {
+      _logger.severe(ex.toString());
+    }
   }
-
 }
