@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 
 void main() async {
   // Firebase setup
+  Provider.debugCheckInvalidValueType = null;
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
