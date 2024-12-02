@@ -61,12 +61,17 @@ class DayService {
         fcmToken: fcmToken,
         hasUploaded: false,
       );
-      await _db
+      final participantDocRef = _db
           .collection('Days')
           .doc(day.id)
           .collection('Participants')
-          .doc(currentUserId)
-          .set(participant.toMap());
+          .doc(currentUserId);
+
+      // Use a WriteBatch to perform the write operation
+      final batch = _db.batch();
+      batch.set(participantDocRef, participant.toMap());
+
+      await batch.commit();
     } catch (ex) {
       _logger.severe(ex.toString());
     }
@@ -75,23 +80,17 @@ class DayService {
   Future<bool> isRoomFull(String dayCode) async {
     try {
       final day = await getDayByCodeFromFirebase(dayCode);
-      if (day == null) {
-        return false;
-      }
+      if (day == null) return false;
 
-      final currentParticipantCount = await _db
+      final currentParticipantCountSnapshot = await _db
           .collection('Days')
           .doc(day.id)
           .collection('Participants')
           .count()
-          .get()
-          .then((value) => value.count);
+          .get();
 
-      if (currentParticipantCount == null) {
-        return true;
-      }
-
-      return day.maxParticipants <= currentParticipantCount;
+      final currentParticipantCount = currentParticipantCountSnapshot.count;
+      return day.maxParticipants <= currentParticipantCount!;
     } catch (ex) {
       _logger.severe(ex.toString());
       return true;
@@ -138,23 +137,30 @@ class DayService {
 
   Future<bool> isDayExistingAndActiveInFirebase(String dayCode) async {
     try {
-      final dayDoc =
-          await _db.collection('Days').where('code', isEqualTo: dayCode).get();
-      if (dayDoc.docs.isEmpty) {
-        return false;
-      }
+      // Fetch day document by code
+      final dayQuerySnapshot = await _db
+          .collection('Days')
+          .where('code', isEqualTo: dayCode)
+          .limit(1)
+          .get();
 
-      final day = Day.fromDocument(dayDoc.docs.first.data());
+      // Check if no documents are found
+      if (dayQuerySnapshot.docs.isEmpty) return false;
 
-      if (day.status == false) {
-        return false;
-      }
+      // Get the first document and map it to a Day object
+      final dayDoc = dayQuerySnapshot.docs.first;
+      final day = Day.fromDocument(dayDoc.data());
 
+      // Check if the day is inactive
+      if (!day.status) return false;
+
+      // Check if the voting deadline has passed
       if (day.votingDeadline.isBefore(DateTime.now())) {
-        await _db.collection('Days').doc(day.id).update({'status': false});
+        await dayDoc.reference.update({'status': false});
         return false;
       }
 
+      // Return the status of the day
       return day.status;
     } catch (ex) {
       _logger.severe(ex.toString());
@@ -164,13 +170,16 @@ class DayService {
 
   Future<String> getDayIdFromFirebase(String dayCode) async {
     try {
-      final dayDoc =
-          await _db.collection('Days').where('code', isEqualTo: dayCode).get();
-      if (dayDoc.docs.isEmpty) {
-        return '';
-      }
+      final querySnapshot = await _db
+          .collection('Days')
+          .where('code', isEqualTo: dayCode)
+          .limit(1)
+          .get();
 
-      final day = Day.fromDocument(dayDoc.docs.first.data());
+      if (querySnapshot.docs.isEmpty) return '';
+
+      final dayDoc = querySnapshot.docs.first;
+      final day = Day.fromDocument(dayDoc.data());
       return day.id;
     } catch (ex) {
       _logger.severe(ex.toString());
@@ -180,13 +189,15 @@ class DayService {
 
   Future<Day?> getDayByCodeFromFirebase(String dayCode) async {
     try {
-      final dayDoc =
-          await _db.collection('Days').where('code', isEqualTo: dayCode).get();
-      if (dayDoc.docs.isEmpty) {
-        return null;
-      }
+      final querySnapshot = await _db
+          .collection('Days')
+          .where('code', isEqualTo: dayCode)
+          .limit(1)
+          .get();
 
-      return Day.fromDocument(dayDoc.docs.first.data());
+      if (querySnapshot.docs.isEmpty) return null;
+
+      return Day.fromDocument(querySnapshot.docs.first.data());
     } catch (ex) {
       _logger.severe(ex.toString());
       return null;
@@ -196,9 +207,7 @@ class DayService {
   Future<List<Moment>> getMomentsFromFirebase(String dayCode) async {
     try {
       final dayId = await getDayIdFromFirebase(dayCode);
-      if (dayId.isEmpty) {
-        return [];
-      }
+      if (dayId.isEmpty) return [];
 
       final momentsDoc = await _db
           .collection('Days')
@@ -211,20 +220,24 @@ class DayService {
           .map((doc) => Moment.fromDocument(doc.data()))
           .toList();
 
-      for (var moment in moments) {
-        final participantDoc = await getParticipantsFromFirebase(dayId);
-        final participant = participantDoc.firstWhere(
-          (element) => element.uid == moment.uploadedBy,
-          orElse: () => Participant(
-            uid: '',
-            role: '',
-            nickname: '',
-            fcmToken: '',
-            hasUploaded: false,
-          ),
-        );
+      final participantIds = moments.map((moment) => moment.uploadedBy).toSet();
+      final participantSnapshot = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .where(FieldPath.documentId, whereIn: participantIds.toList())
+          .get();
 
-        moment.nickname = participant.nickname;
+      final participants = participantSnapshot.docs
+          .map((doc) => Participant.fromDocument(doc.data()))
+          .toList();
+
+      final participantMap = {
+        for (var participant in participants) participant.uid: participant
+      };
+
+      for (var moment in moments) {
+        moment.nickname = participantMap[moment.uploadedBy]?.nickname ?? '';
       }
 
       return moments;
@@ -248,13 +261,16 @@ class DayService {
             .toList();
         final participantIds =
             moments.map((moment) => moment.uploadedBy).toSet();
+
         await _fetchParticipantsInBulk(participantIds, dayId);
+
         for (var moment in moments) {
           final participant = _participantCache[moment.uploadedBy];
           if (participant != null) {
             moment.nickname = participant.nickname;
           }
         }
+
         return moments;
       },
     );
@@ -265,6 +281,7 @@ class DayService {
     final idsToFetch = participantIds
         .where((id) => !_participantCache.containsKey(id))
         .toList();
+
     if (idsToFetch.isNotEmpty) {
       final participantDocs = await _db
           .collection('Days')
@@ -272,6 +289,7 @@ class DayService {
           .collection('Participants')
           .where(FieldPath.documentId, whereIn: idsToFetch)
           .get();
+
       for (var doc in participantDocs.docs) {
         final participant = Participant.fromDocument(doc.data());
         _participantCache[doc.id] = participant;
@@ -281,16 +299,15 @@ class DayService {
 
   Future<List<Participant>> getParticipantsFromFirebase(String dayId) async {
     try {
-      final participantsDoc = await _db
+      final participantsSnapshot = await _db
           .collection('Days')
           .doc(dayId)
           .collection('Participants')
           .get();
 
-      final participants = participantsDoc.docs
+      return participantsSnapshot.docs
           .map((doc) => Participant.fromDocument(doc.data()))
           .toList();
-      return participants;
     } catch (ex) {
       _logger.severe(ex.toString());
       return [];
@@ -305,57 +322,33 @@ class DayService {
       }
 
       final currentUid = _authService.getCurrentUid();
-      final likeDoc = await _db
-          .collection('Days')
-          .doc(dayId)
-          .collection('Moments')
-          .doc(imageId)
-          .collection('Likes')
-          .doc(currentUid)
-          .get();
+      final momentDocRef =
+          _db.collection('Days').doc(dayId).collection('Moments').doc(imageId);
+      final likeDocRef = momentDocRef.collection('Likes').doc(currentUid);
 
-      if (likeDoc.exists) {
+      final likeDocSnapshot = await likeDocRef.get();
+      final batch = _db.batch();
+
+      final momentDocSnapshot = await momentDocRef.get();
+      if (!momentDocSnapshot.exists) return;
+
+      final momentData = momentDocSnapshot.data();
+      if (momentData == null) return;
+
+      final moment = Moment.fromDocument(momentData);
+
+      if (likeDocSnapshot.exists) {
         // User has already voted the image, so we remove the like
-        await likeDoc.reference.delete();
-
-        final momentDoc = await _db
-            .collection('Days')
-            .doc(dayId)
-            .collection('Moments')
-            .doc(imageId)
-            .get();
-
-        if (!momentDoc.exists) return;
-
-        final moment = Moment.fromDocument(momentDoc.data()!);
+        batch.delete(likeDocRef);
         moment.votes -= 1;
-
-        await momentDoc.reference.update({'votes': moment.votes});
       } else {
         // User has not liked the image, so we add the like
-        await _db
-            .collection('Days')
-            .doc(dayId)
-            .collection('Moments')
-            .doc(imageId)
-            .collection('Likes')
-            .doc(currentUid)
-            .set({});
-
-        final momentDoc = await _db
-            .collection('Days')
-            .doc(dayId)
-            .collection('Moments')
-            .doc(imageId)
-            .get();
-
-        if (!momentDoc.exists) return;
-
-        final moment = Moment.fromDocument(momentDoc.data()!);
+        batch.set(likeDocRef, <String, dynamic>{});
         moment.votes += 1;
-
-        await momentDoc.reference.update({'votes': moment.votes});
       }
+
+      batch.update(momentDocRef, {'votes': moment.votes});
+      await batch.commit();
     } catch (ex) {
       _logger.severe(ex.toString());
     }
