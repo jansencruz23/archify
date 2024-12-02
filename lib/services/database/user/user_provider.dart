@@ -61,11 +61,15 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> loadUserMoments() async {
+    setLoading(true);
     final user = await getCurrentUserProfile();
     if (user == null) return;
 
     _moments = await _userService.getUserMomentsFromFirebase();
     _favoriteDaysIds = user.favoriteDays.map((day) => day.dayId).toList();
+
+    setLoading(false);
+    notifyListeners();
   }
 
   // Get a user's profile by their id
@@ -83,8 +87,10 @@ class UserProvider extends ChangeNotifier {
   }
 
   // Update user is not new
-  Future<void> updateUserAfterSetup(
-      {required String name, required String pictureUrl}) async {
+  Future<void> updateUserAfterSetup({
+    required String name,
+    required String pictureUrl,
+  }) async {
     await _userService.updateUserAfterSetupInFirebase(
       name: name != '' ? name : 'Anon',
       pictureUrl: pictureUrl,

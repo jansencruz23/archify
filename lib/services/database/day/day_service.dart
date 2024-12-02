@@ -14,6 +14,7 @@ class DayService {
 
   final _logger = Logger('UserService');
   final Map<String, Map<String, dynamic>> _userCache = {};
+  final Map<String, Participant> _participantCache = {};
 
   // Save day details in Firebase
   Future<String> createDayInFirebase(Day day) async {
@@ -100,21 +101,14 @@ class DayService {
   Future<void> sendImageToFirebase(String imageUrl, String dayCode) async {
     try {
       final dayId = await getDayIdFromFirebase(dayCode);
-      if (dayId.isEmpty) {
-        return;
-      }
+      if (dayId.isEmpty) return;
 
       final uid = _authService.getCurrentUid();
-      final participantDoc = await _db
-          .collection('Days')
-          .doc(dayId)
-          .collection('Participants')
-          .doc(uid)
-          .get();
+      final participantDocRef =
+          _db.collection('Days').doc(dayId).collection('Participants').doc(uid);
 
-      if (!participantDoc.exists) {
-        return;
-      }
+      final participantDoc = await participantDocRef.get();
+      if (!participantDoc.exists) return;
 
       final participant = Participant.fromDocument(participantDoc.data()!);
       participant.hasUploaded = true;
@@ -122,17 +116,21 @@ class DayService {
       final moment = Moment(
         momentId: '',
         imageUrl: imageUrl,
-        uploadedBy: _authService.getCurrentUid(),
+        uploadedBy: uid,
         uploadedAt: DateTime.now(),
         dayId: dayId,
       );
 
-      final docRef =
+      final momentDocRef =
           _db.collection('Days').doc(dayId).collection('Moments').doc();
-      moment.momentId = docRef.id;
+      moment.momentId = momentDocRef.id;
 
-      await docRef.set(moment.toMap());
-      await participantDoc.reference.update(participant.toMap());
+      // Use a WriteBatch to perform multiple write operations in a single request
+      final batch = _db.batch();
+      batch.set(momentDocRef, moment.toMap());
+      batch.update(participantDocRef, participant.toMap());
+
+      await batch.commit();
     } catch (ex) {
       _logger.severe(ex.toString());
     }
@@ -248,24 +246,37 @@ class DayService {
         final moments = snapshot.docs
             .map((doc) => Moment.fromDocument(doc.data()))
             .toList();
-
+        final participantIds =
+            moments.map((moment) => moment.uploadedBy).toSet();
+        await _fetchParticipantsInBulk(participantIds, dayId);
         for (var moment in moments) {
-          final participantDoc = await getParticipantsFromFirebase(dayId);
-          final participant = participantDoc.firstWhere(
-            (element) => element.uid == moment.uploadedBy,
-            orElse: () => Participant(
-              uid: '',
-              role: '',
-              nickname: '',
-              fcmToken: '',
-              hasUploaded: false,
-            ),
-          );
-          moment.nickname = participant.nickname;
+          final participant = _participantCache[moment.uploadedBy];
+          if (participant != null) {
+            moment.nickname = participant.nickname;
+          }
         }
         return moments;
       },
     );
+  }
+
+  Future<void> _fetchParticipantsInBulk(
+      Set<String> participantIds, String dayId) async {
+    final idsToFetch = participantIds
+        .where((id) => !_participantCache.containsKey(id))
+        .toList();
+    if (idsToFetch.isNotEmpty) {
+      final participantDocs = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .where(FieldPath.documentId, whereIn: idsToFetch)
+          .get();
+      for (var doc in participantDocs.docs) {
+        final participant = Participant.fromDocument(doc.data());
+        _participantCache[doc.id] = participant;
+      }
+    }
   }
 
   Future<List<Participant>> getParticipantsFromFirebase(String dayId) async {
@@ -538,6 +549,71 @@ class DayService {
       for (var userDoc in userDocs.docs) {
         _userCache[userDoc.id] = userDoc.data();
       }
+    }
+  }
+
+  Future<bool> isHost(String dayId) async {
+    try {
+      final uid = _authService.getCurrentUid();
+      final dayDoc = await _db.collection('Days').doc(dayId).get();
+      if (!dayDoc.exists) return false;
+
+      final day = Day.fromDocument(dayDoc.data()!);
+      return day.hostId == uid;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return false;
+    }
+  }
+
+  Future<void> leaveDayInFirebase(String dayId) async {
+    try {
+      final uid = _authService.getCurrentUid();
+      final batch = _db.batch();
+
+      // Remove the user from Participants collection
+      final participantRef =
+          _db.collection('Days').doc(dayId).collection('Participants').doc(uid);
+      batch.delete(participantRef);
+
+      // Delete user's moments
+      final momentsSnapshot = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Moments')
+          .where('uploadedBy', isEqualTo: uid)
+          .get();
+      for (var moment in momentsSnapshot.docs) {
+        batch.delete(moment.reference);
+      }
+
+      // Adjust votes and delete likes
+      final momentsWithLikesSnapshot =
+          await _db.collection('Days').doc(dayId).collection('Moments').get();
+      for (var moment in momentsWithLikesSnapshot.docs) {
+        final likesSnapshot = await moment.reference
+            .collection('Likes')
+            .where(FieldPath.documentId, isEqualTo: uid)
+            .get();
+        if (likesSnapshot.docs.isNotEmpty) {
+          final momentData = moment.data();
+          for (var like in likesSnapshot.docs) {
+            batch.delete(like.reference);
+          }
+          if (momentData['votes'] != null) {
+            moment.reference.update({'votes': momentData['votes'] - 1});
+          }
+        }
+      }
+      // Remove the day from the user's joined days
+      final joinedDayRef =
+          _db.collection('Users').doc(uid).collection('JoinedDays').doc(dayId);
+      batch.delete(joinedDayRef);
+
+      // Commit the batch
+      await batch.commit();
+    } catch (ex) {
+      _logger.severe(ex.toString());
     }
   }
 }

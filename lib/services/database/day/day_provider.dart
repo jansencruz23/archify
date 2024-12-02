@@ -217,4 +217,13 @@ class DayProvider extends ChangeNotifier {
       notifyListeners();
     });
   }
+
+  Future<bool> isHost(String dayId) async {
+    return await _dayService.isHost(dayId);
+  }
+
+  Future<void> leaveDay(String dayId) async {
+    await _dayService.leaveDayInFirebase(dayId);
+    notifyListeners();
+  }
 }

@@ -105,6 +105,46 @@ class _DaySpacePageState extends State<DaySpacePage> {
     );
   }
 
+  Future<void> _showSettings() async {
+    if (day == null) return;
+
+    final isHost = await _dayProvider.isHost(day!.id);
+
+    if (isHost) {
+      //goEditDaySettings(context, day!.id);
+    } else {
+      _showParticipantSettings();
+    }
+  }
+
+  void _showParticipantSettings() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Leave the Day?'),
+        content: Text('Are you sure you want to leave?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: Colors.black)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              goRootPage(context);
+              await _leaveDay();
+            },
+            child: Text('Leave', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _leaveDay() async {
+    await _dayProvider.leaveDay(day!.id);
+  }
+
   Future<void> _toggleVote(String momentId) async {
     await _dayProvider.toggleVote(widget.dayCode, momentId);
   }
@@ -135,6 +175,10 @@ class _DaySpacePageState extends State<DaySpacePage> {
                 IconButton(
                   onPressed: _imageUploadClicked,
                   icon: Icon(Icons.photo),
+                ),
+                IconButton(
+                  onPressed: _showSettings,
+                  icon: Icon(Icons.settings_rounded),
                 ),
               ],
             ),
