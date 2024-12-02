@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   late final FocusNode _fieldEmail;
   late final FocusNode _fieldPass;
 
-  int _currentIndex = 1;
+  int _currentIndex = 0;
   @override
   void initState() {
     super.initState();

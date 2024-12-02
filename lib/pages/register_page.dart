@@ -29,7 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
   late final FocusNode _fieldPass;
   late final FocusNode _fieldRepass;
 
-  int _currentIndex = 2;
+  int _currentIndex = 1;
 
   @override
   void initState() {
