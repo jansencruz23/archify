@@ -167,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:
-                      List.generate(3, (index) => buildDot(context, index)),
+                      List.generate(2, (index) => buildDot(context, index)),
                 ),
               ),
 

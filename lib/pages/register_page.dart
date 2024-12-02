@@ -189,7 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:
-                      List.generate(3, (index) => buildDot(context, index)),
+                      List.generate(2, (index) => buildDot(context, index)),
                 ),
               ),
               const SizedBox(height: 20),
