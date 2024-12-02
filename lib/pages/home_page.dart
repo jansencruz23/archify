@@ -565,144 +565,133 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
 
-
-
-                                //Bottom Padding
-                                const SizedBox(height: 100),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom: MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom)),
-                                // Test Icons
-                                // IconButton(
-                                //   onPressed: _logout,
-                                //   icon: const Icon(Icons.logout),
-                                // ),
-                                // IconButton(
-                                //   onPressed: () => goSetup(context),
-                                //   icon: const Icon(Icons.home),
-                                // ),
-                              ],
+                              //Bottom Padding
+                              const SizedBox(height: 100),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: MediaQuery.of(context)
+                                          .viewInsets
+                                          .bottom)),
+                              // Test Icons
+                              // IconButton(
+                              //   onPressed: _logout,
+                              //   icon: const Icon(Icons.logout),
+                              // ),
+                              // IconButton(
+                              //   onPressed: () => goSetup(context),
+                              //   icon: const Icon(Icons.home),
+                              // ),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            color: Colors.white,
+                            child: MyNavbar(
+                              selectedIndex: _selectedIndex,
+                              onItemTapped: _onItemTapped,
+                              showVerticalBar: _showVerticalBar,
+                              isRotated: _isRotated,
+                              toggleRotation: _toggleRotation,
+                              showEnterDayCodeDialog: _showEnterDayCodeDialog,
                             ),
                           ),
+                        ),
+
+                        if (_showVerticalBar)
                           Positioned(
                             bottom: 0,
                             left: 0,
                             right: 0,
-                            child: Container(
-                              color: Colors.white,
-                              child: MyNavbar(
-                                selectedIndex: _selectedIndex,
-                                onItemTapped: _onItemTapped,
-                                showVerticalBar: _showVerticalBar,
-                                isRotated: _isRotated,
-                                toggleRotation: _toggleRotation,
-                                showEnterDayCodeDialog: _showEnterDayCodeDialog,
-                              ),
-                            ),
-                          ),
-                          if (_showVerticalBar)
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: SlideTransition(
-                                position: _slideAnimation,
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 500),
-                                  height:
-                                      (_menuItems.length * 50).toDouble() + 100,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFFF6F61),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(20),
-                                      topRight: Radius.circular(20),
-                                    ),
+                            child: SlideTransition(
+                              position: _slideAnimation,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 500),
+                                height:
+                                    (_menuItems.length * 50).toDouble() + 100,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFF6F61),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
                                   ),
-                                  child: Column(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.topRight,
-                                        child: IconButton(
-                                          icon: const Icon(
-                                              Icons.keyboard_arrow_down,
-                                              size: 30,
-                                              color: Colors.white),
-                                          onPressed: () {
-                                            setState(() {
-                                              _animationController.reverse();
-                                              _showVerticalBar = false;
-                                            });
-                                          },
-                                        ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: IconButton(
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_down,
+                                            size: 30,
+                                            color: Colors.white),
+                                        onPressed: () {
+                                          setState(() {
+                                            _animationController.reverse();
+                                            _showVerticalBar = false;
+                                          });
+                                        },
                                       ),
-                                      Expanded(
-                                        child: ListView.builder(
-                                          itemCount: _menuItems.length,
-                                          itemBuilder: (context, index) {
-                                            final item = _menuItems[index];
-                                            return MouseRegion(
-                                              onEnter: (_) {
-                                                setState(() {
-                                                  _hoveredIndex = index;
-                                                });
+                                    ),
+                                    Expanded(
+                                      child: ListView.builder(
+                                        itemCount: _menuItems.length,
+                                        itemBuilder: (context, index) {
+                                          final item = _menuItems[index];
+                                          return MouseRegion(
+                                            onEnter: (_) {
+                                              setState(() {
+                                                _hoveredIndex = index;
+                                              });
+                                            },
+                                            onExit: (_) {
+                                              setState(() {
+                                                _hoveredIndex = -1;
+                                              });
+                                            },
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                if (item['title'] ==
+                                                    'Enter a day code') {
+                                                  _showEnterDayCodeDialog(
+                                                      context);
+                                                } else if (item['title'] ==
+                                                'Create a day') {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => DaySettingsPage()),
+                                                  );
+                                                }
                                               },
-                                              onExit: (_) {
-                                                setState(() {
-                                                  _hoveredIndex = -1;
-                                                });
-                                              },
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  if (item['title'] ==
-                                                      'Enter a day code') {
-                                                    _showEnterDayCodeDialog(
-                                                        context);
-                                                  } else if (item['title'] ==
-                                                      'Create a day') {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            Provider<
-                                                                DayProvider>(
-                                                          create: (_) =>
-                                                              DayProvider(),
-                                                          child:
-                                                              DaySettingsPage(),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                },
-                                                child: ListTile(
-                                                  leading: Icon(
-                                                    item['icon'],
+                                              child: ListTile(
+                                                leading: Icon(
+                                                  item['icon'],
+                                                  color: Colors.white,
+                                                ),
+                                                title: Text(
+                                                  item['title'],
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Sora',
                                                     color: Colors.white,
-                                                  ),
-                                                  title: Text(
-                                                    item['title'],
-                                                    style: const TextStyle(
-                                                      fontFamily: 'Sora',
-                                                      color: Colors.white,
-                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            );
-                                          },
-                                        ),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                        ],
-                      ),
+                          ),
+                      ],
                     )),
-              );
+              ),);
       },
     );
   }
