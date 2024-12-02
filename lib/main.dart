@@ -13,8 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  // Firebase setup
   Provider.debugCheckInvalidValueType = null;
+  // Firebase setup
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
