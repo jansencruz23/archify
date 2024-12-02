@@ -10,7 +10,7 @@ class AboutUsPage extends StatelessWidget {
             .inversePrimary),),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(right: 30.0, left: 40.0, top: 16.0, bottom: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,7 +55,7 @@ class AboutUsPage extends StatelessWidget {
                     SizedBox(width: 16.0),
                     Expanded(
                       child: Text(
-                        '1. Jansen Cruz - Developer\n'
+                        '1. Jansen Cruz - (Developer)\n'
                             'This dev is like the Sherlock Holmes of the team. They find problems so fast, it’s almost scary.',
                         style: TextStyle(fontSize: 16, color:Theme.of(context)
                             .colorScheme
@@ -64,7 +64,7 @@ class AboutUsPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 8.0),
+                SizedBox(height: 16.0),
                 // Team Member 2
                 Row(
                   children: [
@@ -82,7 +82,7 @@ class AboutUsPage extends StatelessWidget {
                     SizedBox(width: 16.0),
                     Expanded(
                       child: Text(
-                        '2. Aljunalei Alfonso - Developer\n'
+                        '2. Aljunalei Alfonso - (Developer)\n'
                             'This dev will spend hours making sure that button looks just right and that every pixel is perfectly aligned.',
                         style: TextStyle(fontSize: 16, color:Theme.of(context)
                             .colorScheme
@@ -91,7 +91,7 @@ class AboutUsPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 8.0),
+                SizedBox(height: 16.0),
                 // Team Member 3
                 Row(
                   children: [
@@ -109,7 +109,7 @@ class AboutUsPage extends StatelessWidget {
                     SizedBox(width: 16.0),
                     Expanded(
                       child: Text(
-                        '3. Jamaica Salem - Developer\n'
+                        '3. Jamaica Salem - (Developer)\n'
                             'This dev can crank out features faster than anyone else, but they’re the person who writes code like they’re trying to win a sprint race.',
                         style: TextStyle(fontSize: 16, color:Theme.of(context)
                             .colorScheme
