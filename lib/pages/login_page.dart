@@ -206,39 +206,51 @@ class _LoginPageState extends State<LoginPage> {
 
               // Space between login and text boxes
               const SizedBox(height: 10),
-              // Login text field
-              MyTextField(
-                focusNode: _fieldEmail,
-                controller: _emailController,
-                hintText: 'Email',
-                obscureText: false,
-                onSubmitted: (value) {
-                  FocusScope.of(context).requestFocus(_fieldPass);
-                },
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+                child: Column(children: [
+                  // Login text field
+                  MyTextField(
+                    focusNode: _fieldEmail,
+                    controller: _emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                    onSubmitted: (value) {
+                      FocusScope.of(context).requestFocus(_fieldPass);
+                    },
+                  ),
+                  // Space
+                  const SizedBox(height: 10),
+
+                  // Password text field
+                  MyTextField(
+                    focusNode: _fieldPass,
+                    controller: _passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                    onSubmitted: (value) {
+                      _fieldPass.unfocus();
+                    },
+                  ),
+
+                  // Space
+                  const SizedBox(height: 10),
+
+
+
+
+                ],),
               ),
-
-              // Space
-              const SizedBox(height: 10),
-
-              // Password text field
-              MyTextField(
-                focusNode: _fieldPass,
-                controller: _passwordController,
-                hintText: 'Password',
-                obscureText: true,
-                onSubmitted: (value) {
-                  _fieldPass.unfocus();
-                },
-              ),
-
-              // Space
-              const SizedBox(height: 10),
 
               // Login button
               MyButton(
                 text: 'Login',
                 onTap: () async => login(),
               ),
+
+
+
+
 
               // Space
 

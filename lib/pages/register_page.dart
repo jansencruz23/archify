@@ -222,44 +222,56 @@ class _RegisterPageState extends State<RegisterPage> {
               // Space between login and text boxes
               const SizedBox(height: 10),
 
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+                child: Column(
+
+                  children: [
+                    MyTextField(
+                      focusNode: _fieldEmail,
+                      controller: _emailController,
+                      hintText: 'Email',
+                      obscureText: false,
+                      onSubmitted: (value) {
+                        FocusScope.of(context).requestFocus(_fieldPass);
+                      },
+                    ),
+
+                    // Space
+                    const SizedBox(height: 20),
+
+                    // Password text field
+                    MyTextField(
+                      focusNode: _fieldPass,
+                      controller: _passwordController,
+                      hintText: 'Password',
+                      obscureText: true,
+                      onSubmitted: (value) {
+                        FocusScope.of(context).requestFocus(_fieldRepass);
+                      },
+                    ),
+
+                    // Space
+                    const SizedBox(height: 20),
+
+                    // Password text field
+                    MyTextField(
+                      focusNode: _fieldRepass,
+                      controller: _confirmPwController,
+                      hintText: 'Confirm Password',
+                      obscureText: true,
+                      onSubmitted: (value) {
+                        FocusScope.of(context).unfocus();
+                      },
+                    ),
+
+
+
+                  ],
+                ),
+              ),
+
               // Login text field
-              MyTextField(
-                focusNode: _fieldEmail,
-                controller: _emailController,
-                hintText: 'Email',
-                obscureText: false,
-                onSubmitted: (value) {
-                  FocusScope.of(context).requestFocus(_fieldPass);
-                },
-              ),
-
-              // Space
-              const SizedBox(height: 20),
-
-              // Password text field
-              MyTextField(
-                focusNode: _fieldPass,
-                controller: _passwordController,
-                hintText: 'Password',
-                obscureText: true,
-                onSubmitted: (value) {
-                  FocusScope.of(context).requestFocus(_fieldRepass);
-                },
-              ),
-
-              // Space
-              const SizedBox(height: 20),
-
-              // Password text field
-              MyTextField(
-                focusNode: _fieldRepass,
-                controller: _confirmPwController,
-                hintText: 'Confirm Password',
-                obscureText: true,
-                onSubmitted: (value) {
-                  FocusScope.of(context).unfocus();
-                },
-              ),
 
               // Space
               const SizedBox(height: 10),
