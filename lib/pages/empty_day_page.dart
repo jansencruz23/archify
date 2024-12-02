@@ -149,24 +149,24 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
             titleSpacing: 0,
             leadingWidth: 600,
             leading: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 8.0),
               child: Stack(
                 children: [
                   Text(
                     'Let’s keep the moment,',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.01),
+                      fontSize: _getClampedFontSize(context, 0.03),
                       fontFamily: 'Sora',
                       color: Theme.of(context).colorScheme.inversePrimary,
                     ),
                   ),
                   Positioned(
-                    bottom: 10,
+                    bottom: -5,
                     left: 0,
                     child: Text(
                       'Pick the best shot!',
                       style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.06),
+                        fontSize: _getClampedFontSize(context, 0.05),
                         fontFamily: 'Sora',
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.inversePrimary,
