@@ -1,6 +1,7 @@
 import 'package:archify/components/my_comment_text_field.dart';
 import 'package:archify/components/my_day.dart';
 import 'package:archify/components/my_navbar.dart';
+import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/pages/empty_day_page.dart';
@@ -21,6 +22,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import '../components/my_text_field.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/services/database/day/day_provider.dart';
+import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,6 +32,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  //Testing NicknameAndAvatar Dialog
+void _showNicknameAndAvatarDialog(BuildContext context) {
+  showDialog(context: context, builder: (context) =>
+  AlertDialog(
+    title: Text('Select a Photo and Enter Nickanme'),
+    content: Container(
+      width: double.infinity,
+      child: MyNicknameAndAvatarDialog(),
+    ),
+    actions: [TextButton(onPressed: (){
+      Navigator.of(context).pop();
+    }, child: Text('Close'))],
+  ));
+}
+//Text lang ng nickname and avatar
+late final TextEditingController _nicknameController = TextEditingController();
+
+
   late final AuthProvider _authProvider;
   late final DayProvider _dayProvider;
   late final UserProvider _userProvider;
@@ -394,7 +414,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           Padding(
                             padding: const EdgeInsets.only(right: 5),
                             child: IconButton(
-                              onPressed: () {},
+                              onPressed: () => _showNicknameAndAvatarDialog(context),
                               icon: Icon(
                                 Icons.notifications_outlined,
                                 color: Theme.of(context)

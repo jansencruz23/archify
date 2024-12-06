@@ -8,6 +8,7 @@ import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 
 class DaySpacePage extends StatefulWidget {
   final String dayCode;
@@ -33,7 +34,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _isParticipant().then((isParticipant) {
-        if (!isParticipant) _showNicknameInputDialog();
+        if (!isParticipant) _showNicknameAndAvatarDialog(context);
       });
       _loadDay();
     });
@@ -67,18 +68,34 @@ class _DaySpacePageState extends State<DaySpacePage> {
     );
   }
 
-  void _showNicknameInputDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => MyInputAlertBox(
-        textController: _nicknameController,
-        hintText: 'Enter Nickname',
-        confirmButtonText: 'Enter Day',
-        onConfirmPressed: _startDay,
-        focusNode: _nicknameFocusNode,
-      ),
-    );
+  //New dialog
+  void _showNicknameAndAvatarDialog(BuildContext context) {
+    showDialog(context: context, builder: (context) =>
+        AlertDialog(
+          title: Text('Be the best you~'),
+          content: Container(
+            width: double.infinity,
+            child: MyNicknameAndAvatarDialog(),
+          ),
+          actions: [TextButton(onPressed: (){
+            Navigator.of(context).pop();
+          }, child: Text('Close'))],
+        ));
   }
+
+  // OLD Dialog
+  // void _showNicknameInputDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => MyInputAlertBox(
+  //       textController: _nicknameController,
+  //       hintText: 'Enter Nickname',
+  //       confirmButtonText: 'Enter Day',
+  //       onConfirmPressed: _startDay,
+  //       focusNode: _nicknameFocusNode,
+  //     ),
+  //   );
+  // }
 
   Future<void> _loadDay() async {
     await _dayProvider.loadDayByCode(widget.dayCode);

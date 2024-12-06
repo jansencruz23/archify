@@ -95,6 +95,9 @@ flutter:
     - lib/assets/images/Book_img.png
     - lib/assets/images/JCruz_img.png
     - lib/assets/images/Trophy.png
+    - lib/assets/avatars/male_avatar_1.png
+    - lib/assets/avatars/male_avatar_2.png
+    - lib/assets/avatars/female_avatar_1.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
