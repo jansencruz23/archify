@@ -39,6 +39,8 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
     {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
     {'icon': Icons.settings, 'title': 'Settings'},
   ];
+
+  //try lang qr scanner
   void _scanQRCode() async {
     Navigator.push(
       context,

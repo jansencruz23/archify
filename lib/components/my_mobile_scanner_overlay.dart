@@ -17,13 +17,12 @@ class QRScannerScreen extends StatelessWidget {
               final List<Barcode> barcodes = capture.barcodes;
               for (final barcode in barcodes) {
                 if (barcode.rawValue != null) {
-                  onScan(barcode.rawValue!); // Pass the scanned value back
+                  onScan(barcode.rawValue!);
                   break;
                 }
               }
             },
           ),
-          // Custom overlay
           Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
