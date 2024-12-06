@@ -96,6 +96,13 @@ flutter:
     - lib/assets/images/Book_img.png
     - lib/assets/images/JCruz_img.png
     - lib/assets/images/Trophy.png
+    - lib/assets/images/rate_icon.png
+    - lib/assets/images/about_icon.png
+    - lib/assets/images/contact_icon.png
+    - lib/assets/images/feedback_icon.png
+    - lib/assets/images/logout_icon.png
+    - lib/assets/images/privacy_icon.png
+    - lib/assets/images/share_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

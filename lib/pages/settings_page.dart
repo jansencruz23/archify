@@ -315,9 +315,10 @@ class _SettingsPageState extends State<SettingsPage>
                       children: [
                         MySettingsButton(
                           text: 'Rate Us',
-                          icon: Icon(
-                            Icons.star_border_outlined,
-                            color: Theme.of(context).colorScheme.inversePrimary,
+                          icon: Image.asset(
+                            'lib/assets/images/rate_icon.png',
+                            width: 24,
+                            height: 24,
                           ),
                           onTap: () {
                             // print('rate');
@@ -393,9 +394,11 @@ class _SettingsPageState extends State<SettingsPage>
                         ),
                         MySettingsButton(
                           text: 'Share',
-                          icon: Icon(Icons.share_outlined,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/share_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () async {
                             //pang share ng link from appstore or google playstore but hindi publish app natin
                             Share.share('com.archify.app');
@@ -403,9 +406,11 @@ class _SettingsPageState extends State<SettingsPage>
                         ),
                         MySettingsButton(
                           text: 'Privacy',
-                          icon: Icon(Icons.lock_outline_sharp,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/privacy_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -419,9 +424,11 @@ class _SettingsPageState extends State<SettingsPage>
                         ),
                         MySettingsButton(
                           text: 'About',
-                          icon: Icon(Icons.file_present_outlined,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/about_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -435,9 +442,11 @@ class _SettingsPageState extends State<SettingsPage>
                         ),
                         MySettingsButton(
                           text: 'Contact',
-                          icon: Icon(Icons.mail_outline_rounded,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/contact_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -487,9 +496,11 @@ class _SettingsPageState extends State<SettingsPage>
                         ),
                         MySettingsButton(
                           text: 'Feedback',
-                          icon: Icon(Icons.feedback_outlined,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/feedback_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -507,9 +518,11 @@ class _SettingsPageState extends State<SettingsPage>
                         ),
                         MySettingsButton(
                           text: 'Logout',
-                          icon: Icon(Icons.logout,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/logout_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             _logout();
                           },

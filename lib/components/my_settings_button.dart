@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MySettingsButton extends StatefulWidget {
   final String text;
-  final Icon icon;
+  final Widget icon;
   final void Function()? onTap;
 
   const MySettingsButton({
