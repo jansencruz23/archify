@@ -68,7 +68,7 @@ class _MySettingsButtonState extends State<MySettingsButton> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   widget.icon,
-                  SizedBox(width: 8),
+                  SizedBox(width: 15),
                   Text(
                     widget.text,
                     style: TextStyle(
