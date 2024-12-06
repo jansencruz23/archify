@@ -9,6 +9,7 @@ import 'package:archify/pages/settings_page.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/auth/auth_service.dart';
+import 'package:archify/services/database/day/day_gate.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
+          MaterialPageRoute(builder: (context) => DayGate()),
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _showEnterDayCodeDialog(BuildContext context) {
-    TextEditingController _codeController = TextEditingController();
+    TextEditingController codeController = TextEditingController();
 
     showDialog(
       context: context,
@@ -111,7 +112,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           content: TextField(
-            controller: _codeController,
+            controller: codeController,
             cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Enter your code',
@@ -145,8 +146,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
             TextButton(
-              onPressed: () {
-                String enteredCode = _codeController.text;
+              onPressed: () async {
+                String enteredCode = codeController.text;
+                await joinDay(enteredCode);
+                if (!mounted) return;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -169,6 +172,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         );
       },
     );
+  }
+
+  Future<void> joinDay(String dayCode) async {
+    if (dayCode.isEmpty) return;
+    final dayExists = await _dayProvider.isDayExistingAndActive(dayCode);
+    final isRoomFull = await _dayProvider.isRoomFull(dayCode);
+
+    if (!mounted) return;
+
+    if (isRoomFull) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Room is full')),
+      );
+      return;
+    }
+
+    if (!dayExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Day does not exist or already finished')),
+      );
+      return;
+    }
+
+    goDaySpace(context, dayCode);
   }
 
   final CarouselController _carouselController = CarouselController();
@@ -281,6 +308,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void _unfocusAllFields() {
     FocusScope.of(context).unfocus();
   }
+
   @override
   Widget build(BuildContext context) {
     final userListeningProvider = Provider.of<UserProvider>(context);
@@ -294,7 +322,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final comments = dayListeningProvider.commentsByDayId;
 
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         _fieldComment.unfocus();
       },
       child: Consumer<UserProvider>(
@@ -311,7 +339,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         titleSpacing: 0,
                         leadingWidth: 80,
                         leading: Padding(
-                          padding: const EdgeInsets.fromLTRB(8.0, 16.0, 0, 16.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(8.0, 16.0, 0, 16.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +355,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                         ),
                         title: Padding(
-                          padding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 8.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 8.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -367,8 +397,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               onPressed: () {},
                               icon: Icon(
                                 Icons.notifications_outlined,
-                                color:
-                                    Theme.of(context).colorScheme.inversePrimary,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
                                 size: 30,
                               ),
                             ),
@@ -386,41 +417,42 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                     //Main Body
                     body: RefreshIndicator(
-                      color: Theme.of(context).colorScheme.secondary,
-                      onRefresh: _loadData,
-                      child: Stack(
-                        children: [
-                          SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 8.0),
-                                  child: Row(
-                                    children: [
-                                      const SizedBox(width: 10),
-                                      GFImageOverlay(
-                                        image: AssetImage(
-                                            'lib/assets/images/Bestday_img.png'),
-                                        shape: BoxShape.circle,
-                                        width: 36,
-                                        height: 36,
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                        'Best of the Day',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary,
-                                          fontFamily: 'Sora',
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: _getClampedFontSize(
-                                              context, 0.05),
+                        color: Theme.of(context).colorScheme.secondary,
+                        onRefresh: _loadData,
+                        child: Stack(
+                          children: [
+                            SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        8.0, 30.0, 8.0, 8.0),
+                                    child: Row(
+                                      children: [
+                                        const SizedBox(width: 10),
+                                        GFImageOverlay(
+                                          image: AssetImage(
+                                              'lib/assets/images/Bestday_img.png'),
+                                          shape: BoxShape.circle,
+                                          width: 36,
+                                          height: 36,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          'Best of the Day',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary,
+                                            fontFamily: 'Sora',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: _getClampedFontSize(
+                                                context, 0.05),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
 
                                   //Carousel
                                   CarouselSlider.builder(
@@ -432,7 +464,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         );
                                       }
                                       final moment = days[index];
-                                      bool isMainPhoto = this.realIndex == index;
+                                      bool isMainPhoto =
+                                          this.realIndex == index;
 
                                       return MyDay(
                                         moment: moment,
@@ -442,8 +475,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     },
                                     options: CarouselOptions(
                                       enlargeCenterPage: true,
-                                      height: MediaQuery.of(context).size.height *
-                                          0.4,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.4,
                                       autoPlay: false,
                                       viewportFraction: 0.7,
                                       enableInfiniteScroll: false,
@@ -463,7 +497,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
                                         IconButton(
                                           onPressed: () {
@@ -499,8 +534,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     padding: const EdgeInsets.only(
                                         right: 35, left: 8.0),
                                     child: SizedBox(
-                                      height: MediaQuery.of(context).size.height *
-                                          0.28,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.28,
                                       width: MediaQuery.of(context).size.width,
                                       child: Scrollbar(
                                         child: Padding(
@@ -511,7 +547,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                               left: 0.0),
                                           child: comments[_currentDayId] ==
                                                       null ||
-                                                  comments[_currentDayId]!.isEmpty
+                                                  comments[_currentDayId]!
+                                                      .isEmpty
                                               ? const Center(
                                                   child: Text(
                                                       'No comments available.'),
@@ -522,7 +559,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                   itemCount:
                                                       comments[_currentDayId]!
                                                           .length,
-                                                  itemBuilder: (context, index) {
+                                                  itemBuilder:
+                                                      (context, index) {
                                                     final comment = comments[
                                                         _currentDayId]![index];
                                                     return ListTile(
@@ -537,13 +575,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                       title: Text(
                                                         comment.content,
                                                         style: TextStyle(
-                                                          color: Theme.of(context)
+                                                          color: Theme.of(
+                                                                  context)
                                                               .colorScheme
                                                               .inversePrimary,
                                                           fontFamily: 'Sora',
                                                           fontSize:
                                                               _getClampedFontSize(
-                                                                  context, 0.04),
+                                                                  context,
+                                                                  0.04),
                                                         ),
                                                       ),
                                                     );
@@ -623,22 +663,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               ),
                             ),
                             if (!_isKeyboardVisible)
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                color: Colors.white,
-                                child: MyNavbar(
-                                  selectedIndex: _selectedIndex,
-                                  onItemTapped: _onItemTapped,
-                                  showVerticalBar: _showVerticalBar,
-                                  isRotated: _isRotated,
-                                  toggleRotation: _toggleRotation,
-                                  showEnterDayCodeDialog: _showEnterDayCodeDialog,
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  color: Colors.white,
+                                  child: MyNavbar(
+                                    selectedIndex: _selectedIndex,
+                                    onItemTapped: _onItemTapped,
+                                    showVerticalBar: _showVerticalBar,
+                                    isRotated: _isRotated,
+                                    toggleRotation: _toggleRotation,
+                                    showEnterDayCodeDialog:
+                                        _showEnterDayCodeDialog,
+                                  ),
                                 ),
                               ),
-                            ),
                             if (_showVerticalBar)
                               Positioned(
                                 bottom: 0,
@@ -649,7 +690,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 500),
                                     height:
-                                        (_menuItems.length * 50).toDouble() + 100,
+                                        (_menuItems.length * 50).toDouble() +
+                                            100,
                                     decoration: const BoxDecoration(
                                       color: Color(0xFFFF6F61),
                                       borderRadius: BorderRadius.only(

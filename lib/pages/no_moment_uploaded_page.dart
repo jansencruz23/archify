@@ -1,7 +1,9 @@
+import 'package:archify/services/database/day/day_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/pages/day_settings_page.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../models/day.dart';
 import '../services/database/day/day_provider.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +20,8 @@ class NoMomentUploadedPage extends StatefulWidget {
   State<NoMomentUploadedPage> createState() => _NoMomentUploadedPageState();
 }
 
-class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with TickerProviderStateMixin {
+class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
+    with TickerProviderStateMixin {
   late Day? day;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
@@ -44,7 +47,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
+          MaterialPageRoute(builder: (context) => DayGate()),
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -76,6 +79,47 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
     setState(() {
       _isRotated = !_isRotated;
     });
+  }
+
+  void _showDayCode(String code) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("QR Code"),
+          content: Container(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  QrImageView(
+                    data: code,
+                    version: QrVersions.auto,
+                    size: 200.0,
+                  ),
+                  SizedBox(height: 20),
+                  Text(code),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                "Close",
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showEnterDayCodeDialog(BuildContext context) {
@@ -150,7 +194,8 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: const Offset(0, 0),
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    ).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
   }
 
   @override
@@ -224,15 +269,18 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
                       borderRadius: BorderRadius.circular(10.0),
                       color: Theme.of(context).colorScheme.secondary,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'DAY CODE: ${day?.code == null ? '' : day!.code}',
-                        style: TextStyle(
-                          fontSize: _getClampedFontSize(context, 0.03),
-                          fontFamily: 'Sora',
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.surface,
+                    child: GestureDetector(
+                      onTap: () => _showDayCode(day?.code ?? ''),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'DAY CODE: ${day?.code == null ? '' : day!.code}',
+                          style: TextStyle(
+                            fontSize: _getClampedFontSize(context, 0.03),
+                            fontFamily: 'Sora',
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
                         ),
                       ),
                     ),
@@ -298,7 +346,8 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            icon: const Icon(Icons.keyboard_arrow_down, size: 30, color: Colors.white),
+                            icon: const Icon(Icons.keyboard_arrow_down,
+                                size: 30, color: Colors.white),
                             onPressed: () {
                               setState(() {
                                 _animationController.reverse();
@@ -313,15 +362,21 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage> with Ticker
                             itemBuilder: (context, index) {
                               final item = _menuItems[index];
                               return ListTile(
-                                leading: Icon(item['icon'], color: Colors.white),
-                                title: Text(item['title'], style: const TextStyle(fontFamily: 'Sora', color: Colors.white)),
+                                leading:
+                                    Icon(item['icon'], color: Colors.white),
+                                title: Text(item['title'],
+                                    style: const TextStyle(
+                                        fontFamily: 'Sora',
+                                        color: Colors.white)),
                                 onTap: () {
                                   if (item['title'] == 'Enter a day code') {
                                     _showEnterDayCodeDialog(context);
                                   } else if (item['title'] == 'Create a day') {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => DaySettingsPage()),
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DaySettingsPage()),
                                     );
                                   }
                                 },

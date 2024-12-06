@@ -1,8 +1,12 @@
+import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/services/database/day/day_gate.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
+import 'package:provider/provider.dart';
 
 class MyNavbar extends StatelessWidget {
   final int selectedIndex;
@@ -13,14 +17,14 @@ class MyNavbar extends StatelessWidget {
   final Function(BuildContext)? showEnterDayCodeDialog;
 
   const MyNavbar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
     required this.onItemTapped,
     required this.showVerticalBar,
     required this.isRotated,
     required this.toggleRotation,
     this.showEnterDayCodeDialog,
-  }) : super(key: key);
+  });
 
   static const double navIconSize = 30.0;
 
@@ -132,6 +136,8 @@ class MyNavbar extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -144,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen>
   int _hoveredIndex = -1;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  late DayProvider _dayProvider;
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -155,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -181,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen>
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
+          MaterialPageRoute(builder: (context) => DayGate()),
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -192,10 +200,10 @@ class _HomeScreenState extends State<HomeScreen>
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
-        } else if (_showVerticalBar) {
-            _animationController.reverse();
-            _showVerticalBar = false;
-        } else if (index == 3) {
+      } else if (_showVerticalBar) {
+        _animationController.reverse();
+        _showVerticalBar = false;
+      } else if (index == 3) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => ProfilePage()),
@@ -209,7 +217,6 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-
   void _toggleRotation() {
     setState(() {
       _isRotated = !_isRotated;
@@ -217,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _showEnterDayCodeDialog(BuildContext context) {
-    TextEditingController _codeController = TextEditingController();
+    TextEditingController codeController = TextEditingController();
 
     showDialog(
       context: context,
@@ -232,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
           content: TextField(
-            controller: _codeController,
+            controller: codeController,
             cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Enter your code',
@@ -266,8 +273,8 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
             TextButton(
-              onPressed: () {
-                String enteredCode = _codeController.text;
+              onPressed: () async {
+                String enteredCode = codeController.text;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

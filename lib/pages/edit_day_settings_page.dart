@@ -2,19 +2,21 @@ import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/components/my_text_field_form.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/models/day.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class DaySettingsPage extends StatefulWidget {
-  const DaySettingsPage({super.key});
+class EditDaySettingsPage extends StatefulWidget {
+  final Day day;
+  const EditDaySettingsPage({super.key, required this.day});
 
   @override
-  State<DaySettingsPage> createState() => _DaySettingsPageState();
+  State<EditDaySettingsPage> createState() => _DaySettingsPageState();
 }
 
-class _DaySettingsPageState extends State<DaySettingsPage> {
+class _DaySettingsPageState extends State<EditDaySettingsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final DayProvider _dayProvider;
   late final TextEditingController _dayNameController;
@@ -42,6 +44,17 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
     _pickVotingDeadlineFocusNode = FocusNode();
     _votingDeadline = TimeOfDay.now();
     _fillUpFormMessage = 'Please Fill Up The Form';
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  void _loadData() {
+    _dayNameController.text = widget.day.name;
+    _dayDescriptionController.text = widget.day.description;
+    _maxParticipantsController.text = widget.day.maxParticipants.toString();
+    _votingDeadline = TimeOfDay.fromDateTime(widget.day.votingDeadline);
   }
 
   Future<void> pickTime() async {
@@ -94,7 +107,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
     );
   }
 
-  Future<void> createDay() async {
+  Future<void> _updateDay() async {
     if (!_formKey.currentState!.validate()) return;
     final dayName = _dayNameController.text;
     final dayDescription = _dayDescriptionController.text;
@@ -104,14 +117,29 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
       return;
     }
 
-    final dayId = await _dayProvider.createDay(
-      name: dayName,
+    final participantsCount =
+        await _dayProvider.getParticipantCount(widget.day.id);
+
+    if (!mounted) return;
+
+    if (participantsCount > maxParticipants) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Max participants cannot be less than current count.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    Navigator.pop(context);
+    await _dayProvider.updateDay(
+      dayId: widget.day.id,
+      dayName: dayName,
       description: dayDescription,
       maxParticipants: maxParticipants,
       votingDeadline: _votingDeadline,
     );
-
-    goDayCode(context, dayId);
   }
 
   @override
@@ -131,7 +159,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
           alignment: Alignment.centerLeft,
           child: const SafeArea(
             child: Text(
-              "Create a Day",
+              "Update your Day",
               style: TextStyle(
                 fontFamily: 'Sora',
                 fontSize: 20,
@@ -283,44 +311,42 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                       ),
                     ),
                   ),
-
-                           const SizedBox(height: 12),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Color(0xFFFF6F61), width: 1),
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  child: Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                      fontFamily: 'Sora',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: Color(0xFFFF6F61),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              // Add spacing between buttons
-                              SizedBox(
-                                width: 24,
-                              ),
+                  const SizedBox(height: 12),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          side: const BorderSide(
+                              color: Color(0xFFFF6F61), width: 1),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(35),
+                          ),
+                        ),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                            fontFamily: 'Sora',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Color(0xFFFF6F61),
+                          ),
+                        ),
+                      ),
+                      // Add spacing between buttons
+                      SizedBox(
+                        width: 24,
+                      ),
 
                       GestureDetector(
-                        onTap: createDay,
+                        onTap: _updateDay,
                         child: MouseRegion(
                           cursor: SystemMouseCursors.click,
                           onEnter: (PointerEvent details) =>
@@ -344,7 +370,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             ),
                             child: Center(
                               child: Text(
-                                'Create Day',
+                                'Update Day',
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.primary,

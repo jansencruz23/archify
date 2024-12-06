@@ -1,4 +1,3 @@
-import 'package:archify/models/comment.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/favorite_day.dart';
 import 'package:archify/models/joined_day.dart';
@@ -297,13 +296,31 @@ class UserService {
     }
   }
 
-  Future<void> updateUserProfileInFirebase({
-    required String uid,
-    required String name,
-    required String bio,
-  }) async {
-    final docRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    await docRef.update({'name': name, 'bio': bio});
-  }
+  Future<void> updateUserProfileInFirebase(
+    String name,
+    String bio,
+    String imagePath,
+  ) async {
+    try {
+      final uid = _authService.getCurrentUid();
+      final docRef = _db.collection('Users').doc(uid);
 
+      if (imagePath.isNotEmpty) {
+        await docRef.update({
+          'name': name,
+          'bio': bio,
+          'pictureUrl': imagePath,
+        });
+
+        return;
+      }
+
+      await docRef.update({
+        'name': name,
+        'bio': bio,
+      });
+    } catch (ex) {
+      _logger.severe(ex.toString());
+    }
+  }
 }
