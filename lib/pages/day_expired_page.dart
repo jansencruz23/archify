@@ -174,15 +174,14 @@ class _DayExpiredPageState extends State<DayExpiredPage>
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
     day = listeningProvider.day;
-
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
+        preferredSize: const Size.fromHeight(80),
         child: AppBar(
           titleSpacing: 0,
           leadingWidth: 600,
           leading: Padding(
-            padding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 8.0),
+            padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 0),
             child: Stack(
               children: [
                 Text(
@@ -194,7 +193,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                   ),
                 ),
                 Positioned(
-                  bottom: -5,
+                  bottom: -6,
                   left: 0,
                   child: Text(
                     'Pick the best shot!',
@@ -213,7 +212,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
             preferredSize: const Size.fromHeight(1),
             child: Divider(
               height: 2,
-              color: Theme.of(context).colorScheme.outline,
+              color: Color(0xFFD9D9D9),
             ),
           ),
         ),

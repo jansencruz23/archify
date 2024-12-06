@@ -167,12 +167,12 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(70),
+          preferredSize: const Size.fromHeight(80),
           child: AppBar(
             titleSpacing: 0,
             leadingWidth: 600,
             leading: Padding(
-              padding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 8.0),
+              padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 0),
               child: Stack(
                 children: [
                   Text(
@@ -184,7 +184,7 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
                     ),
                   ),
                   Positioned(
-                    bottom: -5,
+                    bottom: -6,
                     left: 0,
                     child: Text(
                       'Pick the best shot!',
@@ -203,7 +203,7 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
               preferredSize: const Size.fromHeight(1),
               child: Divider(
                 height: 2,
-                color: Theme.of(context).colorScheme.outline,
+                color: Color(0xFFD9D9D9),
               ),
             ),
           ),

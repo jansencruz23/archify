@@ -370,7 +370,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           preferredSize: Size.fromHeight(1),
                           child: Divider(
                             height: 2,
-                            color: Theme.of(context).colorScheme.outline,
+                            color: Color(0xFFD9D9D9),
                           ),
                         ),
                       ),

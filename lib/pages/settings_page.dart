@@ -55,7 +55,7 @@ class _SettingsPageState extends State<SettingsPage>
     googlePlayIdentifier: 'com.archify.app',
   );
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 4;
   bool _showVerticalBar = false;
   bool _isRotated = false;
   int _hoveredIndex = -1;
@@ -298,7 +298,7 @@ class _SettingsPageState extends State<SettingsPage>
                       "Settings",
                       style: TextStyle(
                         fontFamily: 'Sora',
-                        fontSize: 23,
+                        fontSize: 22,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
