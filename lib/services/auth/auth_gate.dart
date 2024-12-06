@@ -22,7 +22,7 @@ class AuthGate extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const HomePage(); //DaySpacePage(dayCode: '02550' 8892a);
+            return const SettingsPage();
           } else {
             return const LoginOrRegister();
           }
