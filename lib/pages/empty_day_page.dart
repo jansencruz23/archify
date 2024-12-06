@@ -1,3 +1,4 @@
+import 'package:archify/helpers/navigate_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
@@ -47,6 +48,7 @@ class _EmptyDayPageState extends State<EmptyDayPage>
             setState(() {
               qrCode = code;
             });
+            goDaySpace(context, qrCode);
             Navigator.pop(context);
           },
         ),

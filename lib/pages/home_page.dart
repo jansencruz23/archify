@@ -148,17 +148,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             TextButton(
               onPressed: () async {
                 String enteredCode = codeController.text;
-                await joinDay(enteredCode);
-                if (!mounted) return;
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Code Entered: $enteredCode',
-                      style: const TextStyle(fontFamily: 'Sora'),
-                    ),
-                  ),
-                );
+                await joinDay(enteredCode);
               },
               child: const Text(
                 'Enter',
