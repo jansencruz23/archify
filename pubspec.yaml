@@ -103,6 +103,7 @@ flutter:
     - lib/assets/images/logout_icon.png
     - lib/assets/images/privacy_icon.png
     - lib/assets/images/share_icon.png
+    - lib/assets/images/notification_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
