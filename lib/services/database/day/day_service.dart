@@ -45,7 +45,8 @@ class DayService {
   }
 
   // Start the day
-  Future<void> startDayInFirebase(String dayCode, String nickname) async {
+  Future<void> startDayInFirebase(
+      String dayCode, String nickname, String avatar) async {
     try {
       final day = await getDayByCodeFromFirebase(dayCode);
       if (day == null) return;
@@ -58,6 +59,7 @@ class DayService {
         role: day.hostId == currentUserId ? 'host' : 'participant',
         nickname: nickname,
         fcmToken: fcmToken,
+        avatar: avatar,
         hasUploaded: false,
       );
 
@@ -230,11 +232,13 @@ class DayService {
             role: '',
             nickname: '',
             fcmToken: '',
+            avatar: '',
             hasUploaded: false,
           ),
         );
 
         moment.nickname = participant.nickname;
+        moment.avatarId = participant.avatar;
       }
 
       return moments;
@@ -263,9 +267,11 @@ class DayService {
           await _fetchParticipantsInBulk(participantIds, dayId);
 
           for (var moment in moments) {
-            final participant = _participantCache[moment.uploadedBy];
+            final participant =
+                _participantCache['${moment.uploadedBy} $dayId'];
             if (participant != null) {
               moment.nickname = participant.nickname;
+              moment.avatarId = participant.avatar;
             }
           }
           return moments;
@@ -280,7 +286,9 @@ class DayService {
   Future<void> _fetchParticipantsInBulk(
       Set<String> participantIds, String dayId) async {
     try {
-      final idsToFetch = participantIds.toList();
+      final idsToFetch = participantIds
+          .where((uid) => !_participantCache.containsKey('$uid $dayId'))
+          .toList();
 
       if (idsToFetch.isNotEmpty) {
         final participantDocs = await _db
@@ -292,7 +300,7 @@ class DayService {
 
         for (var doc in participantDocs.docs) {
           final participant = Participant.fromDocument(doc.data());
-          _participantCache[doc.id] = participant;
+          _participantCache['${doc.id} $dayId'] = participant;
         }
       }
     } catch (ex) {

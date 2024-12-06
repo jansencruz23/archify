@@ -101,11 +101,11 @@ class DayProvider extends ChangeNotifier {
     return dayId;
   }
 
-  Future<void> startDay(String dayCode, String nickname) async {
+  Future<void> startDay(String dayCode, String nickname, String avatar) async {
     final dayId = await _dayService.getDayIdFromFirebase(dayCode);
     _userService.addDayToUserProfile(dayId, _authService.getCurrentUid());
 
-    await _dayService.startDayInFirebase(dayCode, nickname);
+    await _dayService.startDayInFirebase(dayCode, nickname, avatar);
   }
 
   Future<bool> isDayExistingAndActive(String dayCode) async {

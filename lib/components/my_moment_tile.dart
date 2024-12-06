@@ -1,3 +1,4 @@
+import 'package:archify/helpers/avatar_mapper.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,17 @@ class MyMomentTile extends StatefulWidget {
 }
 
 class _MyMomentTileState extends State<MyMomentTile> {
+  //late String _avatarPath;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      //_avatarPath = avatarMap[widget.moment.avatarId]!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
@@ -41,8 +53,8 @@ class _MyMomentTileState extends State<MyMomentTile> {
                 child: Row(
                   children: [
                     ClipOval(
-                      child: Image.network(
-                        widget.moment.imageUrl,
+                      child: Image.asset(
+                        'lib/assets/avatars/male_avatar_1.png',
                         height: 40,
                         width: 40,
                         fit: BoxFit.cover,

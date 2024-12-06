@@ -8,6 +8,7 @@ import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 
 class DaySpacePage extends StatefulWidget {
   final String dayCode;
@@ -19,6 +20,7 @@ class DaySpacePage extends StatefulWidget {
 }
 
 class _DaySpacePageState extends State<DaySpacePage> {
+  late final TextEditingController _avatarController;
   late final TextEditingController _nicknameController;
   late final FocusNode _nicknameFocusNode;
   late final DayProvider _dayProvider;
@@ -27,13 +29,15 @@ class _DaySpacePageState extends State<DaySpacePage> {
   @override
   void initState() {
     super.initState();
+
+    _avatarController = TextEditingController();
     _nicknameController = TextEditingController();
     _nicknameFocusNode = FocusNode();
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _isParticipant().then((isParticipant) {
-        if (!isParticipant) _showNicknameInputDialog();
+        if (!isParticipant) _showNicknameAndAvatarDialog(context);
       });
       _loadDay();
     });
@@ -67,18 +71,43 @@ class _DaySpacePageState extends State<DaySpacePage> {
     );
   }
 
-  void _showNicknameInputDialog() {
+  //New dialog
+  void _showNicknameAndAvatarDialog(BuildContext context) {
     showDialog(
-      context: context,
-      builder: (context) => MyInputAlertBox(
-        textController: _nicknameController,
-        hintText: 'Enter Nickname',
-        confirmButtonText: 'Enter Day',
-        onConfirmPressed: _startDay,
-        focusNode: _nicknameFocusNode,
-      ),
-    );
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text('Be the best you~'),
+              content: Container(
+                width: double.infinity,
+                child: MyNicknameAndAvatarDialog(
+                  onSubmit: _startDay,
+                  avatarController: _avatarController,
+                  nicknameController: _nicknameController,
+                ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Close'))
+              ],
+            ));
   }
+
+  // OLD Dialog
+  // void _showNicknameInputDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => MyInputAlertBox(
+  //       textController: _nicknameController,
+  //       hintText: 'Enter Nickname',
+  //       confirmButtonText: 'Enter Day',
+  //       onConfirmPressed: _startDay,
+  //       focusNode: _nicknameFocusNode,
+  //     ),
+  //   );
+  // }
 
   Future<void> _loadDay() async {
     await _dayProvider.loadDayByCode(widget.dayCode);
@@ -87,7 +116,11 @@ class _DaySpacePageState extends State<DaySpacePage> {
   }
 
   Future<void> _startDay() async {
-    await _dayProvider.startDay(widget.dayCode, _nicknameController.text);
+    await _dayProvider.startDay(
+      widget.dayCode,
+      _nicknameController.text,
+      _avatarController.text,
+    );
   }
 
   Future<void> _imageUploadClicked() async {
@@ -210,7 +243,6 @@ class _DaySpacePageState extends State<DaySpacePage> {
                 ),
               )
             : NoMomentUploadedPage(imageUploadClicked: _imageUploadClicked),
-
       ),
     );
   }
