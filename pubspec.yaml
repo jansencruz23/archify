@@ -54,6 +54,8 @@ dependencies:
   url_launcher: ^6.3.1
   intl: ^0.20.1
   mobile_scanner: ^6.0.2
+  animated_splash_screen: ^1.3.0
+  page_transition: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +97,7 @@ flutter:
     - lib/assets/images/Book_img.png
     - lib/assets/images/JCruz_img.png
     - lib/assets/images/Trophy.png
+    - lib/assets/images/Logo.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

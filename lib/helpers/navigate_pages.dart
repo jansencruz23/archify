@@ -9,13 +9,18 @@ import 'package:archify/pages/join_or_create_page.dart';
 import 'package:archify/pages/join_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/setup_page.dart';
+import 'package:archify/services/auth/auth_gate.dart';
 import 'package:archify/services/database/day/day_gate.dart';
 import 'package:flutter/material.dart';
 
 // Helper para short code sa pag navigate thru pages
 
 void goRootPage(BuildContext context) {
-  Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (context) => const AuthGate()),
+    (route) => false,
+  );
 }
 
 void goSetup(BuildContext context) {
