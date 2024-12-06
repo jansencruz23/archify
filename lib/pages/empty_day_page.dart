@@ -10,6 +10,9 @@ import 'package:archify/pages/day_code_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:archify/components/my_mobile_scanner_overlay.dart';
+
+
 
 
 class EmptyDayPage extends StatefulWidget {
@@ -329,26 +332,39 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
     );
   }
 }
-class QRScannerScreen extends StatelessWidget {
-  final Function(String) onScan;
 
-  const QRScannerScreen({required this.onScan, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Scan QR Code')),
-      body: MobileScanner(
-        onDetect: (capture) {
-          final List<Barcode> barcodes = capture.barcodes;
-          for (final barcode in barcodes) {
-            if (barcode.rawValue != null) {
-              onScan(barcode.rawValue!); // Pass the scanned value back
-              break;
-            }
-          }
-        },
-      ),
-    );
-  }
-}
+// class QRScannerScreen extends StatelessWidget {
+//   final Function(String) onScan;
+//
+//   const QRScannerScreen({required this.onScan, Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Scan QR Code')),
+//       body: Stack(
+//         children: [
+//           MobileScanner(
+//             onDetect: (capture) {
+//               final List<Barcode> barcodes = capture.barcodes;
+//               for (final barcode in barcodes) {
+//                 if (barcode.rawValue != null) {
+//                   onScan(barcode.rawValue!); // Pass the scanned value back
+//                   break;
+//                 }
+//               }
+//             },
+//           ),
+//           MobileScannerOverlay(
+//             overlayColor: Colors.black.withOpacity(0.5), // Adjust the opacity for the overlay
+//             borderWidth: 2.0, // Width of the border around the scanning area
+//             borderColor: Colors.green, // Color of the border
+//             borderRadius: BorderRadius.circular(12), // Rounded corners for the border
+//             borderLength: 50, // Length of the border
+//             child: Container(), // Optional child widget to display above the overlay
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
