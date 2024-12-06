@@ -210,6 +210,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
                 ),
               )
             : NoMomentUploadedPage(imageUploadClicked: _imageUploadClicked),
+
       ),
     );
   }

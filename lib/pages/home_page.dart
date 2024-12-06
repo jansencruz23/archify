@@ -253,8 +253,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _loadData() async {
-    _loadUserProfile();
-    _loadUserMoments();
+    await _loadUserProfile();
+    await _loadUserMoments();
+    _refreshComments();
+  }
+
+  void _refreshComments() async {
+    _dayProvider.refreshComments();
   }
 
   Future<void> _loadUserMoments() async {
@@ -604,8 +609,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       children: [
                                         const SizedBox(width: 10),
                                         GFImageOverlay(
-                                          image: AssetImage(
-                                              'lib/assets/images/AAlfonso_img.png'),
+                                          image: userProfile == null ||
+                                                  userProfile.pictureUrl.isEmpty
+                                              ? const AssetImage(
+                                                  'lib/assets/images/Bestday_img.png')
+                                              : Image.network(
+                                                      userProfile.pictureUrl)
+                                                  .image,
                                           shape: BoxShape.circle,
                                           height: 50,
                                           width: 50,
