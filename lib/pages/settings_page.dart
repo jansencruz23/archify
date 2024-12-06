@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:archify/pages/about_us_page.dart';
 import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/profile_page.dart';
@@ -279,37 +280,25 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
             : SafeArea(
           child: Scaffold(
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(70),
-              child: AppBar(
-                titleSpacing: 0,
-                leadingWidth: 500,
-                leading: SizedBox(
-                  height: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      children: [
-                        SizedBox(width: 8),
-                        Text(
-                          'Settings',
-                          style: TextStyle(
-                            fontSize: _getClampedFontSize(context, 0.06),
-                            fontFamily: 'Sora',
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .inversePrimary,
-                          ),
-                        ),
-                      ],
-                    ),
+              preferredSize: const Size.fromHeight(80.0),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0),
                   ),
                 ),
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(1),
-                  child: Divider(
-                    height: 2,
-                    color: Theme.of(context).colorScheme.outline,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                alignment: Alignment.centerLeft,
+                child: const SafeArea(
+                  child: Text(
+                    "Settings",
+                    style: TextStyle(
+                      fontFamily: 'Sora',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),
@@ -349,7 +338,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                               actionsBuilder: (context, stars) {
                                 return [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       TextButton(
                                         onPressed: () {
@@ -418,11 +407,91 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                             );
                           },
                         ),
+                        MySettingsButton(
+                          text: 'Contact',
+                          icon: Icon(Icons.mail_outline_rounded,
+                              color:
+                              Theme.of(context).colorScheme.inversePrimary),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    'archify.app@gmail.com',
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary),
+                                  ),
+                                  content: Text(
+                                    'Feel free to contact us via our email!',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(
+                                            context); // Close the dialog
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          'Close',
+                                          style: TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .inversePrimary),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        MySettingsButton(
+                          text: 'Feedback',
+                          icon: Icon(Icons.feedback_outlined,
+                              color:
+                              Theme.of(context).colorScheme.inversePrimary),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  child: MyFeedbackForm(
+                                      onSubmit: (String subject, String body) {
+                                        debugPrint('Subject: $subject');
+                                        debugPrint('Body: $body');
+                                      }),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        MySettingsButton(
+                          text: 'Logout',
+                          icon: Icon(Icons.logout,
+                              color:
+                              Theme.of(context).colorScheme.inversePrimary),
+                          onTap: () {
+                            _logout();
+                          },
+                        ),
                       ],
                     ),
                   ),
                 ),
-                // Vertical Bar SlideTransition
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -527,6 +596,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                       ),
                     ),
                   ),
+                // Vertical Bar SlideTransition
               ],
             ),
           ),
