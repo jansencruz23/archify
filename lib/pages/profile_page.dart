@@ -59,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   void _showEnterDayCodeDialog(BuildContext context) {
-    TextEditingController _codeController = TextEditingController();
+    TextEditingController codeController = TextEditingController();
 
     showDialog(
       context: context,
@@ -74,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage>
             ),
           ),
           content: TextField(
-            controller: _codeController,
+            controller: codeController,
             cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Enter your code',
@@ -109,7 +109,7 @@ class _ProfilePageState extends State<ProfilePage>
             ),
             TextButton(
               onPressed: () {
-                String enteredCode = _codeController.text;
+                String enteredCode = codeController.text;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

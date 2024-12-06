@@ -34,7 +34,7 @@ class DayProvider extends ChangeNotifier {
   late List<String> _votedMomentIds = [];
   List<String> get votedMomentIds => _votedMomentIds;
 
-  late Map<String, List<Comment>> _commentsByDayId = {};
+  late final Map<String, List<Comment>> _commentsByDayId = {};
   Map<String, List<Comment>> get commentsByDayId => _commentsByDayId;
 
   bool? _hasUploaded;

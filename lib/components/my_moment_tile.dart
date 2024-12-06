@@ -87,6 +87,5 @@ class _MyMomentTileState extends State<MyMomentTile> {
         ),
       ),
     );
-    ;
   }
 }

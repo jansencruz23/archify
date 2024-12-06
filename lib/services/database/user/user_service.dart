@@ -1,4 +1,3 @@
-import 'package:archify/models/comment.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/models/favorite_day.dart';
 import 'package:archify/models/joined_day.dart';

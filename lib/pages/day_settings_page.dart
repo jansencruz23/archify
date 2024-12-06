@@ -189,14 +189,16 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                 child: ElevatedButton(
                   onPressed: pickTime,
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(const Color(0xFFFAF1E1)),
-                    padding: MaterialStateProperty.all(
+                    backgroundColor:
+                        WidgetStateProperty.all(const Color(0xFFFAF1E1)),
+                    padding: WidgetStateProperty.all(
                       const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                     ),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                    shape: WidgetStateProperty.all(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)),
                     ),
-                    elevation: MaterialStateProperty.all(0),
+                    elevation: WidgetStateProperty.all(0),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -234,8 +236,10 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        side: const BorderSide(color: Color(0xFFFF6F61), width: 1),
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        side: const BorderSide(
+                            color: Color(0xFFFF6F61), width: 1),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(35),
                         ),
@@ -251,7 +255,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),  // Add spacing between buttons
+                  const SizedBox(width: 12), // Add spacing between buttons
                   Expanded(
                     child: MyButton(
                       onTap: createDay,

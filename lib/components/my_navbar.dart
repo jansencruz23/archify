@@ -12,14 +12,14 @@ class MyNavbar extends StatelessWidget {
   final Function(BuildContext)? showEnterDayCodeDialog;
 
   const MyNavbar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
     required this.onItemTapped,
     required this.showVerticalBar,
     required this.isRotated,
     required this.toggleRotation,
     this.showEnterDayCodeDialog,
-  }) : super(key: key);
+  });
 
   static const double navIconSize = 30.0;
 
@@ -131,6 +131,8 @@ class MyNavbar extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -199,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _showEnterDayCodeDialog(BuildContext context) {
-    TextEditingController _codeController = TextEditingController();
+    TextEditingController codeController = TextEditingController();
 
     showDialog(
       context: context,
@@ -214,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
           content: TextField(
-            controller: _codeController,
+            controller: codeController,
             cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Enter your code',
@@ -249,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             TextButton(
               onPressed: () async {
-                String enteredCode = _codeController.text;
+                String enteredCode = codeController.text;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

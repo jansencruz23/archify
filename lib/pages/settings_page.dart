@@ -45,7 +45,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String subject = '';
   String body = '';
   String? _email; //how to get email
-  bool _isDialogShown = false;
+  final bool _isDialogShown = false;
 
   late final RateMyApp _rateMyApp = RateMyApp(
     preferencesPrefix: 'rateMyApp_',
@@ -89,11 +89,11 @@ class _SettingsPageState extends State<SettingsPage> {
       super.dispose();
     }
 
-    Future<void> _loadUserProfile() async {
+    Future<void> loadUserProfile() async {
       await _userProvider.loadUserProfile();
     }
 
-    Future<void> _checkIfNewUser() async {
+    Future<void> checkIfNewUser() async {
       if (_setupNavigationTriggered) return;
 
       final user = await _userProvider.getCurrentUserProfile();

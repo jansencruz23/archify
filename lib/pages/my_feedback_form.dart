@@ -2,7 +2,6 @@ import 'package:archify/components/my_button.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../components/my_text_field.dart';
 import '../services/auth/auth_provider.dart';
 import '../services/auth/auth_service.dart';
 import '../services/database/user/user_provider.dart';
@@ -37,13 +36,15 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
       _email = user?.email ?? 'Email not available';
     });
   }
-@override
+
+  @override
   void initState() {
     // TODO: implement initState
-  _bodyController = TextEditingController();
-  _subjectController = TextEditingController();
+    _bodyController = TextEditingController();
+    _subjectController = TextEditingController();
     super.initState();
   }
+
   //For Responsiveness
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;
@@ -56,23 +57,30 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
     _fieldBody.dispose();
     super.dispose();
   }
+
   void _unfocusAllFields() {
     FocusScope.of(context).unfocus();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Feedback', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color:Theme.of(context)
-            .colorScheme
-            .inversePrimary),),
+        title: Text(
+          'Feedback',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.inversePrimary),
+        ),
       ),
       body: GestureDetector(
         onTap: _unfocusAllFields,
         behavior: HitTestBehavior.translucent,
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 30.0, right:  30.0),
+            padding: const EdgeInsets.only(
+                top: 16.0, bottom: 16.0, left: 30.0, right: 30.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,13 +101,15 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                 //If mas maganda may text na "Subject sa taas"
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('Subject',                             style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.05),
-                    fontFamily: 'Sora',
-                    color: Theme.of(context)
-                        .colorScheme
-                        .inversePrimary,
-                  ), textAlign: TextAlign.left,),
+                  child: Text(
+                    'Subject',
+                    style: TextStyle(
+                      fontSize: _getClampedFontSize(context, 0.05),
+                      fontFamily: 'Sora',
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -133,13 +143,15 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                 //IF mas maganda pakita na may text na "Body"
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('Body',                             style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.05),
-                    fontFamily: 'Sora',
-                    color: Theme.of(context)
-                        .colorScheme
-                        .inversePrimary,
-                  ), textAlign: TextAlign.left,),
+                  child: Text(
+                    'Body',
+                    style: TextStyle(
+                      fontSize: _getClampedFontSize(context, 0.05),
+                      fontFamily: 'Sora',
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
                 TextField(
                   focusNode: _fieldBody,
@@ -150,7 +162,6 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                     border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.teal)),
                   ),
-
                   onSubmitted: (_) {
                     _fieldBody.unfocus();
                   },
@@ -171,7 +182,8 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                       widget.onSubmit(subject, body);
                       Navigator.pop(context);
 
-                      String? encodeQueryParameters(Map<String, String> params) {
+                      String? encodeQueryParameters(
+                          Map<String, String> params) {
                         return params.entries
                             .map((MapEntry<String, String> e) =>
                                 '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')

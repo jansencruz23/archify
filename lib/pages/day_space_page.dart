@@ -8,7 +8,6 @@ import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'dart:ui' as ui;
 
 class DaySpacePage extends StatefulWidget {
   final String dayCode;
