@@ -48,9 +48,9 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
         builder: (context) => QRScannerScreen(
           onScan: (String code) {
             setState(() {
-              qrCode = code; // Store scanned code in a string
+              qrCode = code;
             });
-            Navigator.pop(context); // Return to the previous screen
+            Navigator.pop(context);
           },
         ),
       ),
