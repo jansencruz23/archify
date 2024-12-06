@@ -22,21 +22,19 @@ class MyMomentTile extends StatefulWidget {
 }
 
 class _MyMomentTileState extends State<MyMomentTile> {
-  //late String _avatarPath;
+  late String _avatarPath;
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      //_avatarPath = avatarMap[widget.moment.avatarId]!;
-    });
+    _avatarPath = avatarMap[widget.moment.avatarId]!;
   }
 
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
     final votedMomentIds = listeningProvider.votedMomentIds;
+    _avatarPath = avatarMap[widget.moment.avatarId]!;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -54,7 +52,7 @@ class _MyMomentTileState extends State<MyMomentTile> {
                   children: [
                     ClipOval(
                       child: Image.asset(
-                        'lib/assets/avatars/male_avatar_1.png',
+                        _avatarPath,
                         height: 40,
                         width: 40,
                         fit: BoxFit.cover,
