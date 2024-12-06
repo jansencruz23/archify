@@ -34,7 +34,7 @@ class _DaySpacePageState extends State<DaySpacePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _isParticipant().then((isParticipant) {
-        if (!isParticipant) _showNicknameAndAvatarDialog(context);
+        if (!isParticipant) _showNicknameInputDialog();
       });
       _loadDay();
     });
@@ -90,18 +90,18 @@ class _DaySpacePageState extends State<DaySpacePage> {
   }
 
   // OLD Dialog
-  // void _showNicknameInputDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => MyInputAlertBox(
-  //       textController: _nicknameController,
-  //       hintText: 'Enter Nickname',
-  //       confirmButtonText: 'Enter Day',
-  //       onConfirmPressed: _startDay,
-  //       focusNode: _nicknameFocusNode,
-  //     ),
-  //   );
-  // }
+  void _showNicknameInputDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => MyInputAlertBox(
+        textController: _nicknameController,
+        hintText: 'Enter Nickname',
+        confirmButtonText: 'Enter Day',
+        onConfirmPressed: _startDay,
+        focusNode: _nicknameFocusNode,
+      ),
+    );
+  }
 
   Future<void> _loadDay() async {
     await _dayProvider.loadDayByCode(widget.dayCode);
@@ -207,31 +207,34 @@ class _DaySpacePageState extends State<DaySpacePage> {
           ),
         ),
         body: hasUploaded
-            ? Center(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: MasonryGridView.builder(
-                        gridDelegate:
-                            SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2),
-                        shrinkWrap: true,
-                        itemCount: moments?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          final moment = moments![index];
+            ? Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Center(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: MasonryGridView.builder(
+                          gridDelegate:
+                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2),
+                          shrinkWrap: true,
+                          itemCount: moments?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            final moment = moments![index];
 
-                          return MyMomentTile(
-                            moment: moment,
-                            onTap: _showImageDialog,
-                            index: index,
-                            toggleVote: _toggleVote,
-                          );
-                        },
+                            return MyMomentTile(
+                              moment: moment,
+                              onTap: _showImageDialog,
+                              index: index,
+                              toggleVote: _toggleVote,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              )
+            )
             : NoMomentUploadedPage(imageUploadClicked: _imageUploadClicked),
       ),
     );

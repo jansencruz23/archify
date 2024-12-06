@@ -43,8 +43,8 @@ class _MyMomentTileState extends State<MyMomentTile> {
                     ClipOval(
                       child: Image.network(
                         widget.moment.imageUrl,
-                        height: 40,
-                        width: 40,
+                        height: 25,
+                        width: 25,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -83,6 +83,7 @@ class _MyMomentTileState extends State<MyMomentTile> {
                 )),
               ],
             ),
+            SizedBox(height: (widget.index % 3 == 0) ? 10 : 10,)
           ],
         ),
       ),
