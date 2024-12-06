@@ -622,4 +622,40 @@ class DayService {
       _logger.severe(ex.toString());
     }
   }
+
+  Future<Day?> updateDayInFirebase({
+    required String dayId,
+    required String dayName,
+    required String description,
+    required int maxParticipants,
+    required DateTime votingDeadline,
+  }) async {
+    try {
+      final dayDocRef = _db.collection('Days').doc(dayId);
+      await dayDocRef.update({
+        'name': dayName,
+        'description': description,
+        'maxParticipants': maxParticipants,
+        'votingDeadline': votingDeadline,
+      });
+      return Day.fromDocument((await dayDocRef.get()).data()!);
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return null;
+    }
+  }
+
+  Future<int> getParticipantCount(String dayId) async {
+    try {
+      final participantsSnapshot = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .get();
+      return participantsSnapshot.size;
+    } catch (ex) {
+      _logger.severe(ex.toString());
+      return 0;
+    }
+  }
 }

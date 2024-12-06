@@ -109,8 +109,8 @@ class _DaySpacePageState extends State<DaySpacePage> {
 
     final isHost = await _dayProvider.isHost(day!.id);
 
-    if (isHost) {
-      //goEditDaySettings(context, day!.id);
+    if (isHost && mounted) {
+      goEditSettings(context, day!);
     } else {
       _showParticipantSettings();
     }

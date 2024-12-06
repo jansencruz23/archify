@@ -1,6 +1,8 @@
+import 'package:archify/models/day.dart';
 import 'package:archify/pages/day_code_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/day_space_page.dart';
+import 'package:archify/pages/edit_day_settings_page.dart';
 import 'package:archify/pages/edit_profile_page.dart';
 import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/join_or_create_page.dart';
@@ -85,5 +87,12 @@ void goEditProfile(BuildContext context) {
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(builder: (context) => EditProfilePage()),
+  );
+}
+
+void goEditSettings(BuildContext context, Day day) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => EditDaySettingsPage(day: day)),
   );
 }
