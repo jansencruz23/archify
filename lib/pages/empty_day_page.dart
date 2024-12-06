@@ -9,9 +9,11 @@ import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/day_code_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+
 
 class EmptyDayPage extends StatefulWidget {
-  const EmptyDayPage({super.key});
+  const EmptyDayPage({super.key, Null Function(String code)? onScan}); //try scanner
 
   @override
   State<EmptyDayPage> createState() => _EmptyDayPageState();
@@ -24,13 +26,31 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
+  //Try lang qr scanner
+  String qrCode = '';
+
+
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
     {'icon': Icons.qr_code_scanner, 'title': 'Scan QR code'},
     {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
     {'icon': Icons.settings, 'title': 'Settings'},
   ];
-
+  void _scanQRCode() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EmptyDayPage(
+          onScan: (String code) {
+            setState(() {
+              qrCode = code; // Store scanned code in a string
+            });
+            Navigator.pop(context); // Return to the previous screen
+          },
+        ),
+      ),
+    );
+  }
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -213,14 +233,21 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(36.0),
-                child: Text(
-                  'Pssst... the room\'s waiting for you. Got the code?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.05),
-                    fontFamily: 'Sora',
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Pssst... the room\'s waiting for you. Got the code?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: _getClampedFontSize(context, 0.05),
+                        fontFamily: 'Sora',
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                      ),
+                    ),
+                    MyButton(text: "Scan Code", onTap: _scanQRCode)
+                  ],
                 ),
               ),
             ),
