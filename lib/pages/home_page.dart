@@ -3,6 +3,9 @@ import 'package:archify/components/my_day.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/pages/empty_day_page.dart';
+import 'package:archify/pages/profile_page.dart';
+import 'package:archify/pages/settings_page.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/auth/auth_service.dart';
@@ -49,20 +52,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   void _onItemTapped(int index) {
     setState(() {
-      if (index == 2) {
+      _selectedIndex = index;
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => EmptyDayPage()),
+        );
+      } else if (index == 2) {
         if (_showVerticalBar) {
+          print('Reversing animation');
           _animationController.reverse();
         } else {
+          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
-      } else {
-        if (_showVerticalBar) {
-          _animationController.reverse();
-          _showVerticalBar = false;
-        }
+      } else if (_showVerticalBar) {
+        _animationController.reverse();
+        _showVerticalBar = false;
+      } else if (index == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else if (index == 4) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SettingsPage()),
+        );
       }
-      _selectedIndex = index;
     });
   }
 
@@ -286,13 +309,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: AppBar(
                         // Leading section with profile picture and welcome text
                         titleSpacing: 0,
-                        leadingWidth: 100,
-
+                        leadingWidth: 80,
                         leading: Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.fromLTRB(8.0, 16.0, 0, 16.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Profile picture widget
                               MyProfilePicture(
@@ -306,7 +328,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         title: Padding(
                           padding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 8.0),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Welcome back text
@@ -317,7 +339,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .inversePrimary,
-                                  fontSize: 16,
+                                  fontSize: 13,
                                 ),
                               ),
                               // User's name text
@@ -328,7 +350,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 style: TextStyle(
                                   fontFamily: 'Sora',
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                  fontSize: 16,
                                   color: Theme.of(context)
                                       .colorScheme
                                       .inversePrimary,
@@ -364,41 +386,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                     //Main Body
                     body: RefreshIndicator(
-                        color: Theme.of(context).colorScheme.secondary,
-                        onRefresh: _loadData,
-                        child: Stack(
-                          children: [
-                            SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        const SizedBox(width: 10),
-                                        GFImageOverlay(
-                                          image: AssetImage(
-                                              'lib/assets/images/Bestday_img.png'),
-                                          shape: BoxShape.circle,
-                                          width: 36,
-                                          height: 36,
+                      color: Theme.of(context).colorScheme.secondary,
+                      onRefresh: _loadData,
+                      child: Stack(
+                        children: [
+                          SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 8.0),
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(width: 10),
+                                      GFImageOverlay(
+                                        image: AssetImage(
+                                            'lib/assets/images/Bestday_img.png'),
+                                        shape: BoxShape.circle,
+                                        width: 36,
+                                        height: 36,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        'Best of the Day',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary,
+                                          fontFamily: 'Sora',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: _getClampedFontSize(
+                                              context, 0.05),
                                         ),
-                                        const SizedBox(width: 10),
-                                        Text(
-                                          'Best of the Day',
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .inversePrimary,
-                                            fontFamily: 'Sora',
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: _getClampedFontSize(
-                                                context, 0.05),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
+                                ),
 
                                   //Carousel
                                   CarouselSlider.builder(

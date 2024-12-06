@@ -6,6 +6,9 @@ import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/empty_day_page.dart';
+import 'package:archify/pages/settings_page.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -33,20 +36,40 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
 
   void _onItemTapped(int index) {
     setState(() {
-      if (index == 2) {
+      _selectedIndex = index;
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => EmptyDayPage()),
+        );
+      } else if (index == 2) {
         if (_showVerticalBar) {
+          print('Reversing animation');
           _animationController.reverse();
         } else {
+          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
-      } else {
-        if (_showVerticalBar) {
-          _animationController.reverse();
-          _showVerticalBar = false;
-        }
+      } else if (_showVerticalBar) {
+        _animationController.reverse();
+        _showVerticalBar = false;
+      } else if (index == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else if (index == 4) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SettingsPage()),
+        );
       }
-      _selectedIndex = index;
     });
   }
 

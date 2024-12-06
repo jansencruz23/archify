@@ -371,8 +371,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             ],
                           )
 
-
-
                 ],
               ),
             ),
