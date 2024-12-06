@@ -47,7 +47,7 @@ class _MyMomentTileState extends State<MyMomentTile> {
           children: [
             if (widget.moment.nickname.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(0),
                 child: Row(
                   children: [
                     ClipOval(
@@ -59,7 +59,7 @@ class _MyMomentTileState extends State<MyMomentTile> {
                       ),
                     ),
                     SizedBox(
-                      width: 8,
+                      width: 3,
                     ),
                     Text(
                       widget.moment.nickname,
@@ -93,6 +93,9 @@ class _MyMomentTileState extends State<MyMomentTile> {
                 )),
               ],
             ),
+            SizedBox(
+              height: (widget.index % 3 == 0) ? 10 : 10,
+            )
           ],
         ),
       ),

@@ -638,7 +638,6 @@ class DayService {
   Future<Day?> updateDayInFirebase({
     required String dayId,
     required String dayName,
-    required String description,
     required int maxParticipants,
     required DateTime votingDeadline,
   }) async {
@@ -646,7 +645,6 @@ class DayService {
       final dayDocRef = _db.collection('Days').doc(dayId);
       await dayDocRef.update({
         'name': dayName,
-        'description': description,
         'maxParticipants': maxParticipants,
         'votingDeadline': votingDeadline,
       });
@@ -668,6 +666,56 @@ class DayService {
     } catch (ex) {
       _logger.severe(ex.toString());
       return 0;
+    }
+  }
+
+  Future<void> deleteDayInFirebase(String dayId) async {
+    try {
+      final batch = _db.batch();
+
+      // Delete all participants
+      final participantsSnapshot = await _db
+          .collection('Days')
+          .doc(dayId)
+          .collection('Participants')
+          .get();
+      for (var participant in participantsSnapshot.docs) {
+        batch.delete(participant.reference);
+      }
+
+      // Delete all moments
+      final momentsSnapshot =
+          await _db.collection('Days').doc(dayId).collection('Moments').get();
+      for (var moment in momentsSnapshot.docs) {
+        batch.delete(moment.reference);
+      }
+
+      // Delete all comments
+      final commentsSnapshot =
+          await _db.collection('Days').doc(dayId).collection('Comments').get();
+      for (var comment in commentsSnapshot.docs) {
+        batch.delete(comment.reference);
+      }
+
+      // Delete the day
+      batch.delete(_db.collection('Days').doc(dayId));
+
+      // Delete the day from all users' joined days
+      final usersSnapshot = await _db.collection('Users').get();
+      for (var user in usersSnapshot.docs) {
+        final joinedDaysSnapshot = await user.reference
+            .collection('JoinedDays')
+            .where(FieldPath.documentId, isEqualTo: dayId)
+            .get();
+        for (var joinedDay in joinedDaysSnapshot.docs) {
+          batch.delete(joinedDay.reference);
+        }
+      }
+
+      // Commit the batch
+      await batch.commit();
+    } catch (ex) {
+      _logger.severe(ex.toString());
     }
   }
 }

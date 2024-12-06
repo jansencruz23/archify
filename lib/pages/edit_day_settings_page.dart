@@ -20,7 +20,6 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final DayProvider _dayProvider;
   late final TextEditingController _dayNameController;
-  late final TextEditingController _dayDescriptionController;
   late final TextEditingController _maxParticipantsController;
   late final TextEditingController _codeController;
   late TimeOfDay _votingDeadline;
@@ -35,7 +34,6 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
     super.initState();
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _dayNameController = TextEditingController();
-    _dayDescriptionController = TextEditingController();
     _maxParticipantsController = TextEditingController();
     _codeController = TextEditingController();
     _dayNameFocusNode = FocusNode();
@@ -52,7 +50,6 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
 
   void _loadData() {
     _dayNameController.text = widget.day.name;
-    _dayDescriptionController.text = widget.day.description;
     _maxParticipantsController.text = widget.day.maxParticipants.toString();
     _votingDeadline = TimeOfDay.fromDateTime(widget.day.votingDeadline);
   }
@@ -107,13 +104,40 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
     );
   }
 
+  void _showDeleteDayDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Day?'),
+        content: Text('Are you sure you want to delete you day?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: Colors.black)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              goRootPage(context);
+              await _deleteDay();
+            },
+            child: Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteDay() async {
+    await _dayProvider.deleteDay(widget.day.id);
+  }
+
   Future<void> _updateDay() async {
     if (!_formKey.currentState!.validate()) return;
     final dayName = _dayNameController.text;
-    final dayDescription = _dayDescriptionController.text;
     final maxParticipants = int.tryParse(_maxParticipantsController.text);
 
-    if (dayName.isEmpty || dayDescription.isEmpty || maxParticipants == null) {
+    if (dayName.isEmpty || maxParticipants == null) {
       return;
     }
 
@@ -136,7 +160,6 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
     await _dayProvider.updateDay(
       dayId: widget.day.id,
       dayName: dayName,
-      description: dayDescription,
       maxParticipants: maxParticipants,
       votingDeadline: _votingDeadline,
     );
@@ -229,23 +252,6 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Please enter a day name";
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 12),
-                          MyTextFormField(
-                            controller: _dayDescriptionController,
-                            hintText: 'Day Description',
-                            obscureText: false,
-                            focusNode: _dayDescriptionFocusNode,
-                            onSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(_maxParticipantsFocusNode);
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please a day description";
                               }
                               return null;
                             },
@@ -385,7 +391,16 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                         ),
                       ),
                     ],
-                  )
+                  ),
+                  TextButton(
+                    onPressed: _showDeleteDayDialog,
+                    child: const Text(
+                      'Delete Day',
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

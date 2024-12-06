@@ -86,7 +86,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("QR Code"),
+          title: Text("QR Code", style: TextStyle(fontFamily: 'Sora',color: Theme.of(context).colorScheme.inversePrimary,),),
           content: Container(
             width: double.maxFinite,
             child: SingleChildScrollView(
@@ -98,8 +98,8 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                     version: QrVersions.auto,
                     size: 200.0,
                   ),
-                  SizedBox(height: 20),
-                  Text(code),
+                  SizedBox(height: 10),
+                  Text(code, style: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w700, color:Theme.of(context).colorScheme.secondary ),),
                 ],
               ),
             ),
@@ -109,7 +109,8 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
               child: Text(
                 "Close",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                  fontFamily: 'Sora',
                 ),
               ),
               onPressed: () {
@@ -216,101 +217,64 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
 
     return SafeArea(
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(70),
-          child: AppBar(
-            titleSpacing: 0,
-            leadingWidth: 600,
-            leading: Padding(
-              padding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 8.0),
-              child: Stack(
-                children: [
-                  Text(
-                    'Let’s keep the moment,',
-                    style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.03),
-                      fontFamily: 'Sora',
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: -5,
-                    left: 0,
-                    child: Text(
-                      'Pick the best shot!',
-                      style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
-                        fontFamily: 'Sora',
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Divider(
-                height: 2,
-                color: Theme.of(context).colorScheme.outline,
-              ),
-            ),
-          ),
-        ),
         body: Stack(
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(23.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Theme.of(context).colorScheme.secondary,
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Center(
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, top: 20, bottom: 10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            child: GestureDetector(
+                              onTap: () => _showDayCode(day?.code ?? ''),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'DAY CODE: ${day?.code == null ? '' : day!.code}',
+                                  style: TextStyle(
+                                    fontSize: _getClampedFontSize(context, 0.03),
+                                    fontFamily: 'Sora',
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.surface,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    child: GestureDetector(
-                      onTap: () => _showDayCode(day?.code ?? ''),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'DAY CODE: ${day?.code == null ? '' : day!.code}',
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Oops, no peeking! \nYou haven\'t uploaded a moment yet.',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: _getClampedFontSize(context, 0.03),
+                            fontSize: _getClampedFontSize(context, 0.05),
                             fontFamily: 'Sora',
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.surface,
+                            color: Theme.of(context).colorScheme.inversePrimary,
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(36.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Oops, no peeking! \nYou haven\'t uploaded a moment yet.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
-                        fontFamily: 'Sora',
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      ),
-                    ),
-                    MyButton(
-                      text: 'Upload your masterpiece',
-                      onTap: widget.imageUploadClicked,
+                        MyButton(
+                          text: 'Upload your masterpiece',
+                          onTap: widget.imageUploadClicked,
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
+
             Positioned(
               bottom: 0,
               left: 0,

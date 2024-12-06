@@ -68,7 +68,6 @@ class DayProvider extends ChangeNotifier {
 
   Future<String> createDay({
     required String name,
-    required String description,
     required int maxParticipants,
     required TimeOfDay votingDeadline,
   }) async {
@@ -87,7 +86,6 @@ class DayProvider extends ChangeNotifier {
       id: '',
       hostId: uid,
       name: name,
-      description: description,
       maxParticipants: maxParticipants,
       votingDeadline: deadline,
       code: uuid.v4().substring(0, 5),
@@ -116,14 +114,16 @@ class DayProvider extends ChangeNotifier {
     return await _dayService.isRoomFull(dayCode);
   }
 
-  Future<void> deleteDay(String day) async {
-    // Delete a day from the database
+  Future<void> deleteDay(String dayId) async {
+    await _dayService.deleteDayInFirebase(dayId);
+    _day = null;
+
+    notifyListeners();
   }
 
   Future<void> updateDay({
     required String dayId,
     required String dayName,
-    required String description,
     required int maxParticipants,
     required TimeOfDay votingDeadline,
   }) async {
@@ -139,7 +139,6 @@ class DayProvider extends ChangeNotifier {
     _day = await _dayService.updateDayInFirebase(
       dayId: dayId,
       dayName: dayName,
-      description: description,
       maxParticipants: maxParticipants,
       votingDeadline: deadline,
     );

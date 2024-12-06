@@ -174,48 +174,6 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     final listeningProvider = Provider.of<DayProvider>(context);
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-        child: AppBar(
-          titleSpacing: 0,
-          leadingWidth: 600,
-          leading: Padding(
-            padding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 8.0),
-            child: Stack(
-              children: [
-                Text(
-                  'Let’s keep the moment,',
-                  style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.03),
-                    fontFamily: 'Sora',
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                  ),
-                ),
-                Positioned(
-                  bottom: -5,
-                  left: 0,
-                  child: Text(
-                    'Pick the best shot!',
-                    style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.05),
-                      fontFamily: 'Sora',
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1),
-            child: Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.outline,
-            ),
-          ),
-        ),
-      ),
       body: Stack(
         children: [
           Row(

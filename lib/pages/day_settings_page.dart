@@ -18,7 +18,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final DayProvider _dayProvider;
   late final TextEditingController _dayNameController;
-  late final TextEditingController _dayDescriptionController;
   late final TextEditingController _maxParticipantsController;
   late final TextEditingController _codeController;
   late TimeOfDay _votingDeadline;
@@ -33,7 +32,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
     super.initState();
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _dayNameController = TextEditingController();
-    _dayDescriptionController = TextEditingController();
     _maxParticipantsController = TextEditingController();
     _codeController = TextEditingController();
     _dayNameFocusNode = FocusNode();
@@ -97,16 +95,14 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
   Future<void> createDay() async {
     if (!_formKey.currentState!.validate()) return;
     final dayName = _dayNameController.text;
-    final dayDescription = _dayDescriptionController.text;
     final maxParticipants = int.tryParse(_maxParticipantsController.text);
 
-    if (dayName.isEmpty || dayDescription.isEmpty || maxParticipants == null) {
+    if (dayName.isEmpty || maxParticipants == null) {
       return;
     }
 
     final dayId = await _dayProvider.createDay(
       name: dayName,
-      description: dayDescription,
       maxParticipants: maxParticipants,
       votingDeadline: _votingDeadline,
     );
@@ -207,23 +203,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                           ),
                           const SizedBox(height: 12),
                           MyTextFormField(
-                            controller: _dayDescriptionController,
-                            hintText: 'Day Description',
-                            obscureText: false,
-                            focusNode: _dayDescriptionFocusNode,
-                            onSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(_maxParticipantsFocusNode);
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please a day description";
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 12),
-                          MyTextFormField(
                             controller: _maxParticipantsController,
                             hintText: 'Max Participants',
                             obscureText: false,
@@ -233,8 +212,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                                   RegExp(r'^[0-9]*$'))
                             ],
                             onSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(_pickVotingDeadlineFocusNode);
+                              FocusScope.of(context).unfocus();
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
