@@ -16,7 +16,7 @@ import 'package:archify/components/my_mobile_scanner_overlay.dart';
 
 
 class EmptyDayPage extends StatefulWidget {
-  const EmptyDayPage({super.key, Null Function(String code)? onScan}); //try scanner
+  const EmptyDayPage({super.key}); //try scanner
 
   @override
   State<EmptyDayPage> createState() => _EmptyDayPageState();
