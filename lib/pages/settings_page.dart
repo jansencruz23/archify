@@ -38,7 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
   late bool _setupNavigationTriggered;
   DateTime? minimumDate;
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 4;
   bool _showVerticalBar = false;
   bool _isRotated = false;
 
