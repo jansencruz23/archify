@@ -233,8 +233,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                                   RegExp(r'^[0-9]*$'))
                             ],
                             onSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(_pickVotingDeadlineFocusNode);
+                              FocusScope.of(context).unfocus();
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
