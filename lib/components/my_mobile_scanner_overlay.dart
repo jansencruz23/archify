@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -25,11 +24,8 @@ class QRScannerScreen extends StatelessWidget {
               }
             },
           ),
-
-
           Stack(
             children: [
-
               Center(
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.7,

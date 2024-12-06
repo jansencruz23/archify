@@ -541,6 +541,10 @@ class DayService {
     });
   }
 
+  void resetUserCache() {
+    _userCache.clear();
+  }
+
   Future<void> _fetchUserDataInBulk(List<dynamic> userIds) async {
     final userIdsToFetch =
         userIds.where((uid) => !_userCache.containsKey(uid)).toList();

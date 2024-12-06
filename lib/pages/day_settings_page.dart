@@ -282,41 +282,42 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border:
+                                Border.all(color: Color(0xFFFF6F61), width: 1),
+                            borderRadius: BorderRadius.circular(35),
+                          ),
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(
+                              fontFamily: 'Sora',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Color(0xFFFF6F61),
+                            ),
+                          ),
+                        ),
+                      ),
 
-                           const SizedBox(height: 12),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Color(0xFFFF6F61), width: 1),
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  child: Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                      fontFamily: 'Sora',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: Color(0xFFFF6F61),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              // Add spacing between buttons
-                              SizedBox(
-                                width: 24,
-                              ),
+                      // Add spacing between buttons
+                      SizedBox(
+                        width: 24,
+                      ),
 
                       GestureDetector(
                         onTap: createDay,

@@ -239,6 +239,11 @@ class DayProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void refreshComments() {
+    _dayService.resetUserCache();
+    notifyListeners();
+  }
+
   void listenToComments(String dayId) {
     _dayService.commentsStream(dayId).listen((comments) {
       _commentsByDayId[dayId] = comments;

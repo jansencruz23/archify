@@ -49,14 +49,12 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> loadUserProfile() async {
-    setLoading(true);
     final user = await getCurrentUserProfile();
     if (user == null) return;
 
     _userProfile = user;
     _picturePath = user.pictureUrl;
 
-    setLoading(false);
     notifyListeners();
   }
 

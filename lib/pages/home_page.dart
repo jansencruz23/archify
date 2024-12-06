@@ -168,17 +168,8 @@ late final TextEditingController _nicknameController = TextEditingController();
             TextButton(
               onPressed: () async {
                 String enteredCode = codeController.text;
-                await joinDay(enteredCode);
-                if (!mounted) return;
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Code Entered: $enteredCode',
-                      style: const TextStyle(fontFamily: 'Sora'),
-                    ),
-                  ),
-                );
+                await joinDay(enteredCode);
               },
               child: const Text(
                 'Enter',
@@ -273,8 +264,13 @@ late final TextEditingController _nicknameController = TextEditingController();
   }
 
   Future<void> _loadData() async {
-    _loadUserProfile();
-    _loadUserMoments();
+    await _loadUserProfile();
+    await _loadUserMoments();
+    _refreshComments();
+  }
+
+  void _refreshComments() async {
+    _dayProvider.refreshComments();
   }
 
   Future<void> _loadUserMoments() async {
@@ -511,7 +507,6 @@ late final TextEditingController _nicknameController = TextEditingController();
                                         });
                                       },
                                     ),
-
                                   ),
 
                                   //View Comment Icon
@@ -625,8 +620,13 @@ late final TextEditingController _nicknameController = TextEditingController();
                                       children: [
                                         const SizedBox(width: 10),
                                         GFImageOverlay(
-                                          image: AssetImage(
-                                              'lib/assets/images/AAlfonso_img.png'),
+                                          image: userProfile == null ||
+                                                  userProfile.pictureUrl.isEmpty
+                                              ? const AssetImage(
+                                                  'lib/assets/images/Bestday_img.png')
+                                              : Image.network(
+                                                      userProfile.pictureUrl)
+                                                  .image,
                                           shape: BoxShape.circle,
                                           height: 50,
                                           width: 50,
@@ -792,6 +792,43 @@ late final TextEditingController _nicknameController = TextEditingController();
                                   ),
                                 ),
                               ),
+                            Column(
+                              children: [
+                                const SizedBox(height: 30),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: MediaQuery.of(context)
+                                            .viewInsets
+                                            .bottom)),
+
+                                ElevatedButton(
+                                  onPressed: () => goProfile(context),
+                                  child: const Text('Profile'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    goDayGate(context);
+                                  },
+                                  child: const Text('Day'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    goJoinOrCreate(context);
+                                  },
+                                  child: const Text('Join or Create'),
+                                ),
+
+                                // Test Icons
+                                IconButton(
+                                  onPressed: _logout,
+                                  icon: const Icon(Icons.logout),
+                                ),
+                                IconButton(
+                                  onPressed: () => goSetup(context),
+                                  icon: const Icon(Icons.home),
+                                ),
+                              ],
+                            ),
                           ],
                         )),
                   ),
