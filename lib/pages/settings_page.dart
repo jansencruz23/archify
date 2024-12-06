@@ -522,6 +522,12 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                           _logout();
                         },
                       ),
+                      const SizedBox(height: 300),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context)
+                                  .viewInsets
+                                  .bottom)),
                     ],
                   ),
               ),
