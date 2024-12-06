@@ -34,29 +34,32 @@ class _MySettingsButtonState extends State<MySettingsButton> {
             if (widget.onTap != null) {
               widget.onTap!();
             }
-            Future.delayed(Duration(milliseconds: 400), () {
+            Future.delayed(Duration(milliseconds: 300), () {
               setState(() {
                 _isClicked = false;
               });
             });
           },
           onLongPressStart: (_) {
-            setState(() {
-              _isLongPressed = true; // Start the long press
+            Future.delayed(const Duration(milliseconds: 100), () {
+              setState(() {
+                _isLongPressed = true;
+              });
             });
           },
+
           onLongPressEnd: (_) {
             setState(() {
-              _isLongPressed = false; // End the long press
+              _isLongPressed = false;
             });
           },
           child: AnimatedContainer(
-            duration: Duration(microseconds: 200),
+            duration: Duration(microseconds: 100),
             height: 50,
             decoration: BoxDecoration(
               color:
               _isLongPressed
-                  ? Theme.of(context).colorScheme.secondaryContainer // Color on long press
+                  ? Theme.of(context).colorScheme.secondaryContainer
               : _isClicked
                   ? Theme.of(context).colorScheme.secondaryContainer
                   : Theme.of(context).colorScheme.surface,
