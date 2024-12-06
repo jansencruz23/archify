@@ -58,48 +58,45 @@ class _MyTextFieldState extends State<MyTextField> {
     final focusColor =
         widget.focusColor ?? Theme.of(context).colorScheme.secondaryFixedDim;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: Theme.of(context).colorScheme.tertiary,
-        ),
-        child: ValueListenableBuilder<bool>(
-          valueListenable: focusNotifier,
-          builder: (context, hasFocus, child) {
-            return TextField(
-              keyboardType: widget.inputType ?? TextInputType.text,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.inversePrimary,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        color: Theme.of(context).colorScheme.tertiary,
+      ),
+      child: ValueListenableBuilder<bool>(
+        valueListenable: focusNotifier,
+        builder: (context, hasFocus, child) {
+          return TextField(
+            keyboardType: widget.inputType ?? TextInputType.text,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.inversePrimary,
+              fontFamily: 'Sora',
+              fontSize: 18,
+            ),
+            controller: widget.controller,
+            obscureText: widget.obscureText,
+            focusNode: widget.focusNode,
+            onSubmitted: widget.onSubmitted,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  width: 0,
+                  style: BorderStyle.none,
+                ),
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              fillColor: hasFocus ? focusColor : fillColor,
+              filled: true,
+              hintText: widget.hintText,
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
                 fontFamily: 'Sora',
                 fontSize: 18,
               ),
-              controller: widget.controller,
-              obscureText: widget.obscureText,
-              focusNode: widget.focusNode,
-              onSubmitted: widget.onSubmitted,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    width: 0,
-                    style: BorderStyle.none,
-                  ),
-                  borderRadius: BorderRadius.circular(25.0),
-                ),
-                fillColor: hasFocus ? focusColor : fillColor,
-                filled: true,
-                hintText: widget.hintText,
-                hintStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontFamily: 'Sora',
-                  fontSize: 18,
-                ),
-                  contentPadding: const EdgeInsets.only(left: 30),
-              ),
-            );
-          },
-        ),
+                contentPadding: const EdgeInsets.only(left: 30),
+            ),
+          );
+        },
       ),
     );
   }

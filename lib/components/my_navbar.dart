@@ -1,6 +1,11 @@
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/services/database/day/day_gate.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/empty_day_page.dart';
+import 'package:archify/pages/profile_page.dart';
+import 'package:archify/pages/settings_page.dart';
 import 'package:provider/provider.dart';
 
 class MyNavbar extends StatelessWidget {
@@ -175,7 +180,18 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _onItemTapped(int index) {
     setState(() {
-      if (index == 2) {
+      _selectedIndex = index;
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DayGate()),
+        );
+      } else if (index == 2) {
         if (_showVerticalBar) {
           print('Reversing animation');
           _animationController.reverse();
@@ -184,13 +200,20 @@ class _HomeScreenState extends State<HomeScreen>
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
-      } else {
-        if (_showVerticalBar) {
-          _animationController.reverse();
-          _showVerticalBar = false;
-        }
+      } else if (_showVerticalBar) {
+        _animationController.reverse();
+        _showVerticalBar = false;
+      } else if (index == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else if (index == 4) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SettingsPage()),
+        );
       }
-      _selectedIndex = index;
     });
   }
 

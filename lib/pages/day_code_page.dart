@@ -46,11 +46,11 @@ class _DayCodePageState extends State<DayCodePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     QrImageView(
-                      data: day == null ? '' : day.code,
+                      data: day?.code ?? '',
                       version: QrVersions.auto,
                       size: 200.0,
                     ),
-                    Text(day == null ? 'Loading...' : day.code),
+                    Text(day?.code ?? 'Loading...'),
                     MyButton(
                       text: 'Start Day',
                       onTap: () => goHome(context),
