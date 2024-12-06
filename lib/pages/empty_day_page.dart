@@ -40,7 +40,7 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EmptyDayPage(
+        builder: (context) => QRScannerScreen(
           onScan: (String code) {
             setState(() {
               qrCode = code; // Store scanned code in a string
@@ -325,6 +325,29 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
 
           ],
         ),
+      ),
+    );
+  }
+}
+class QRScannerScreen extends StatelessWidget {
+  final Function(String) onScan;
+
+  const QRScannerScreen({required this.onScan, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Scan QR Code')),
+      body: MobileScanner(
+        onDetect: (capture) {
+          final List<Barcode> barcodes = capture.barcodes;
+          for (final barcode in barcodes) {
+            if (barcode.rawValue != null) {
+              onScan(barcode.rawValue!); // Pass the scanned value back
+              break;
+            }
+          }
+        },
       ),
     );
   }
