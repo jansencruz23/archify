@@ -273,30 +273,39 @@ class _ProfilePageState extends State<ProfilePage>
                     RefreshIndicator(
                       onRefresh: _loadUserMoments,
                       color: Theme.of(context).colorScheme.secondary,
-                      child: MasonryGridView.builder(
-                          gridDelegate:
-                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
-                          shrinkWrap: true,
-                          itemCount: favoriteDays.length, //sample
-                          itemBuilder: (context, index) {
-                            final imagePath =
-                                favoriteDays[index].imageUrl; //sample
-                            if (imagePath.isEmpty) return SizedBox.shrink();
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16.0),
-                                child: Image.network(
-                                  imagePath, //sample
-                                  width: double.infinity,
-                                  height: (index % 3 == 0) ? 180 : 230,
-                                  fit: BoxFit.cover,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 80),
+                        child: MasonryGridView.builder(
+                            gridDelegate:
+                                SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            shrinkWrap: true,
+                            itemCount: favoriteDays.length, //sample
+                            itemBuilder: (context, index) {
+                              final imagePath =
+                                  favoriteDays[index].imageUrl; //sample
+                              if (imagePath.isEmpty) return SizedBox.shrink();
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16.0),
+                                  child: Image.network(
+                                    imagePath, //sample
+                                    width: double.infinity,
+                                    height: (index % 3 == 0) ? 180 : 230,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
+                              );
+                            }),
+                      ),
                     ),
+                    const SizedBox(height: 800),
+                    Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context)
+                                .viewInsets
+                                .bottom)),
                     Positioned(
                       bottom: 0,
                       left: 0,

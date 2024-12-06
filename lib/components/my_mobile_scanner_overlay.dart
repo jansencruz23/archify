@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -23,18 +25,24 @@ class QRScannerScreen extends StatelessWidget {
               }
             },
           ),
-          Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.7,
-              height: MediaQuery.of(context).size.width * 0.7,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 10.0),
-                  borderRadius: BorderRadius.circular(20),
-                ),
 
+
+          Stack(
+            children: [
+
+              Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  height: MediaQuery.of(context).size.width * 0.7,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 10.0),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
