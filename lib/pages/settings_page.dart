@@ -194,7 +194,6 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
@@ -203,6 +202,8 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
 
     _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0))
         .animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+
+    super.initState();
     _setupNavigationTriggered = false;
 
     _email = "";
@@ -214,28 +215,12 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
       // _loadUserProfile();
       // _checkIfNewUser();
     });
-    @override
-    void dispose() {
-      _animationController.dispose();
-      super.dispose();
-    }
+  }
 
-    Future<void> _loadUserProfile() async {
-      await _userProvider.loadUserProfile();
-    }
-
-    Future<void> _checkIfNewUser() async {
-      if (_setupNavigationTriggered) return;
-
-      final user = await _userProvider.getCurrentUserProfile();
-
-      if (user != null && user.isNew) {
-        _setupNavigationTriggered = true;
-        if (mounted) {
-          goSetup(context);
-        }
-      }
-    }
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   //For Responsiveness
@@ -247,6 +232,23 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
   //hover for button and mouse change
   bool amIHovering = false;
   Offset exitFrom = Offset(0, 0);
+
+  Future<void> _loadUserProfile() async {
+    await _userProvider.loadUserProfile();
+  }
+
+  Future<void> _checkIfNewUser() async {
+    if (_setupNavigationTriggered) return;
+
+    final user = await _userProvider.getCurrentUserProfile();
+
+    if (user != null && user.isNew) {
+      _setupNavigationTriggered = true;
+      if (mounted) {
+        goSetup(context);
+      }
+    }
+  }
 
   Future<void> _logout() async {
     await AuthService().logoutInFirebase();
@@ -306,9 +308,9 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
             body: Stack(
               children: [
                 SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
+                 physics: const BouncingScrollPhysics(),
                   child: Padding(
-                    padding: const EdgeInsets.all(18.0),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 200),
                     child: Column(
                       children: [
                         MySettingsButton(
