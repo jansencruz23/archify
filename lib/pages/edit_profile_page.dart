@@ -77,7 +77,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _cancelEdit() {
-    Navigator.pop(context);
+    goProfile(context);
   }
 
   @override
