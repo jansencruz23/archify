@@ -62,10 +62,8 @@ class _DaySpacePageState extends State<DaySpacePage>
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
-          print('Reversing animation');
           _animationController.reverse();
         } else {
-          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
@@ -188,7 +186,6 @@ class _DaySpacePageState extends State<DaySpacePage>
       final result = await _dayProvider.isHost(day!.id);
       setState(() {
         _isHost = result;
-        print('Is Host: $_isHost'); // Debug log
       });
     }
   }
