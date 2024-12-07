@@ -802,43 +802,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ),
-                            Column(
-                              children: [
-                                const SizedBox(height: 30),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom: MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom)),
-
-                                ElevatedButton(
-                                  onPressed: () => goProfile(context),
-                                  child: const Text('Profile'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    goDayGate(context);
-                                  },
-                                  child: const Text('Day'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    goJoinOrCreate(context);
-                                  },
-                                  child: const Text('Join or Create'),
-                                ),
-
-                                // Test Icons
-                                IconButton(
-                                  onPressed: _logout,
-                                  icon: const Icon(Icons.logout),
-                                ),
-                                IconButton(
-                                  onPressed: () => goSetup(context),
-                                  icon: const Icon(Icons.home),
-                                ),
-                              ],
-                            ),
                           ],
                         )),
                   ),

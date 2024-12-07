@@ -5,8 +5,6 @@ import 'package:archify/pages/day_space_page.dart';
 import 'package:archify/pages/edit_day_settings_page.dart';
 import 'package:archify/pages/edit_profile_page.dart';
 import 'package:archify/pages/home_page.dart';
-import 'package:archify/pages/join_or_create_page.dart';
-import 'package:archify/pages/join_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/setup_page.dart';
 import 'package:archify/services/auth/auth_gate.dart';
@@ -44,13 +42,6 @@ void goDayCode(BuildContext context, String dayId) {
   );
 }
 
-void goJoin(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const JoinPage()),
-  );
-}
-
 void goDaySpace(BuildContext context, String dayCode) {
   WidgetsBinding.instance.addPostFrameCallback((_) {
     Navigator.push(
@@ -64,13 +55,6 @@ void goHome(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => HomePage()),
-  );
-}
-
-void goJoinOrCreate(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const JoinOrCreatePage()),
   );
 }
 

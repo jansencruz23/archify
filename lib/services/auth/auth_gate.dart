@@ -2,7 +2,6 @@ import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/pages/day_space_page.dart';
 import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/home_page.dart';
-import 'package:archify/pages/join_or_create_page.dart';
 import 'package:archify/pages/no_moment_uploaded_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
