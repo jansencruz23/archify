@@ -34,32 +34,32 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   //Testing NicknameAndAvatar Dialog
-  // void _showNicknameAndAvatarDialog(BuildContext context) {
-  //   showDialog(
-  //       context: context,
-  //       builder: (context) => AlertDialog(
-  //             title: Text('Select a Photo and Enter Nickanme'),
-  //             content: Container(
-  //               width: double.infinity,
-  //               child: MyNicknameAndAvatarDialog(
-  //                 nicknameController: _nicknameController,
-  //                 avatarController: _avatarController,
-  //               ),
-  //             ),
-  //             actions: [
-  //               TextButton(
-  //                   onPressed: () {
-  //                     Navigator.of(context).pop();
-  //                   },
-  //                   child: Text('Close'))
-  //             ],
-  //           ));
-  // }
+  void _showNicknameAndAvatarDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text('Select a Photo and Enter Nickanme'),
+              content: Container(
+                width: double.infinity,
+                child: MyNicknameAndAvatarDialog(
+                  nicknameController: _nicknameController,
+                  avatarController: _avatarController, onSubmit: () {  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Close'))
+              ],
+            ));
+  }
 
-//Text lang ng nickname and avatar
-  // late final TextEditingController _nicknameController =
-  //     TextEditingController();
-  // late final TextEditingController _avatarController = TextEditingController();
+// Text lang ng nickname and avatar
+  late final TextEditingController _nicknameController =
+      TextEditingController();
+  late final TextEditingController _avatarController = TextEditingController();
 
   late final AuthProvider _authProvider;
   late final DayProvider _dayProvider;
@@ -446,7 +446,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(5, 14, 7, 0),
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showNicknameAndAvatarDialog(context);
+                        },
                         icon: Image.asset(
                           'lib/assets/images/notification_icon.png',
                           width: 30,
