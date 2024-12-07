@@ -227,7 +227,7 @@ class _ProfilePageState extends State<ProfilePage>
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(180),
           child: Padding(
-            padding: const EdgeInsets.only(top: 20.0),
+            padding: const EdgeInsets.only(top: 25.0),
             child: AppBar(
               leadingWidth: 120,
               toolbarHeight: 75,
@@ -247,26 +247,52 @@ class _ProfilePageState extends State<ProfilePage>
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.inversePrimary,
                       fontSize: 18,
+                      fontFamily: 'Sora'
                     ),
                   ),
-                  Text(
-                    userProfile == null ? 'Loading' : userProfile.bio,
-                    maxLines: 3,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.inversePrimary,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 23.0, top: 5.0),
+                    child: Text(
+                      userProfile == null ? 'Loading' : userProfile.bio,
+                      maxLines: 3,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Sora',
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                      ),
                     ),
                   ),
                 ],
               ),
               bottom: PreferredSize(
                 preferredSize: Size.fromHeight(30),
-                child: MyButton(
-                  text: 'Edit Profile',
-                  onTap: () => goEditProfile(context),
-                  padding: 8,
+                child: Padding(
+                  padding: const EdgeInsets.all(7.0),
+                  child: SizedBox(
+                    width: 370,
+                    height: 42,
+                    child: ElevatedButton(
+                      onPressed: () => goEditProfile(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFFF6F61),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                      ),
+                      child: Text(
+                        'Edit Profile',
+                        style: TextStyle(
+                          fontFamily: 'Sora',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
+
             ),
           ),
         ),
@@ -276,7 +302,7 @@ class _ProfilePageState extends State<ProfilePage>
               onRefresh: _loadUserMoments,
               color: Theme.of(context).colorScheme.secondary,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 80),
+                padding: const EdgeInsets.only(bottom: 80, left: 15, right: 15, top: 6),
                 child: MasonryGridView.builder(
                     gridDelegate:
                         SliverSimpleGridDelegateWithFixedCrossAxisCount(
