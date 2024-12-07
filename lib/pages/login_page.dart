@@ -61,7 +61,18 @@ class _LoginPageState extends State<LoginPage> {
     } catch (ex) {
       // replace with custom show dialog for errors
       if (mounted) {
-        showErrorDialog(context, ex.toString());
+        if(ex.toString() == 'Exception: invalid-email'){
+          showErrorDialog(context, 'Enter a valid email');
+        }
+        else if(ex.toString() == 'Exception: invalid-credentials'){
+          showErrorDialog(context, 'Error: Invalid Credentials');
+        }
+        else if(ex.toString() == 'Exception: channel-error'){
+          showErrorDialog(context, 'Enter both email and password');
+        }
+        else {
+          showErrorDialog(context, ex.toString());//'Something went wrong'
+        }
       }
     }
   }
