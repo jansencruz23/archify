@@ -26,6 +26,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Day? day;
+
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;

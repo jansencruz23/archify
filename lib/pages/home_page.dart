@@ -87,10 +87,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index == 1) {
+
+      Route customRoute(Widget page) {
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0); // from right magna-navigate
+            const end = Offset.zero;
+            const curve = Curves.ease;
+
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+      }
+
+      if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DayGate()),
+          customRoute(HomePage()), // transition to HomePage
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(
+          context,
+          customRoute(EmptyDayPage()), // transition to EmptyDayPage
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -107,16 +131,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          customRoute(ProfilePage()), // transition to ProfilePage
         );
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
+          customRoute(SettingsPage()), // transition to SettingsPage
         );
       }
     });
   }
+
 
   void _toggleRotation() {
     setState(() {

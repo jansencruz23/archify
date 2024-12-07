@@ -51,7 +51,12 @@ class MyNavbar extends StatelessWidget {
 
   Widget _buildNavIcon(String assetPath, int index) {
     return GestureDetector(
-      onTap: () => onItemTapped(index),
+      onTap: () {
+        // Only update the selectedIndex if it's not index 2
+        if (index != 2) {
+          onItemTapped(index);
+        }
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -60,7 +65,8 @@ class MyNavbar extends StatelessWidget {
             width: navIconSize,
             height: navIconSize,
           ),
-          if (selectedIndex == index)
+          // Show the dot only for the selectedIndex and exclude index 2
+          if (selectedIndex == index && selectedIndex != 2)
             Container(
               margin: const EdgeInsets.only(top: 4),
               height: 8,
@@ -74,6 +80,7 @@ class MyNavbar extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildElevatedNavIcon() {
     return GestureDetector(
