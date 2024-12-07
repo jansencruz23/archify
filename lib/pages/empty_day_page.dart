@@ -1,3 +1,4 @@
+import 'package:archify/helpers/navigate_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
@@ -9,26 +10,50 @@ import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/day_code_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:archify/components/my_mobile_scanner_overlay.dart';
 
 class EmptyDayPage extends StatefulWidget {
-  const EmptyDayPage({super.key});
+  const EmptyDayPage({super.key}); //try scanner
 
   @override
   State<EmptyDayPage> createState() => _EmptyDayPageState();
 }
 
-class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMixin {
+class _EmptyDayPageState extends State<EmptyDayPage>
+    with TickerProviderStateMixin {
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
+  //Try lang qr scanner
+  String qrCode = '';
+
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
     {'icon': Icons.qr_code_scanner, 'title': 'Scan QR code'},
     {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
   ];
+
+  //try lang qr scanner
+  void _scanQRCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRScannerScreen(
+          onScan: (String code) {
+            setState(() {
+              qrCode = code;
+            });
+            goDaySpace(context, qrCode);
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -147,7 +172,8 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: const Offset(0, 0),
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    ).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
   }
 
   @override
@@ -212,14 +238,21 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(36.0),
-                child: Text(
-                  'Pssst... the room\'s waiting for you. Got the code?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.05),
-                    fontFamily: 'Sora',
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Pssst... the room\'s waiting for you. Got the code?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: _getClampedFontSize(context, 0.05),
+                        fontFamily: 'Sora',
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                      ),
+                    ),
+                    MyButton(text: "Scan Code", onTap: _scanQRCode)
+                  ],
                 ),
               ),
             ),
@@ -258,7 +291,8 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            icon: const Icon(Icons.keyboard_arrow_down, size: 30, color: Colors.white),
+                            icon: const Icon(Icons.keyboard_arrow_down,
+                                size: 30, color: Colors.white),
                             onPressed: () {
                               setState(() {
                                 _animationController.reverse();
@@ -273,15 +307,21 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
                             itemBuilder: (context, index) {
                               final item = _menuItems[index];
                               return ListTile(
-                                leading: Icon(item['icon'], color: Colors.white),
-                                title: Text(item['title'], style: const TextStyle(fontFamily: 'Sora', color: Colors.white)),
+                                leading:
+                                    Icon(item['icon'], color: Colors.white),
+                                title: Text(item['title'],
+                                    style: const TextStyle(
+                                        fontFamily: 'Sora',
+                                        color: Colors.white)),
                                 onTap: () {
                                   if (item['title'] == 'Enter a day code') {
                                     _showEnterDayCodeDialog(context);
                                   } else if (item['title'] == 'Create a day') {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => DaySettingsPage()),
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DaySettingsPage()),
                                     );
                                   }
                                 },
@@ -294,10 +334,45 @@ class _EmptyDayPageState extends State<EmptyDayPage> with TickerProviderStateMix
                   ),
                 ),
               ),
-
           ],
         ),
       ),
     );
   }
 }
+
+// class QRScannerScreen extends StatelessWidget {
+//   final Function(String) onScan;
+//
+//   const QRScannerScreen({required this.onScan, Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Scan QR Code')),
+//       body: Stack(
+//         children: [
+//           MobileScanner(
+//             onDetect: (capture) {
+//               final List<Barcode> barcodes = capture.barcodes;
+//               for (final barcode in barcodes) {
+//                 if (barcode.rawValue != null) {
+//                   onScan(barcode.rawValue!); // Pass the scanned value back
+//                   break;
+//                 }
+//               }
+//             },
+//           ),
+//           MobileScannerOverlay(
+//             overlayColor: Colors.black.withOpacity(0.5), // Adjust the opacity for the overlay
+//             borderWidth: 2.0, // Width of the border around the scanning area
+//             borderColor: Colors.green, // Color of the border
+//             borderRadius: BorderRadius.circular(12), // Rounded corners for the border
+//             borderLength: 50, // Length of the border
+//             child: Container(), // Optional child widget to display above the overlay
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

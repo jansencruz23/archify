@@ -13,7 +13,8 @@ import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
 
 class DayExpiredPage extends StatefulWidget {
-  const DayExpiredPage({super.key});
+  final String dayCode;
+  const DayExpiredPage({super.key, required this.dayCode});
 
   @override
   State<DayExpiredPage> createState() => _DayExpiredPageState();
@@ -154,7 +155,8 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: const Offset(0, 0),
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    ).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
   }
 
   @override
@@ -231,7 +233,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'DAY CODE: ${day?.code == null ? '' : day!.code}',
+                      'DAY CODE: ${widget.dayCode}',
                       style: TextStyle(
                         fontSize: _getClampedFontSize(context, 0.03),
                         fontFamily: 'Sora',
@@ -301,7 +303,8 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                       Align(
                         alignment: Alignment.topRight,
                         child: IconButton(
-                          icon: const Icon(Icons.keyboard_arrow_down, size: 30, color: Colors.white),
+                          icon: const Icon(Icons.keyboard_arrow_down,
+                              size: 30, color: Colors.white),
                           onPressed: () {
                             setState(() {
                               _animationController.reverse();
@@ -317,14 +320,18 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                             final item = _menuItems[index];
                             return ListTile(
                               leading: Icon(item['icon'], color: Colors.white),
-                              title: Text(item['title'], style: const TextStyle(fontFamily: 'Sora', color: Colors.white)),
+                              title: Text(item['title'],
+                                  style: const TextStyle(
+                                      fontFamily: 'Sora', color: Colors.white)),
                               onTap: () {
                                 if (item['title'] == 'Enter a day code') {
                                   _showEnterDayCodeDialog(context);
                                 } else if (item['title'] == 'Create a day') {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => DaySettingsPage()),
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            DaySettingsPage()),
                                   );
                                 }
                               },

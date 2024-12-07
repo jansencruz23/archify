@@ -1,5 +1,4 @@
 import 'package:archify/models/moment.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProfile {
   final String uid;
@@ -21,8 +20,6 @@ class UserProfile {
     required this.isNew,
     List<Moment>? favoriteDays,
   }) : favoriteDays = favoriteDays ?? [];
-
-
 
   // Firebase -> App
   factory UserProfile.fromDocument(Map<String, dynamic> doc) {
@@ -69,5 +66,4 @@ class UserProfile {
       isNew: isNew ?? this.isNew,
     );
   }
-
 }

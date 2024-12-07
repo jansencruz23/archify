@@ -49,15 +49,12 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> loadUserProfile() async {
-    setLoading(true);
-
     final user = await getCurrentUserProfile();
     if (user == null) return;
 
     _userProfile = user;
     _picturePath = user.pictureUrl;
 
-    setLoading(false);
     notifyListeners();
   }
 
@@ -67,6 +64,7 @@ class UserProvider extends ChangeNotifier {
 
     _moments = await _userService.getUserMomentsFromFirebase();
     _favoriteDaysIds = user.favoriteDays.map((day) => day.dayId).toList();
+
     notifyListeners();
   }
 
@@ -85,8 +83,10 @@ class UserProvider extends ChangeNotifier {
   }
 
   // Update user is not new
-  Future<void> updateUserAfterSetup(
-      {required String name, required String pictureUrl}) async {
+  Future<void> updateUserAfterSetup({
+    required String name,
+    required String pictureUrl,
+  }) async {
     await _userService.updateUserAfterSetupInFirebase(
       name: name != '' ? name : 'Anon',
       pictureUrl: pictureUrl,
@@ -148,6 +148,24 @@ class UserProvider extends ChangeNotifier {
     }
     await _userService.addToFavoritesInFirebase(dayId);
 
+    notifyListeners();
+  }
+
+  Future<void> updateUserProfile({
+    required String name,
+    required String bio,
+    required String imagePath,
+  }) async {
+    if (_userProfile == null) return;
+
+    final pictureUrl = await uploadProfilePicture(imagePath);
+    await _userService.updateUserProfileInFirebase(name, bio, pictureUrl);
+
+    _userProfile = _userProfile!.copyWith(
+      name: name,
+      bio: bio,
+      pictureUrl: pictureUrl,
+    );
     notifyListeners();
   }
 }

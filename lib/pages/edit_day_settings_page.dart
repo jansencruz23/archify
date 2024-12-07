@@ -2,19 +2,21 @@ import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/components/my_text_field_form.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/models/day.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class DaySettingsPage extends StatefulWidget {
-  const DaySettingsPage({super.key});
+class EditDaySettingsPage extends StatefulWidget {
+  final Day day;
+  const EditDaySettingsPage({super.key, required this.day});
 
   @override
-  State<DaySettingsPage> createState() => _DaySettingsPageState();
+  State<EditDaySettingsPage> createState() => _DaySettingsPageState();
 }
 
-class _DaySettingsPageState extends State<DaySettingsPage> {
+class _DaySettingsPageState extends State<EditDaySettingsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final DayProvider _dayProvider;
   late final TextEditingController _dayNameController;
@@ -40,6 +42,16 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
     _pickVotingDeadlineFocusNode = FocusNode();
     _votingDeadline = TimeOfDay.now();
     _fillUpFormMessage = 'Please Fill Up The Form';
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  void _loadData() {
+    _dayNameController.text = widget.day.name;
+    _maxParticipantsController.text = widget.day.maxParticipants.toString();
+    _votingDeadline = TimeOfDay.fromDateTime(widget.day.votingDeadline);
   }
 
   Future<void> pickTime() async {
@@ -92,7 +104,35 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
     );
   }
 
-  Future<void> createDay() async {
+  void _showDeleteDayDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Day?'),
+        content: Text('Are you sure you want to delete you day?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: Colors.black)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              goRootPage(context);
+              await _deleteDay();
+            },
+            child: Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteDay() async {
+    await _dayProvider.deleteDay(widget.day.id);
+  }
+
+  Future<void> _updateDay() async {
     if (!_formKey.currentState!.validate()) return;
     final dayName = _dayNameController.text;
     final maxParticipants = int.tryParse(_maxParticipantsController.text);
@@ -101,13 +141,28 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
       return;
     }
 
-    final dayId = await _dayProvider.createDay(
-      name: dayName,
+    final participantsCount =
+        await _dayProvider.getParticipantCount(widget.day.id);
+
+    if (!mounted) return;
+
+    if (participantsCount > maxParticipants) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Max participants cannot be less than current count.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    Navigator.pop(context);
+    await _dayProvider.updateDay(
+      dayId: widget.day.id,
+      dayName: dayName,
       maxParticipants: maxParticipants,
       votingDeadline: _votingDeadline,
     );
-
-    goDayCode(context, dayId);
   }
 
   @override
@@ -123,14 +178,14 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
               bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0),
             ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 33.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           alignment: Alignment.centerLeft,
           child: const SafeArea(
             child: Text(
-              "Create a Day",
+              "Update your Day",
               style: TextStyle(
                 fontFamily: 'Sora',
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -212,7 +267,8 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                                   RegExp(r'^[0-9]*$'))
                             ],
                             onSubmitted: (_) {
-                              FocusScope.of(context).unfocus();
+                              FocusScope.of(context)
+                                  .requestFocus(_pickVotingDeadlineFocusNode);
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -292,14 +348,13 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                           ),
                         ),
                       ),
-
                       // Add spacing between buttons
                       SizedBox(
                         width: 24,
                       ),
 
                       GestureDetector(
-                        onTap: createDay,
+                        onTap: _updateDay,
                         child: MouseRegion(
                           cursor: SystemMouseCursors.click,
                           onEnter: (PointerEvent details) =>
@@ -323,7 +378,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             ),
                             child: Center(
                               child: Text(
-                                'Create Day',
+                                'Update Day',
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.primary,
@@ -336,7 +391,16 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                         ),
                       ),
                     ],
-                  )
+                  ),
+                  TextButton(
+                    onPressed: _showDeleteDayDialog,
+                    child: const Text(
+                      'Delete Day',
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

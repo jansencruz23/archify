@@ -7,6 +7,10 @@ import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/day_settings_page.dart';
+import 'package:archify/pages/my_feedback_form.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/auth/auth_service.dart';
 import 'package:archify/services/database/user/user_provider.dart';
@@ -18,6 +22,8 @@ import 'package:rate_my_app/rate_my_app.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:archify/pages/terms_and_condition_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -46,7 +52,7 @@ class _SettingsPageState extends State<SettingsPage>
   String subject = '';
   String body = '';
   String? _email; //how to get email
-  bool _isDialogShown = false;
+  final bool _isDialogShown = false;
 
   late final RateMyApp _rateMyApp = RateMyApp(
     preferencesPrefix: 'rateMyApp_',
@@ -191,7 +197,16 @@ class _SettingsPageState extends State<SettingsPage>
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0))
+        .animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
     _setupNavigationTriggered = false;
 
     _email = "";

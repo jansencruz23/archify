@@ -1,3 +1,4 @@
+import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,9 +19,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   late final UserProvider _userProvider;
   final ImagePicker _picker = ImagePicker(); // Image picker instance
+  String _imagePath = '';
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeUserData();
+    });
     super.initState();
     _userProvider = Provider.of<UserProvider>(context, listen: false);
     _initializeUserData();
@@ -32,6 +37,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (userProfile != null) {
       _nameController.text = userProfile.name;
       _bioController.text = userProfile.bio;
+      _imagePath = userProfile.pictureUrl;
     }
   }
 
@@ -45,7 +51,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       // await _userProvider.updateUserProfilePicture(imageFile);
 
       setState(() {
-        // This will trigger a UI update after the image has been uploaded
+        _imagePath = imageFile.path;
       });
     }
   }
@@ -59,19 +65,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _saveProfile() async {
     if (_formKey.currentState!.validate()) {
-      // await _userProvider.updateUserProfile(
-      //   name: _nameController.text,
-      //   bio: _bioController.text,
-      // );
-      Navigator.pop(context);
-    }
-  }
+      await _userProvider.updateUserProfile(
+        name: _nameController.text,
+        bio: _bioController.text,
+        imagePath: _imagePath,
+      );
 
-  Future<File?> openImagePicker() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      return File(pickedFile.path);
+      if (mounted) goProfile(context);
     }
     return null;
   }

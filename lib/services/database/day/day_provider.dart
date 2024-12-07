@@ -34,7 +34,7 @@ class DayProvider extends ChangeNotifier {
   late List<String> _votedMomentIds = [];
   List<String> get votedMomentIds => _votedMomentIds;
 
-  late Map<String, List<Comment>> _commentsByDayId = {};
+  late final Map<String, List<Comment>> _commentsByDayId = {};
   Map<String, List<Comment>> get commentsByDayId => _commentsByDayId;
 
   bool? _hasUploaded;
@@ -68,7 +68,6 @@ class DayProvider extends ChangeNotifier {
 
   Future<String> createDay({
     required String name,
-    required String description,
     required int maxParticipants,
     required TimeOfDay votingDeadline,
   }) async {
@@ -87,7 +86,6 @@ class DayProvider extends ChangeNotifier {
       id: '',
       hostId: uid,
       name: name,
-      description: description,
       maxParticipants: maxParticipants,
       votingDeadline: deadline,
       code: uuid.v4().substring(0, 5),
@@ -101,11 +99,11 @@ class DayProvider extends ChangeNotifier {
     return dayId;
   }
 
-  Future<void> startDay(String dayCode, String nickname) async {
+  Future<void> startDay(String dayCode, String nickname, String avatar) async {
     final dayId = await _dayService.getDayIdFromFirebase(dayCode);
     _userService.addDayToUserProfile(dayId, _authService.getCurrentUid());
 
-    await _dayService.startDayInFirebase(dayCode, nickname);
+    await _dayService.startDayInFirebase(dayCode, nickname, avatar);
   }
 
   Future<bool> isDayExistingAndActive(String dayCode) async {
@@ -116,12 +114,40 @@ class DayProvider extends ChangeNotifier {
     return await _dayService.isRoomFull(dayCode);
   }
 
-  Future<void> deleteDay(String day) async {
-    // Delete a day from the database
+  Future<void> deleteDay(String dayId) async {
+    await _dayService.deleteDayInFirebase(dayId);
+    _day = null;
+
+    notifyListeners();
   }
 
-  Future<void> updateDay(String day) async {
-    // Update a day in the database
+  Future<void> updateDay({
+    required String dayId,
+    required String dayName,
+    required int maxParticipants,
+    required TimeOfDay votingDeadline,
+  }) async {
+    final now = DateTime.now();
+    final deadline = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      votingDeadline.hour,
+      votingDeadline.minute,
+    );
+
+    _day = await _dayService.updateDayInFirebase(
+      dayId: dayId,
+      dayName: dayName,
+      maxParticipants: maxParticipants,
+      votingDeadline: deadline,
+    );
+
+    notifyListeners();
+  }
+
+  Future<int> getParticipantCount(String dayId) async {
+    return await _dayService.getParticipantCount(dayId);
   }
 
   // Open gallery and get the profile picture path
@@ -138,9 +164,10 @@ class DayProvider extends ChangeNotifier {
     }
 
     final imageUrl = await uploadImage(image.path);
+
     await _dayService.sendImageToFirebase(imageUrl, dayCode);
-    await loadMoments(dayCode);
     await loadHasUploaded(dayCode);
+    await loadMoments(dayCode);
 
     notifyListeners();
   }
@@ -211,10 +238,24 @@ class DayProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void refreshComments() {
+    _dayService.resetUserCache();
+    notifyListeners();
+  }
+
   void listenToComments(String dayId) {
     _dayService.commentsStream(dayId).listen((comments) {
       _commentsByDayId[dayId] = comments;
       notifyListeners();
     });
+  }
+
+  Future<bool> isHost(String dayId) async {
+    return await _dayService.isHost(dayId);
+  }
+
+  Future<void> leaveDay(String dayId) async {
+    await _dayService.leaveDayInFirebase(dayId);
+    notifyListeners();
   }
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
-
 class MyCommentTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
@@ -54,28 +52,29 @@ class _MyCommentTextFieldState extends State<MyCommentTextField> {
   @override
   Widget build(BuildContext context) {
     //Focus color ng textfield pag typing
-    final fillColor =
-        widget.fillColor ?? Theme.of(context).colorScheme.surface;
+    final fillColor = widget.fillColor ?? Theme.of(context).colorScheme.surface;
     //ano magandang color pag typings??
     final focusColor =
         widget.focusColor ?? Theme.of(context).colorScheme.tertiaryContainer;
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30), // This controls the corner roundness
+        borderRadius:
+            BorderRadius.circular(30), // This controls the corner roundness
 // The fill color inside the box
         border: Border.all(
-          color: Theme.of(context).colorScheme.inversePrimary,  // Set the border color
+          color: Theme.of(context)
+              .colorScheme
+              .inversePrimary, // Set the border color
           width: 1, // Increase this value to make the border thicker
         ),
       ),
-
       child: ValueListenableBuilder<bool>(
         valueListenable: focusNotifier,
         builder: (context, hasFocus, child) {
           return TextField(
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(25),
-              ],
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(25),
+            ],
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
               fontFamily: 'Sora',

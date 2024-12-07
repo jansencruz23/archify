@@ -1,6 +1,7 @@
 import 'package:archify/components/my_comment_text_field.dart';
 import 'package:archify/components/my_day.dart';
 import 'package:archify/components/my_navbar.dart';
+import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/pages/empty_day_page.dart';
@@ -9,6 +10,7 @@ import 'package:archify/pages/settings_page.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/auth/auth_provider.dart';
 import 'package:archify/services/auth/auth_service.dart';
+import 'package:archify/services/database/day/day_gate.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +22,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import '../components/my_text_field.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/services/database/day/day_provider.dart';
+import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,6 +32,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  //Testing NicknameAndAvatar Dialog
+  // void _showNicknameAndAvatarDialog(BuildContext context) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //             title: Text('Select a Photo and Enter Nickanme'),
+  //             content: Container(
+  //               width: double.infinity,
+  //               child: MyNicknameAndAvatarDialog(
+  //                 nicknameController: _nicknameController,
+  //                 avatarController: _avatarController,
+  //               ),
+  //             ),
+  //             actions: [
+  //               TextButton(
+  //                   onPressed: () {
+  //                     Navigator.of(context).pop();
+  //                   },
+  //                   child: Text('Close'))
+  //             ],
+  //           ));
+  // }
+
+//Text lang ng nickname and avatar
+  // late final TextEditingController _nicknameController =
+  //     TextEditingController();
+  // late final TextEditingController _avatarController = TextEditingController();
+
   late final AuthProvider _authProvider;
   late final DayProvider _dayProvider;
   late final UserProvider _userProvider;
@@ -60,7 +91,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
+          MaterialPageRoute(builder: (context) => DayGate()),
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -95,7 +126,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _showEnterDayCodeDialog(BuildContext context) {
-    TextEditingController _codeController = TextEditingController();
+    TextEditingController codeController = TextEditingController();
 
     showDialog(
       context: context,
@@ -110,7 +141,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           content: TextField(
-            controller: _codeController,
+            controller: codeController,
             cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Enter your code',
@@ -144,17 +175,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
             TextButton(
-              onPressed: () {
-                String enteredCode = _codeController.text;
+              onPressed: () async {
+                String enteredCode = codeController.text;
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Code Entered: $enteredCode',
-                      style: const TextStyle(fontFamily: 'Sora'),
-                    ),
-                  ),
-                );
+                await joinDay(enteredCode);
               },
               child: const Text(
                 'Enter',
@@ -168,6 +192,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         );
       },
     );
+  }
+
+  Future<void> joinDay(String dayCode) async {
+    if (dayCode.isEmpty) return;
+    final dayExists = await _dayProvider.isDayExistingAndActive(dayCode);
+    final isRoomFull = await _dayProvider.isRoomFull(dayCode);
+
+    if (!mounted) return;
+
+    if (isRoomFull) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Room is full')),
+      );
+      return;
+    }
+
+    if (!dayExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Day does not exist or already finished')),
+      );
+      return;
+    }
+
+    goDaySpace(context, dayCode);
   }
 
   final CarouselController _carouselController = CarouselController();
@@ -225,8 +273,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _loadData() async {
-    _loadUserProfile();
-    _loadUserMoments();
+    await _loadUserProfile();
+    await _loadUserMoments();
+    _refreshComments();
+  }
+
+  void _refreshComments() async {
+    _dayProvider.refreshComments();
   }
 
   Future<void> _loadUserMoments() async {
@@ -276,6 +329,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
   }
 
+  //Out ng comment textfield pag click anywhere
+  void _unfocusAllFields() {
+    FocusScope.of(context).unfocus();
+  }
+
   @override
   Widget build(BuildContext context) {
     final userListeningProvider = Provider.of<UserProvider>(context);
@@ -288,12 +346,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     dayListeningProvider.listenToComments(_currentDayId);
     final comments = dayListeningProvider.commentsByDayId;
 
-    return Consumer<UserProvider>(
-      builder: (context, userProvider, child) {
-        return userProvider.isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SafeArea(
-                child: Scaffold(
+    return GestureDetector(
+      onTap: () {
+        _fieldComment.unfocus();
+      },
+      child: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          return userProvider.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SafeArea(
+                  child: Scaffold(
                     // AppBar with custom height
                     appBar: PreferredSize(
                       preferredSize: Size.fromHeight(80),
@@ -302,7 +364,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         titleSpacing: 0,
                         leadingWidth: 80,
                         leading: Padding(
-                          padding: const EdgeInsets.fromLTRB(8.0, 20.0, 0, 16.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(8.0, 20.0, 0, 16.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,8 +380,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                         ),
                         title: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(0, 24.0, 8.0, 8.0),
+                          padding: const EdgeInsets.fromLTRB(0, 24.0, 8.0, 8.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,341 +439,371 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                     //Main Body
                     body: RefreshIndicator(
-                      color: Theme.of(context).colorScheme.secondary,
-                      onRefresh: _loadData,
-                      child: Stack(
-                        children: [
-                          SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 8.0),
-                                  child: Row(
-                                    children: [
-                                      const SizedBox(width: 10),
-                                      GFImageOverlay(
-                                        image: AssetImage(
-                                            'lib/assets/images/Bestday_img.png'),
-                                        shape: BoxShape.circle,
-                                        width: 36,
-                                        height: 36,
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                        'Best of the Day',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary,
-                                          fontFamily: 'Sora',
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: _getClampedFontSize(
-                                              context, 0.05),
+                        color: Theme.of(context).colorScheme.secondary,
+                        onRefresh: _loadData,
+                        child: Stack(
+                          children: [
+                            SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        8.0, 30.0, 8.0, 8.0),
+                                    child: Row(
+                                      children: [
+                                        const SizedBox(width: 10),
+                                        GFImageOverlay(
+                                          image: AssetImage(
+                                              'lib/assets/images/Bestday_img.png'),
+                                          shape: BoxShape.circle,
+                                          width: 36,
+                                          height: 36,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          'Best of the Day',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary,
+                                            fontFamily: 'Sora',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: _getClampedFontSize(
+                                                context, 0.05),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
 
-                                //Carousel
-                                CarouselSlider.builder(
-                                  itemCount: days.length,
-                                  itemBuilder: (context, index, realIndex) {
-                                    if (days.isEmpty) {
-                                      return const Center(
-                                        child: Text('No moments available.'),
+                                  //Carousel
+                                  CarouselSlider.builder(
+                                    itemCount: days.length,
+                                    itemBuilder: (context, index, realIndex) {
+                                      if (days.isEmpty) {
+                                        return const Center(
+                                          child: Text('No moments available.'),
+                                        );
+                                      }
+                                      final moment = days[index];
+                                      bool isMainPhoto =
+                                          this.realIndex == index;
+
+                                      return MyDay(
+                                        moment: moment,
+                                        isMainPhoto: isMainPhoto,
+                                        toggleFavorites: _toggleFavorites,
                                       );
-                                    }
-                                    final moment = days[index];
-                                    bool isMainPhoto = this.realIndex == index;
-
-                                    return MyDay(
-                                      moment: moment,
-                                      isMainPhoto: isMainPhoto,
-                                      toggleFavorites: _toggleFavorites,
-                                    );
-                                  },
-                                  options: CarouselOptions(
-                                    enlargeCenterPage: true,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.4,
-                                    autoPlay: false,
-                                    viewportFraction: 0.7,
-                                    enableInfiniteScroll: false,
-                                    reverse: true,
-                                    scrollDirection: Axis.horizontal,
-                                    onPageChanged: (index, reason) {
-                                      setState(() {
-                                        _currentIndex = index;
-                                        _currentDayId = days[index].dayId;
-                                        _isInitialLoad = false;
-                                      });
                                     },
-                                  ),
-                                ),
-
-                                //View Comment Icon
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          // When comment icon is pressed, focus on the comment text field
-                                          FocusScope.of(context)
-                                              .requestFocus(_fieldComment);
-                                        },
-                                        icon: Icon(
-                                          Icons.comment_outlined,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary,
-                                          size: 24,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Comments',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary,
-                                          fontFamily: 'Sora',
-                                          fontSize: _getClampedFontSize(
-                                              context, 0.04),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                //Comment Section
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 35, left: 8.0),
-                                  child: SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.28,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Scrollbar(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(bottom: 8.0, top: 8.0, right: 8.0, left: 0.0),
-                                        child: comments[_currentDayId] == null ||
-                                                comments[_currentDayId]!.isEmpty
-                                            ? const Center(
-                                                child: Text('No comments available.'),
-                                              )
-                                            : ListView.builder(
-                                                shrinkWrap: true, // Add this line
-                                                itemCount:
-                                                    comments[_currentDayId]!.length,
-                                                itemBuilder: (context, index) {
-                                                  final comment =
-                                                      comments[_currentDayId]![index];
-                                                  return ListTile(
-                                                    leading: GFImageOverlay(
-                                                      image: Image.network(comment
-                                                              .profilePictureUrl)
-                                                          .image,
-                                                      shape: BoxShape.circle,
-                                                      height: 36,
-                                                      width: 36,
-                                                    ),
-                                                    title: Text(
-                                                      comment.content,
-                                                      style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .inversePrimary,
-                                                        fontFamily: 'Sora',
-                                                        fontSize: _getClampedFontSize(
-                                                            context, 0.04),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                      ),
+                                    options: CarouselOptions(
+                                      enlargeCenterPage: true,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.4,
+                                      autoPlay: false,
+                                      viewportFraction: 0.7,
+                                      enableInfiniteScroll: false,
+                                      reverse: true,
+                                      scrollDirection: Axis.horizontal,
+                                      onPageChanged: (index, reason) {
+                                        setState(() {
+                                          _currentIndex = index;
+                                          _currentDayId = days[index].dayId;
+                                          _isInitialLoad = false;
+                                        });
+                                      },
                                     ),
                                   ),
-                                ),
 
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                //Comment Text Field
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      const SizedBox(width: 10),
-                                      GFImageOverlay(
-                                        image: AssetImage(
-                                            'lib/assets/images/AAlfonso_img.png'),
-                                        shape: BoxShape.circle,
-                                        height: 50,
-                                        width: 50,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Expanded(
-                                        child: MyCommentTextField(
-                                          focusNode: _fieldComment,
-                                          controller: _commentController,
-                                          hintText: ' Comment...',
-                                          obscureText: false,
-                                          onSubmitted: (value) {
-                                            if (mounted) {
-                                              _fieldComment.unfocus();
-                                            }
+                                  //View Comment Icon
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            // When comment icon is pressed, focus on the comment text field
+                                            FocusScope.of(context)
+                                                .requestFocus(_fieldComment);
                                           },
+                                          icon: Icon(
+                                            Icons.comment_outlined,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary,
+                                            size: 24,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Comments',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary,
+                                            fontFamily: 'Sora',
+                                            fontSize: _getClampedFontSize(
+                                                context, 0.04),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  //Comment Section
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 35, left: 8.0),
+                                    child: SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.28,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Scrollbar(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 8.0,
+                                              top: 8.0,
+                                              right: 8.0,
+                                              left: 0.0),
+                                          child: comments[_currentDayId] ==
+                                                      null ||
+                                                  comments[_currentDayId]!
+                                                      .isEmpty
+                                              ? const Center(
+                                                  child: Text(
+                                                      'No comments available.'),
+                                                )
+                                              : ListView.builder(
+                                                  shrinkWrap:
+                                                      true, // Add this line
+                                                  itemCount:
+                                                      comments[_currentDayId]!
+                                                          .length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    final comment = comments[
+                                                        _currentDayId]![index];
+                                                    return ListTile(
+                                                      leading: GFImageOverlay(
+                                                        image: Image.network(comment
+                                                                .profilePictureUrl)
+                                                            .image,
+                                                        shape: BoxShape.circle,
+                                                        height: 36,
+                                                        width: 36,
+                                                      ),
+                                                      title: Text(
+                                                        comment.content,
+                                                        style: TextStyle(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .colorScheme
+                                                              .inversePrimary,
+                                                          fontFamily: 'Sora',
+                                                          fontSize:
+                                                              _getClampedFontSize(
+                                                                  context,
+                                                                  0.04),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      IconButton(
-                                        onPressed: _sendComment,
-                                        icon: Icon(
-                                          Icons.send,
-                                          size: 35,
+                                    ),
+                                  ),
+
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  //Comment Text Field
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        const SizedBox(width: 10),
+                                        GFImageOverlay(
+                                          image: userProfile == null ||
+                                                  userProfile.pictureUrl.isEmpty
+                                              ? const AssetImage(
+                                                  'lib/assets/images/Bestday_img.png')
+                                              : Image.network(
+                                                      userProfile.pictureUrl)
+                                                  .image,
+                                          shape: BoxShape.circle,
+                                          height: 50,
+                                          width: 50,
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                              //Bottom Padding
-                              const SizedBox(height: 100),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context)
-                                          .viewInsets
-                                          .bottom)),
-                              // Test Icons
-                              // IconButton(
-                              //   onPressed: _logout,
-                              //   icon: const Icon(Icons.logout),
-                              // ),
-                              // IconButton(
-                              //   onPressed: () => goSetup(context),
-                              //   icon: const Icon(Icons.home),
-                              // ),
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            color: Colors.white,
-                            child: MyNavbar(
-                              selectedIndex: _selectedIndex,
-                              onItemTapped: _onItemTapped,
-                              showVerticalBar: _showVerticalBar,
-                              isRotated: _isRotated,
-                              toggleRotation: _toggleRotation,
-                              showEnterDayCodeDialog: _showEnterDayCodeDialog,
-                            ),
-                          ),
-                        ),
-
-                        if (_showVerticalBar)
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: SlideTransition(
-                              position: _slideAnimation,
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 500),
-                                height:
-                                    (_menuItems.length * 50).toDouble() + 100,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFFF6F61),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: IconButton(
-                                        icon: const Icon(
-                                            Icons.keyboard_arrow_down,
-                                            size: 30,
-                                            color: Colors.white),
-                                        onPressed: () {
-                                          setState(() {
-                                            _animationController.reverse();
-                                            _showVerticalBar = false;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: _menuItems.length,
-                                        itemBuilder: (context, index) {
-                                          final item = _menuItems[index];
-                                          return MouseRegion(
-                                            onEnter: (_) {
-                                              setState(() {
-                                                _hoveredIndex = index;
-                                              });
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: MyCommentTextField(
+                                            focusNode: _fieldComment,
+                                            controller: _commentController,
+                                            hintText: ' Comment...',
+                                            obscureText: false,
+                                            onSubmitted: (value) {
+                                              if (mounted) {
+                                                _fieldComment.unfocus();
+                                              }
                                             },
-                                            onExit: (_) {
-                                              setState(() {
-                                                _hoveredIndex = -1;
-                                              });
-                                            },
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                if (item['title'] ==
-                                                    'Enter a day code') {
-                                                  _showEnterDayCodeDialog(
-                                                      context);
-                                                } else if (item['title'] ==
-                                                'Create a day') {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(builder: (context) => DaySettingsPage()),
-                                                  );
-                                                }
-                                              },
-                                              child: ListTile(
-                                                leading: Icon(
-                                                  item['icon'],
-                                                  color: Colors.white,
-                                                ),
-                                                title: Text(
-                                                  item['title'],
-                                                  style: const TextStyle(
-                                                    fontFamily: 'Sora',
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        IconButton(
+                                          onPressed: _sendComment,
+                                          icon: Icon(
+                                            Icons.send,
+                                            size: 35,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+
+                                  //Bottom Padding
+                                  const SizedBox(height: 100),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context)
+                                              .viewInsets
+                                              .bottom)),
+                                  // Test Icons
+                                  // IconButton(
+                                  //   onPressed: _logout,
+                                  //   icon: const Icon(Icons.logout),
+                                  // ),
+                                  // IconButton(
+                                  //   onPressed: () => goSetup(context),
+                                  //   icon: const Icon(Icons.home),
+                                  // ),
+                                ],
                               ),
                             ),
-                          ),
-                      ],
-                    )),
-              ),);
-      },
+                            if (!_isKeyboardVisible)
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  color: Colors.white,
+                                  child: MyNavbar(
+                                    selectedIndex: _selectedIndex,
+                                    onItemTapped: _onItemTapped,
+                                    showVerticalBar: _showVerticalBar,
+                                    isRotated: _isRotated,
+                                    toggleRotation: _toggleRotation,
+                                    showEnterDayCodeDialog:
+                                        _showEnterDayCodeDialog,
+                                  ),
+                                ),
+                              ),
+                            if (_showVerticalBar)
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: SlideTransition(
+                                  position: _slideAnimation,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 500),
+                                    height:
+                                        (_menuItems.length * 50).toDouble() +
+                                            100,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFFF6F61),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.topRight,
+                                          child: IconButton(
+                                            icon: const Icon(
+                                                Icons.keyboard_arrow_down,
+                                                size: 30,
+                                                color: Colors.white),
+                                            onPressed: () {
+                                              setState(() {
+                                                _animationController.reverse();
+                                                _showVerticalBar = false;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: ListView.builder(
+                                            itemCount: _menuItems.length,
+                                            itemBuilder: (context, index) {
+                                              final item = _menuItems[index];
+                                              return MouseRegion(
+                                                onEnter: (_) {
+                                                  setState(() {
+                                                    _hoveredIndex = index;
+                                                  });
+                                                },
+                                                onExit: (_) {
+                                                  setState(() {
+                                                    _hoveredIndex = -1;
+                                                  });
+                                                },
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    if (item['title'] ==
+                                                        'Enter a day code') {
+                                                      _showEnterDayCodeDialog(
+                                                          context);
+                                                    } else if (item['title'] ==
+                                                        'Create a day') {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                DaySettingsPage()),
+                                                      );
+                                                    }
+                                                  },
+                                                  child: ListTile(
+                                                    leading: Icon(
+                                                      item['icon'],
+                                                      color: Colors.white,
+                                                    ),
+                                                    title: Text(
+                                                      item['title'],
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Sora',
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        )),
+                  ),
+                );
+        },
+      ),
     );
   }
 }

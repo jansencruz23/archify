@@ -9,6 +9,7 @@ class Moment {
   final String dayId;
   late int votes;
   late String nickname;
+  late String avatarId;
   late String dayName;
   late List<Comment> comments;
   late List<String> voterIds;
@@ -22,6 +23,7 @@ class Moment {
     this.votes = 0,
     this.dayName = '',
     this.nickname = '',
+    this.avatarId = '',
     List<Comment>? comments,
     List<String>? voterIds,
   })  : comments = comments ?? [],
