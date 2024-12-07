@@ -368,7 +368,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   //For Responsiveness
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
+    return calculatedFontSize.clamp(12.0, 24.0); // Ang min and max nyaa
   }
 
   //Out ng comment textfield pag click anywhere
@@ -650,7 +650,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   image: userProfile == null ||
                                           userProfile.pictureUrl.isEmpty
                                       ? const AssetImage(
-                                          'lib/assets/images/Bestday_img.png')
+                                          'lib/assets/images/user_icon.png')
                                       : Image.network(userProfile.pictureUrl)
                                           .image,
                                   shape: BoxShape.circle,
