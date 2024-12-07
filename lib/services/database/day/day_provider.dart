@@ -222,6 +222,7 @@ class DayProvider extends ChangeNotifier {
     if (expired) {
       _votedMomentIds = [];
       _userProvider.loadUserMoments();
+      _userProvider.resetCurrentDay();
     }
 
     notifyListeners();
@@ -264,6 +265,7 @@ class DayProvider extends ChangeNotifier {
     _moments = [];
     _commentsByDayId = {};
     _votedMomentIds = [];
+    _userProvider.resetCurrentDay();
 
     notifyListeners();
   }

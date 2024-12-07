@@ -73,7 +73,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       if (mounted) goProfile(context);
     }
-    return null;
   }
 
   void _cancelEdit() {
@@ -121,10 +120,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     return CircleAvatar(
                       radius: 60,
                       backgroundColor: Colors.grey[300],
-                      backgroundImage: provider.userProfile?.pictureUrl != null
-                          ? NetworkImage(provider.userProfile!.pictureUrl!)
-                          : const AssetImage("assets/placeholder_profile.jpg")
-                              as ImageProvider,
+                      backgroundImage: _imagePath.startsWith('https')
+                          ? Image.network(_imagePath).image
+                          : Image.file(File(_imagePath)).image,
                     );
                   }),
                   FloatingActionButton.small(

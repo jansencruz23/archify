@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/models/user_profile.dart';
 import 'package:archify/services/auth/auth_service.dart';
@@ -25,6 +26,12 @@ class UserProvider extends ChangeNotifier {
   // Properties to call in the UI
   late String _picturePath = '';
   String get picturePath => _picturePath;
+
+  Day? _currentDay;
+  Day? get currentDay => _currentDay;
+
+  String? _timeLeft = '';
+  String? get timeLeft => _timeLeft;
 
   late UserProfile? _userProfile = UserProfile(
       uid: '',
@@ -175,6 +182,37 @@ class UserProvider extends ChangeNotifier {
     _favoriteDaysIds = [];
     _picturePath = '';
 
+    notifyListeners();
+  }
+
+  Future<String?> updateTimeLeft() async {
+    if (_currentDay == null) return null;
+
+    final votingDeadline = _currentDay!.votingDeadline;
+    final now = DateTime.now();
+
+    final difference = votingDeadline.difference(now);
+    final hours = difference.inHours;
+    final minutes = difference.inMinutes.remainder(60);
+    final seconds = difference.inSeconds.remainder(60);
+
+    _timeLeft = '$hours hours $minutes minutes $seconds seconds';
+    notifyListeners();
+
+    return _timeLeft;
+  }
+
+  Future<void> updateCurrentDay() async {
+    final dayCode = await getJoinedDayCodeToday();
+    if (dayCode == null) return;
+
+    _currentDay = await _dayService.getDayByCodeFromFirebase(dayCode);
+    notifyListeners();
+  }
+
+  void resetCurrentDay() {
+    _timeLeft = '';
+    _currentDay = null;
     notifyListeners();
   }
 }
