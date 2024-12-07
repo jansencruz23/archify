@@ -1,5 +1,6 @@
 import 'package:archify/components/my_comment_text_field.dart';
 import 'package:archify/components/my_day.dart';
+import 'package:archify/components/my_mobile_scanner_overlay.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 import 'package:archify/components/my_profile_picture.dart';
@@ -74,6 +75,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
+  //Qrcode string
+  String qrCode = '';
+
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
     {'icon': Icons.qr_code_scanner, 'title': 'Scan QR code'},
@@ -83,10 +87,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
+      Route customRoute(Widget page) {
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0); // from right magna-navigate
+            const end = Offset.zero;
+            const curve = Curves.ease;
+
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+      }
+
       if (index == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DayGate()),
+          customRoute(DayGate()), // transition to EmptyDayPage
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -103,12 +127,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          customRoute(ProfilePage()), // transition to ProfilePage
         );
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
+          customRoute(SettingsPage()), // transition to SettingsPage
         );
       }
     });
@@ -186,6 +210,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ],
         );
       },
+    );
+  }
+
+  //QR Scanner
+  void _scanQRCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRScannerScreen(
+          onScan: (String code) {
+            setState(() {
+              qrCode = code;
+            });
+            goDaySpace(context, qrCode);
+            Navigator.pop(context);
+          },
+        ),
+      ),
     );
   }
 
@@ -354,20 +396,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 // Leading section with profile picture and welcome text
                 titleSpacing: 0,
                 leadingWidth: 80,
-                leading: Padding(
-                  padding: const EdgeInsets.fromLTRB(8.0, 20.0, 0, 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Profile picture widget
-                      MyProfilePicture(
-                        height: 60,
-                        width: 60,
-                        onProfileTapped: () {},
-                      ),
-                    ],
-                  ),
+                leading: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Profile picture widget
+                    MyProfilePicture(
+                      height: 80,
+                      width: 80,
+                      onProfileTapped: () {},
+                    ),
+                  ],
                 ),
                 title: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 24.0, 8.0, 8.0),
@@ -735,6 +774,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                     builder: (context) =>
                                                         DaySettingsPage()),
                                               );
+                                            } else if (item['title'] ==
+                                                'Scan QR code') {
+                                              _scanQRCode();
                                             }
                                           },
                                           child: ListTile(

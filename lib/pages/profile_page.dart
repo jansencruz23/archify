@@ -13,6 +13,8 @@ import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/settings_page.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+import '../components/my_mobile_scanner_overlay.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -29,6 +31,9 @@ class _ProfilePageState extends State<ProfilePage>
   int _hoveredIndex = -1;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+
+  //Qrcode string
+  String qrCode = '';
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -149,6 +154,24 @@ class _ProfilePageState extends State<ProfilePage>
           ],
         );
       },
+    );
+  }
+
+  //QR Scanner
+  void _scanQRCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRScannerScreen(
+          onScan: (String code) {
+            setState(() {
+              qrCode = code;
+            });
+            goDaySpace(context, qrCode);
+            Navigator.pop(context);
+          },
+        ),
+      ),
     );
   }
 

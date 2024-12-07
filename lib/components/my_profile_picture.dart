@@ -65,7 +65,7 @@ class _MyProfilePictureState extends State<MyProfilePicture> {
                           width: 5,
                         )
                       : null,
-                  color: Colors.grey,
+                  color: Colors.grey[200],
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     image: listeningProvider.picturePath.startsWith('https')

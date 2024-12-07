@@ -4,6 +4,8 @@ import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../components/my_mobile_scanner_overlay.dart';
+import '../helpers/navigate_pages.dart';
 import '../models/day.dart';
 import '../services/database/day/day_provider.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +30,9 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
   bool _isRotated = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+
+  //Qrcode string
+  String qrCode = '';
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -187,6 +192,24 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
           ],
         );
       },
+    );
+  }
+
+  //QR Scanner
+  void _scanQRCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRScannerScreen(
+          onScan: (String code) {
+            setState(() {
+              qrCode = code;
+            });
+            goDaySpace(context, qrCode);
+            Navigator.pop(context);
+          },
+        ),
+      ),
     );
   }
 
@@ -423,6 +446,9 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                                           builder: (context) =>
                                               DaySettingsPage()),
                                     );
+                                  }
+                                  else if (item['title'] == 'Scan QR code') {
+                                  _scanQRCode();
                                   }
                                 },
                               );

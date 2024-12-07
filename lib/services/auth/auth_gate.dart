@@ -1,13 +1,7 @@
-import 'package:archify/helpers/navigate_pages.dart';
-import 'package:archify/pages/day_space_page.dart';
-import 'package:archify/pages/empty_day_page.dart';
-import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/no_moment_uploaded_page.dart';
 import 'package:archify/pages/day_expired_page.dart';
-import 'package:archify/pages/no_moment_uploaded_page.dart';
-import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
-import 'package:archify/pages/day_space_page.dart';
+import 'package:archify/pages/home_page.dart';
 import 'package:archify/services/auth/login_or_register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +21,7 @@ class AuthGate extends StatelessWidget {
           } else {
             return const LoginOrRegister();
           }
+
         },
       ),
     );
