@@ -3,6 +3,8 @@ import 'package:archify/pages/day_space_page.dart';
 import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/no_moment_uploaded_page.dart';
+import 'package:archify/pages/day_expired_page.dart';
+import 'package:archify/pages/no_moment_uploaded_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
 import 'package:archify/pages/day_space_page.dart';

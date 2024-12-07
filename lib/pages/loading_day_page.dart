@@ -13,14 +13,14 @@ import 'package:archify/pages/settings_page.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:archify/components/my_mobile_scanner_overlay.dart';
 
-class EmptyDayPage extends StatefulWidget {
-  const EmptyDayPage({super.key}); //try scanner
+class LoadingDayPage extends StatefulWidget {
+  const LoadingDayPage({super.key}); //try scanner
 
   @override
-  State<EmptyDayPage> createState() => _EmptyDayPageState();
+  State<LoadingDayPage> createState() => _LoadingDayPage();
 }
 
-class _EmptyDayPageState extends State<EmptyDayPage>
+class _LoadingDayPage extends State<LoadingDayPage>
     with TickerProviderStateMixin {
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
@@ -236,18 +236,7 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Pssst... the room\'s waiting for you. Got the code?',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
-                        fontFamily: 'Sora',
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      ),
-                    ),
-                    MyButton(text: "Scan Code", onTap: _scanQRCode)
-                  ],
+                  children: [],
                 ),
               ),
             ),

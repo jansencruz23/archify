@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MySettingsButton extends StatefulWidget {
   final String text;
-  final Icon icon;
+  final Widget icon;
   final void Function()? onTap;
 
   const MySettingsButton({
@@ -71,7 +71,7 @@ class _MySettingsButtonState extends State<MySettingsButton> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   widget.icon,
-                  SizedBox(width: 8),
+                  SizedBox(width: 15),
                   Text(
                     widget.text,
                     style: TextStyle(

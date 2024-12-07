@@ -23,6 +23,7 @@ class DayExpiredPage extends StatefulWidget {
 class _DayExpiredPageState extends State<DayExpiredPage>
     with TickerProviderStateMixin {
   late AnimationController _controller;
+  late Day? day;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -33,7 +34,6 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
     {'icon': Icons.qr_code_scanner, 'title': 'Scan QR code'},
     {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
-    {'icon': Icons.settings, 'title': 'Settings'},
   ];
 
   void _onItemTapped(int index) {
@@ -43,11 +43,6 @@ class _DayExpiredPageState extends State<DayExpiredPage>
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } else if (index == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -172,8 +167,50 @@ class _DayExpiredPageState extends State<DayExpiredPage>
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
-
+    day = listeningProvider.day;
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: AppBar(
+          titleSpacing: 0,
+          leadingWidth: 600,
+          leading: Padding(
+            padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 0),
+            child: Stack(
+              children: [
+                Text(
+                  'Let’s keep the moment,',
+                  style: TextStyle(
+                    fontSize: _getClampedFontSize(context, 0.03),
+                    fontFamily: 'Sora',
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+                Positioned(
+                  bottom: -6,
+                  left: 0,
+                  child: Text(
+                    'Pick the best shot!',
+                    style: TextStyle(
+                      fontSize: _getClampedFontSize(context, 0.05),
+                      fontFamily: 'Sora',
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Divider(
+              height: 2,
+              color: Color(0xFFD9D9D9),
+            ),
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           Row(
