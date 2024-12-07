@@ -45,7 +45,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 width: double.infinity,
                 child: MyNicknameAndAvatarDialog(
                   nicknameController: _nicknameController,
-                  avatarController: _avatarController, onSubmit: () {  },
+                  avatarController: _avatarController,
+                  onSubmit: () {},
                 ),
               ),
               actions: [
