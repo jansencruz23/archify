@@ -169,7 +169,8 @@ class _DaySpacePageState extends State<DaySpacePage> with TickerProviderStateMix
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: const Offset(0, 0),
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    ).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _isParticipant().then((isParticipant) {
@@ -186,24 +187,25 @@ class _DaySpacePageState extends State<DaySpacePage> with TickerProviderStateMix
   void _showImageDialog(Moment moment, int index) {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        child: IntrinsicHeight(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: InteractiveViewer(
-                  child: MyMomentTile(
-                    moment: moment,
-                    index: index,
-                    toggleVote: _toggleVote,
+      builder: (context) =>
+          Dialog(
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: InteractiveViewer(
+                      child: MyMomentTile(
+                        moment: moment,
+                        index: index,
+                        toggleVote: _toggleVote,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -218,7 +220,8 @@ class _DaySpacePageState extends State<DaySpacePage> with TickerProviderStateMix
     showDialog(
         context: context,
         // barrierDismissible: false, para di skippable
-        builder: (context) => AlertDialog(
+        builder: (context) =>
+            AlertDialog(
               title: Text('Be the best you~'),
               content: Container(
                 width: double.infinity,
@@ -301,7 +304,10 @@ class _DaySpacePageState extends State<DaySpacePage> with TickerProviderStateMix
             "QR Code",
             style: TextStyle(
               fontFamily: 'Sora',
-              color: Theme.of(context).colorScheme.inversePrimary,
+              color: Theme
+                  .of(context)
+                  .colorScheme
+                  .inversePrimary,
             ),
           ),
           content: Container(
@@ -321,7 +327,10 @@ class _DaySpacePageState extends State<DaySpacePage> with TickerProviderStateMix
                     style: TextStyle(
                         fontFamily: 'Sora',
                         fontWeight: FontWeight.w700,
-                        color: Theme.of(context).colorScheme.secondary),
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .secondary),
                   ),
                 ],
               ),
@@ -332,7 +341,10 @@ class _DaySpacePageState extends State<DaySpacePage> with TickerProviderStateMix
               child: Text(
                 "Close",
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme
+                      .of(context)
+                      .colorScheme
+                      .inversePrimary,
                   fontFamily: 'Sora',
                 ),
               ),
@@ -349,24 +361,25 @@ class _DaySpacePageState extends State<DaySpacePage> with TickerProviderStateMix
   void _showParticipantSettings() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Leave the Day?'),
-        content: Text('Are you sure you want to leave?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextStyle(color: Colors.black)),
+      builder: (context) =>
+          AlertDialog(
+            title: Text('Leave the Day?'),
+            content: Text('Are you sure you want to leave?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancel', style: TextStyle(color: Colors.black)),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  goRootPage(context);
+                  await _leaveDay();
+                },
+                child: Text('Leave', style: TextStyle(color: Colors.red)),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              goRootPage(context);
-              await _leaveDay();
-            },
-            child: Text('Leave', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
     );
   }
 
@@ -380,7 +393,10 @@ class _DaySpacePageState extends State<DaySpacePage> with TickerProviderStateMix
 
   //Font responsiveness
   double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
+    double calculatedFontSize = MediaQuery
+        .of(context)
+        .size
+        .width * scale;
     return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
   }
 
@@ -400,240 +416,211 @@ class _DaySpacePageState extends State<DaySpacePage> with TickerProviderStateMix
           leadingWidth: 600,
           leading: Padding(
             padding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 8.0),
-            child: Stack(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Let’s keep the moment,',
                   style: TextStyle(
                     fontSize: _getClampedFontSize(context, 0.03),
                     fontFamily: 'Sora',
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .inversePrimary,
                   ),
                 ),
-                Positioned(
-                  bottom: -5,
-                  left: 0,
-                  child: Text(
-                    'Pick the best shot!',
-                    style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.05),
-                      fontFamily: 'Sora',
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    ),
+                Text(
+                  'Pick the best shot!',
+                  style: TextStyle(
+                    fontSize: _getClampedFontSize(context, 0.05),
+                    fontFamily: 'Sora',
+                    fontWeight: FontWeight.bold,
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .inversePrimary,
                   ),
-                ),
-
-                //Test icons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                        'Deadline: ${day == null ? 'Loading' : day!.votingDeadline.toString()}'),
-                    IconButton(
-                      onPressed: _cameraUploadClicked,
-                      icon: Icon(Icons.camera_alt_rounded),
-                    ),
-                    IconButton(
-                      onPressed: _imageUploadClicked,
-                      icon: Icon(Icons.photo),
-                    ),
-                    IconButton(
-                      onPressed: _showSettings,
-                      icon: Icon(Icons.settings_rounded),
-                    ),
-                  ],
                 ),
               ],
             ),
           ),
+          actions: [
+            Row(
+              children: [
+                Text(
+                  'Deadline: ${day == null ? 'Loading' : day!.votingDeadline
+                      .toString()}',
+                ),
+                IconButton(
+                  onPressed: _cameraUploadClicked,
+                  icon: const Icon(Icons.camera_alt_rounded),
+                ),
+                IconButton(
+                  onPressed: _imageUploadClicked,
+                  icon: const Icon(Icons.photo),
+                ),
+                IconButton(
+                  onPressed: _showSettings,
+                  icon: const Icon(Icons.settings_rounded),
+                ),
+              ],
+            ),
+          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
             child: Divider(
               height: 2,
-              color: Theme.of(context).colorScheme.outline,
+              color: Theme
+                  .of(context)
+                  .colorScheme
+                  .outline,
             ),
           ),
         ),
-        body: hasUploaded
-            ? Stack(
-          children: [
-            Center(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: MasonryGridView.builder(
-                      gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2),
-                      shrinkWrap: true,
-                      itemCount: moments?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        final moment = moments![index];
       ),
-
-      //TEST APP BAR
-      // AppBar(
-      //   title: Text(day == null ? 'Loading' : day!.name),
-      //   bottom: PreferredSize(
-      //     preferredSize: Size.zero,
-      //     child: Row(
-      //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //       children: [
-      //         Text(
-      //             'Deadline: ${day == null ? 'Loading' : day!.votingDeadline.toString()}'),
-      //         IconButton(
-      //           onPressed: _cameraUploadClicked,
-      //           icon: Icon(Icons.camera_alt_rounded),
-      //         ),
-      //         IconButton(
-      //           onPressed: _imageUploadClicked,
-      //           icon: Icon(Icons.photo),
-      //         ),
-      //         IconButton(
-      //           onPressed: _showSettings,
-      //           icon: Icon(Icons.settings_rounded),
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
       body: hasUploaded
-          ? SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Center(
-                  child: Column(
-                    children: [
-                      //DAY CODE: COntainer
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, top: 20, bottom: 10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                              child: GestureDetector(
-                                onTap: () => _showDayCode(day?.code ?? ''),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'DAY CODE: ${day?.code == null ? '' : day!.code}',
-                                    style: TextStyle(
-                                      fontSize:
-                                          _getClampedFontSize(context, 0.03),
-                                      fontFamily: 'Sora',
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          Theme.of(context).colorScheme.surface,
-                                    ),
+          ? Stack(
+        children: [
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Center(
+                child: Column(
+                  children: [
+                    // Day Code Container
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, top: 20, bottom: 10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            child: GestureDetector(
+                              onTap: () => _showDayCode(day?.code ?? ''),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'DAY CODE: ${day?.code ?? ''}',
+                                  style: TextStyle(
+                                    fontSize: _getClampedFontSize(context, 0.03),
+                                    fontFamily: 'Sora',
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.surface,
                                   ),
                                 ),
                               ),
                             ),
-                          )
-                        ],
-                      ),
-
-                      Expanded(
-                        child: MasonryGridView.builder(
-                          gridDelegate:
-                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
-                          shrinkWrap: true,
-                          itemCount: moments?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            final moment = moments![index];
-
-                        return MyMomentTile(
-                          moment: moment,
-                          onTap: _showImageDialog,
-                          index: index,
-                          toggleVote: _toggleVote,
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: MyNavbar(
-                selectedIndex: _selectedIndex,
-                onItemTapped: _onItemTapped,
-                showVerticalBar: _showVerticalBar,
-                isRotated: _isRotated,
-                toggleRotation: _toggleRotation,
-                showEnterDayCodeDialog: _showEnterDayCodeDialog,
-              ),
-            ),
-            if (_showVerticalBar)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    height: (_menuItems.length * 50).toDouble() + 100,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFF6F61),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: IconButton(
-                            icon: const Icon(Icons.keyboard_arrow_down, size: 30, color: Colors.white),
-                            onPressed: () {
-                              setState(() {
-                                _animationController.reverse();
-                                _showVerticalBar = false;
-                              });
-                            },
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: _menuItems.length,
-                            itemBuilder: (context, index) {
-                              final item = _menuItems[index];
-                              return ListTile(
-                                leading: Icon(item['icon'], color: Colors.white),
-                                title: Text(item['title'], style: const TextStyle(fontFamily: 'Sora', color: Colors.white)),
-                                onTap: () {
-                                  if (item['title'] == 'Enter a day code') {
-                                    _showEnterDayCodeDialog(context);
-                                  } else if (item['title'] == 'Create a day') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => DaySettingsPage()),
-                                    );
-                                  }
-                                },
-                              );
-                            },
                           ),
                         ),
                       ],
                     ),
+                    // Moments Grid
+                    Expanded(
+                      child: MasonryGridView.builder(
+                        gridDelegate:
+                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                        ),
+                        itemCount: moments?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final moment = moments![index];
+                          return MyMomentTile(
+                            moment: moment,
+                            onTap: _showImageDialog,
+                            index: index,
+                            toggleVote: _toggleVote,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: MyNavbar(
+              selectedIndex: _selectedIndex,
+              onItemTapped: _onItemTapped,
+              showVerticalBar: _showVerticalBar,
+              isRotated: _isRotated,
+              toggleRotation: _toggleRotation,
+              showEnterDayCodeDialog: _showEnterDayCodeDialog,
+            ),
+          ),
+          if (_showVerticalBar)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  height: (_menuItems.length * 50).toDouble() + 100,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFF6F61),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                          icon: const Icon(Icons.keyboard_arrow_down,
+                              size: 30, color: Colors.white),
+                          onPressed: () {
+                            setState(() {
+                              _animationController.reverse();
+                              _showVerticalBar = false;
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _menuItems.length,
+                          itemBuilder: (context, index) {
+                            final item = _menuItems[index];
+                            return ListTile(
+                              leading: Icon(item['icon'], color: Colors.white),
+                              title: Text(item['title'],
+                                  style: const TextStyle(
+                                      fontFamily: 'Sora', color: Colors.white)),
+                              onTap: () {
+                                if (item['title'] == 'Enter a day code') {
+                                  _showEnterDayCodeDialog(context);
+                                } else if (item['title'] == 'Create a day') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            DaySettingsPage()),
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-          ],
-        )
-            : NoMomentUploadedPage(imageUploadClicked: _imageUploadClicked),
-      ),
+            ),
+        ],
+      )
+          : NoMomentUploadedPage(imageUploadClicked: _imageUploadClicked),
     );
   }
 }
