@@ -16,7 +16,13 @@ import 'package:archify/pages/settings_page.dart';
 
 class NoMomentUploadedPage extends StatefulWidget {
   final void Function() imageUploadClicked;
-  const NoMomentUploadedPage({super.key, required this.imageUploadClicked});
+  final void Function() cameraUploadClicked;
+
+  const NoMomentUploadedPage({
+    super.key,
+    required this.imageUploadClicked,
+    required this.cameraUploadClicked,
+  });
 
   @override
   State<NoMomentUploadedPage> createState() => _NoMomentUploadedPageState();
@@ -251,10 +257,11 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.camera_alt),
+                  icon: Icon(Icons.camera_alt_rounded),
                   iconSize: 50.0,
                   onPressed: () {
                     Navigator.of(context).pop();
+                    widget.cameraUploadClicked();
                   },
                 ),
               ],
@@ -267,6 +274,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                   iconSize: 50.0,
                   onPressed: () {
                     Navigator.of(context).pop();
+                    widget.imageUploadClicked();
                   },
                 ),
               ],
@@ -404,9 +412,8 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                                           builder: (context) =>
                                               DaySettingsPage()),
                                     );
-                                  }
-                                  else if (item['title'] == 'Scan QR code') {
-                                  _scanQRCode();
+                                  } else if (item['title'] == 'Scan QR code') {
+                                    _scanQRCode();
                                   }
                                 },
                               );

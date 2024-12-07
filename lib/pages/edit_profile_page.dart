@@ -58,8 +58,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _bioController.dispose();
+    // _nameController.dispose();
+    // _bioController.dispose();
     super.dispose();
   }
 

@@ -3,6 +3,7 @@ import 'package:archify/components/my_mobile_scanner_overlay.dart';
 import 'package:archify/pages/about_us_page.dart';
 import 'package:archify/pages/my_feedback_form.dart';
 import 'package:archify/services/database/day/day_gate.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:archify/pages/empty_day_page.dart';
@@ -46,6 +47,8 @@ class _SettingsPageState extends State<SettingsPage>
     with TickerProviderStateMixin {
   late bool _setupNavigationTriggered;
   DateTime? minimumDate;
+  late final DayProvider _dayProvider;
+  late final UserProvider _userProvider;
 
   String subject = '';
   String body = '';
@@ -214,6 +217,9 @@ class _SettingsPageState extends State<SettingsPage>
     // TODO: implement initState
     super.initState();
 
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -259,6 +265,9 @@ class _SettingsPageState extends State<SettingsPage>
 
   Future<void> _logout() async {
     await AuthService().logoutInFirebase();
+    _dayProvider.resetDay();
+    _userProvider.resetUserProfile();
+
     if (mounted) goRootPage(context);
   }
 

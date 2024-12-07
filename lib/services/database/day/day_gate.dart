@@ -53,7 +53,7 @@ class _DayGateState extends State<DayGate> {
                     votingSnapshot.data == true) {
                   return DayExpiredPage(dayCode: code!);
                 } else {
-                  return DayExpiredPage(dayCode: code!);
+                  return DaySpacePage(dayCode: code!);
                 }
               },
             );

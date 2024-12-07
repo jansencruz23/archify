@@ -217,7 +217,7 @@ class _DaySpacePageState extends State<DaySpacePage>
   void _showNicknameAndAvatarDialog() {
     showDialog(
         context: context,
-        // barrierDismissible: false, para di skippable
+        barrierDismissible: false,
         builder: (context) => AlertDialog(
               title: Text('Be the best you~'),
               content: Container(
@@ -424,24 +424,9 @@ class _DaySpacePageState extends State<DaySpacePage>
             ),
           ),
           actions: [
-            Row(
-              children: [
-                Text(
-                  'Deadline: ${day == null ? 'Loading' : day!.votingDeadline.toString()}',
-                ),
-                IconButton(
-                  onPressed: _cameraUploadClicked,
-                  icon: const Icon(Icons.camera_alt_rounded),
-                ),
-                IconButton(
-                  onPressed: _imageUploadClicked,
-                  icon: const Icon(Icons.photo),
-                ),
-                IconButton(
-                  onPressed: _showSettings,
-                  icon: const Icon(Icons.settings_rounded),
-                ),
-              ],
+            IconButton(
+              onPressed: _showSettings,
+              icon: const Icon(Icons.settings_rounded),
             ),
           ],
           bottom: PreferredSize(
@@ -601,7 +586,10 @@ class _DaySpacePageState extends State<DaySpacePage>
                   ),
               ],
             )
-          : NoMomentUploadedPage(imageUploadClicked: _imageUploadClicked),
+          : NoMomentUploadedPage(
+              imageUploadClicked: _imageUploadClicked,
+              cameraUploadClicked: _cameraUploadClicked,
+            ),
     );
   }
 }
