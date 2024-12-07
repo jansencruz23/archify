@@ -389,72 +389,78 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         },
         child: SafeArea(
           child: Scaffold(
-            // AppBar with custom height
+            //AppBar with custom height
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(80),
-              child: AppBar(
-                // Leading section with profile picture and welcome text
-                titleSpacing: 0,
-                leadingWidth: 80,
-                leading: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Profile picture widget
-                    MyProfilePicture(
-                      height: 80,
-                      width: 80,
-                      onProfileTapped: () {},
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                child: AppBar(
+                  // Leading section with profile picture and welcome text
+                  titleSpacing: 0,
+                  leadingWidth: 80,
+                  leading: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Profile picture widget
+                        MyProfilePicture(
+                          height: 80,
+                          width: 80,
+                          onProfileTapped: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                  title: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 24.0, 8.0, 14.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Welcome back text
+                        Text(
+                          'Welcome back,',
+                          style: TextStyle(
+                            fontFamily: 'Sora',
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                            fontSize: _getClampedFontSize(context, 0.03),
+                          ),
+                        ),
+                        // User's name text
+                        Text(
+                          userProfile == null ? 'Loading' : userProfile.name,
+                          style: TextStyle(
+                            fontFamily: 'Sora',
+                            fontWeight: FontWeight.bold,
+                            fontSize: _getClampedFontSize(context, 0.045),
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Notification icon button
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 14, 7, 0),
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: Image.asset(
+                          'lib/assets/images/notification_icon.png',
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
                     ),
                   ],
-                ),
-                title: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 24.0, 8.0, 8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Welcome back text
-                      Text(
-                        'Welcome back,',
-                        style: TextStyle(
-                          fontFamily: 'Sora',
-                          color: Theme.of(context).colorScheme.inversePrimary,
-                          fontSize: 14,
-                        ),
-                      ),
-                      // User's name text
-                      Text(
-                        userProfile == null ? 'Loading' : userProfile.name,
-                        style: TextStyle(
-                          fontFamily: 'Sora',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                          color: Theme.of(context).colorScheme.inversePrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Notification icon button
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 14, 7, 0),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Image.asset(
-                        'lib/assets/images/notification_icon.png',
-                        width: 30,
-                        height: 30,
-                      ),
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(1),
+                    child: Divider(
+                      height: 2,
+                      color: Color(0xFFD9D9D9),
                     ),
-                  ),
-                ],
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(1),
-                  child: Divider(
-                    height: 2,
-                    color: Color(0xFFD9D9D9),
                   ),
                 ),
               ),
