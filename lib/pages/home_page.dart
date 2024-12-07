@@ -364,7 +364,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         titleSpacing: 0,
                         leadingWidth: 80,
                         leading: Padding(
-                          padding: const EdgeInsets.fromLTRB(8.0, 20.0, 0, 16.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(8.0, 20.0, 0, 16.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,8 +380,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                         ),
                         title: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(0, 24.0, 8.0, 8.0),
+                          padding: const EdgeInsets.fromLTRB(0, 24.0, 8.0, 8.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -798,43 +798,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ),
-                            Column(
-                              children: [
-                                const SizedBox(height: 30),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom: MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom)),
-
-                                ElevatedButton(
-                                  onPressed: () => goProfile(context),
-                                  child: const Text('Profile'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    goDayGate(context);
-                                  },
-                                  child: const Text('Day'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    goJoinOrCreate(context);
-                                  },
-                                  child: const Text('Join or Create'),
-                                ),
-
-                                // Test Icons
-                                IconButton(
-                                  onPressed: _logout,
-                                  icon: const Icon(Icons.logout),
-                                ),
-                                IconButton(
-                                  onPressed: () => goSetup(context),
-                                  icon: const Icon(Icons.home),
-                                ),
-                              ],
-                            ),
                           ],
                         )),
                   ),
