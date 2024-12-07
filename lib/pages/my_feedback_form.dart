@@ -102,7 +102,6 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                   height: 24,
                 ),
                 //Subject
-                //If mas maganda may text na "Subject sa taas"
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(

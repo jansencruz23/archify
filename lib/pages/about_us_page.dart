@@ -50,23 +50,23 @@ class AboutUsPage extends StatelessWidget {
                 // Team Member 1
                 Row(
                   children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(
-                              'lib/assets/images/JCruz_img.png'), // Add the image asset path here
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   width: 60,
+                    //   height: 60,
+                    //   decoration: BoxDecoration(
+                    //     shape: BoxShape.circle,
+                    //     image: DecorationImage(
+                    //       image: AssetImage(
+                    //           'lib/assets/images/JCruz_img.png'),
+                    //       fit: BoxFit.cover,
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(width: 16.0),
                     Expanded(
                       child: Text(
                         '1. Jansen Cruz - (Developer)\n'
-                        'This dev is like the Sherlock Holmes of the team. They find problems so fast, it’s almost scary.',
+                        'This dev is like the Sherlock Holmes of the team. He finds problems so fast, it’s almost scary.',
                         style: TextStyle(
                             fontSize: 16,
                             color:
@@ -79,18 +79,18 @@ class AboutUsPage extends StatelessWidget {
                 // Team Member 2
                 Row(
                   children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(
-                              'lib/assets/images/AAlfonso_img.png'), // Add the image asset path here
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   width: 60,
+                    //   height: 60,
+                    //   decoration: BoxDecoration(
+                    //     shape: BoxShape.circle,
+                    //     image: DecorationImage(
+                    //       image: AssetImage(
+                    //           'lib/assets/images/AAlfonso_img.png'),
+                    //       fit: BoxFit.cover,
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(width: 16.0),
                     Expanded(
                       child: Text(
@@ -108,18 +108,18 @@ class AboutUsPage extends StatelessWidget {
                 // Team Member 3
                 Row(
                   children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(
-                              'lib/assets/images/JSalem_img.png'), // Add the image asset path here
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   width: 60,
+                    //   height: 60,
+                    //   decoration: BoxDecoration(
+                    //     shape: BoxShape.circle,
+                    //     image: DecorationImage(
+                    //       image: AssetImage(
+                    //           'lib/assets/images/JSalem_img.png'), // Add the image asset path here
+                    //       fit: BoxFit.cover,
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(width: 16.0),
                     Expanded(
                       child: Text(
