@@ -187,69 +187,76 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                   },
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  if (selectedAvatarPath.isEmpty) {
-                    // Show an alert if no photo is selected
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('No Photo Selected'),
-                        content: Text('Please select a photo before confirming.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('OK'),
+              Transform.translate(
+                offset: Offset(0, 40),
+                child: SizedBox(
+                  width: 275, // Set the desired width here
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (selectedAvatarPath.isEmpty) {
+                        // Show an alert if no photo is selected
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('No Photo Selected'),
+                            content: Text('Please select a photo before confirming.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  } else {
-                    String nickname = widget.nicknameController.text.trim();
-                    if (nickname.isEmpty) {
-                      // Show alert if nickname is empty
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Nickname Required'),
-                          content: Text('Please enter a nickname before confirming.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'),
+                        );
+                      } else {
+                        String nickname = widget.nicknameController.text.trim();
+                        if (nickname.isEmpty) {
+                          // Show alert if nickname is empty
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Nickname Required'),
+                              content: Text('Please enter a nickname before confirming.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'),
+                                ),
+                              ],
                             ),
-                          ],
+                          );
+                        } else {
+                          // Confirmation dialog
+                          widget.onSubmit();
+                          Navigator.of(context).pop();
+                        }
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Color(0xFFFF6F61)),
+                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
                         ),
-                      );
-                    } else {
-                      // Confirmation dialog
-                      widget.onSubmit();
-                      Navigator.of(context).pop();
-                    }
-                  }
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Color(0xFFFF6F61)),
-                  foregroundColor: MaterialStateProperty.all(Colors.white),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(35),
+                      ),
+                    ),
+                    child: Text(
+                      'Confirm Selection',
+                      style: TextStyle(
+                        fontFamily: 'Sora',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-                child: Text(
-                  'Confirm Selection',
-                  style: TextStyle(
-                    fontFamily: 'Sora',
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
               ),
+
             ],
           ),
         ),

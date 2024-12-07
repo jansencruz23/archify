@@ -41,11 +41,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               title: Text(
                 'Be the best you~',
                 style: TextStyle(
+                  fontSize: 24,
                   fontFamily: 'Sora',
                   color: Color(0xFF333333),
                 ),
               ),
               content: Container(
+                height: 410,
                 width: double.infinity,
                 child: MyNicknameAndAvatarDialog(
                   nicknameController: _nicknameController,
