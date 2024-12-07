@@ -286,19 +286,27 @@ class _ProfilePageState extends State<ProfilePage>
                         SliverSimpleGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2),
                     shrinkWrap: true,
-                    itemCount: favoriteDays.length, //sample
+                    itemCount: favoriteDays.length,
                     itemBuilder: (context, index) {
-                      final imagePath = favoriteDays[index].imageUrl; //sample
+                      final imagePath = favoriteDays[index].imageUrl;
+                      final caption = favoriteDays[index].dayName;
                       if (imagePath.isEmpty) return SizedBox.shrink();
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16.0),
-                          child: Image.network(
-                            imagePath, //sample
-                            width: double.infinity,
-                            height: (index % 3 == 0) ? 180 : 230,
-                            fit: BoxFit.cover,
+                          child: GestureDetector(
+                            onTap: () => goFullScreenImage(
+                              context,
+                              imagePath,
+                              caption,
+                            ),
+                            child: Image.network(
+                              imagePath, //sample
+                              width: double.infinity,
+                              height: (index % 3 == 0) ? 180 : 230,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       );

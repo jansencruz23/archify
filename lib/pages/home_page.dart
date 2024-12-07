@@ -528,10 +528,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               final moment = days[index];
                               bool isMainPhoto = this.realIndex == index;
 
-                              return MyDay(
-                                moment: moment,
-                                isMainPhoto: isMainPhoto,
-                                toggleFavorites: _toggleFavorites,
+                              return GestureDetector(
+                                onTap: () => goFullScreenImage(
+                                  context,
+                                  moment.imageUrl,
+                                  moment.dayName,
+                                ),
+                                onDoubleTap: () => _toggleFavorites(),
+                                child: MyDay(
+                                  moment: moment,
+                                  isMainPhoto: isMainPhoto,
+                                  toggleFavorites: _toggleFavorites,
+                                ),
                               );
                             },
                             options: CarouselOptions(
@@ -590,7 +598,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           //Comment Section
                           Padding(
                             padding:
-                                const EdgeInsets.only(right: 35, left: 8.0),
+                                const EdgeInsets.only(right: 20, left: 20.0),
                             child: SizedBox(
                               height: MediaQuery.of(context).size.height * 0.28,
                               width: MediaQuery.of(context).size.width,
@@ -599,8 +607,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   padding: const EdgeInsets.only(
                                       bottom: 8.0,
                                       top: 8.0,
-                                      right: 8.0,
-                                      left: 0.0),
+                                      right: 4.0,
+                                      left: 4.0),
                                   child: comments[_currentDayId] == null ||
                                           comments[_currentDayId]!.isEmpty
                                       ? const Center(

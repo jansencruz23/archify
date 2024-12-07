@@ -4,6 +4,7 @@ import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/day_space_page.dart';
 import 'package:archify/pages/edit_day_settings_page.dart';
 import 'package:archify/pages/edit_profile_page.dart';
+import 'package:archify/pages/full_screen_image.dart';
 import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/setup_page.dart';
@@ -83,5 +84,16 @@ void goEditSettings(BuildContext context, Day day) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => EditDaySettingsPage(day: day)),
+  );
+}
+
+void goFullScreenImage(BuildContext context, String imageUrl, String caption) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+        builder: (context) => FullScreenImage(
+              imageUrl: imageUrl,
+              caption: caption,
+            )),
   );
 }

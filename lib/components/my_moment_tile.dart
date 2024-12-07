@@ -74,6 +74,7 @@ class _MyMomentTileState extends State<MyMomentTile> {
                   onTap: widget.onTap == null
                       ? () {}
                       : () => widget.onTap!(widget.moment, widget.index),
+                  onDoubleTap: () => widget.toggleVote(widget.moment.momentId),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
                     child: Image.network(
