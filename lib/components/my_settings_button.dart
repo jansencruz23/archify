@@ -5,12 +5,17 @@ class MySettingsButton extends StatefulWidget {
   final Widget icon;
   final void Function()? onTap;
   final bool isEnabled;
+  final bool isClicked;
+  final bool isLongPressed;
 
   const MySettingsButton({
     super.key,
     required this.text,
     required this.icon,
-    this.onTap, this.isEnabled = true,
+    this.onTap,
+    this.isEnabled = true,
+    this.isClicked = false,
+    this.isLongPressed = false,
   });
 
   @override
@@ -30,7 +35,8 @@ class _MySettingsButtonState extends State<MySettingsButton> {
         // Only allow tap if enabled
         child: GestureDetector(
           onTap: () {
-            if (widget.isEnabled) { // Check if enabled before responding to tap
+            if (widget.isEnabled) {
+              // Check if enabled before responding to tap
               setState(() {
                 _isClicked = !_isClicked;
               });
@@ -45,8 +51,8 @@ class _MySettingsButtonState extends State<MySettingsButton> {
             }
           },
           onLongPressStart: (_) {
-            if (widget
-                .isEnabled) { // Check if enabled before handling long press
+            if (widget.isEnabled) {
+              // Check if enabled before handling long press
               Future.delayed(const Duration(milliseconds: 100), () {
                 setState(() {
                   _isLongPressed = true;
@@ -55,8 +61,8 @@ class _MySettingsButtonState extends State<MySettingsButton> {
             }
           },
           onLongPressEnd: (_) {
-            if (widget
-                .isEnabled) { // Check if enabled before handling long press end
+            if (widget.isEnabled) {
+              // Check if enabled before handling long press end
               setState(() {
                 _isLongPressed = false;
               });
@@ -68,23 +74,11 @@ class _MySettingsButtonState extends State<MySettingsButton> {
             decoration: BoxDecoration(
               color: widget.isEnabled
                   ? (_isLongPressed
-                  ? Theme
-                  .of(context)
-                  .colorScheme
-                  .secondaryContainer
+                  ? Theme.of(context).colorScheme.secondaryContainer
                   : _isClicked
-                  ? Theme
-                  .of(context)
-                  .colorScheme
-                  .secondaryContainer
-                  : Theme
-                  .of(context)
-                  .colorScheme
-                  .surface)
-                  : Theme
-                  .of(context)
-                  .colorScheme
-                  .surface,
+                  ? Theme.of(context).colorScheme.secondaryContainer
+                  : Theme.of(context).colorScheme.surface)
+                  : Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
@@ -98,14 +92,8 @@ class _MySettingsButtonState extends State<MySettingsButton> {
                     widget.text,
                     style: TextStyle(
                       color: widget.isEnabled
-                          ? Theme
-                          .of(context)
-                          .colorScheme
-                          .inversePrimary
-                          : Theme
-                          .of(context)
-                          .colorScheme
-                          .onSurfaceVariant,
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                       fontFamily: 'Sora',
                       fontSize: 18,
                     ),

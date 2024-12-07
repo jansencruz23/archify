@@ -71,6 +71,8 @@ class _SettingsPageState extends State<SettingsPage>
 
   //rated or not
   bool _isRated = false;
+  bool isClicked = false;
+  bool isLongPressed = false;
 
   //Qrcode string
   String qrCode = '';
@@ -325,6 +327,8 @@ class _SettingsPageState extends State<SettingsPage>
             child: Column(
               children: [
                 MySettingsButton(
+                  isClicked: isClicked,
+                  isLongPressed: isLongPressed,
                   text: 'Rate Us',
                   icon: Image.asset(
                     'lib/assets/images/rate_icon.png',
