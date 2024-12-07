@@ -34,7 +34,7 @@ class DayProvider extends ChangeNotifier {
   late List<String> _votedMomentIds = [];
   List<String> get votedMomentIds => _votedMomentIds;
 
-  late final Map<String, List<Comment>> _commentsByDayId = {};
+  late Map<String, List<Comment>> _commentsByDayId = {};
   Map<String, List<Comment>> get commentsByDayId => _commentsByDayId;
 
   bool? _hasUploaded;
@@ -256,6 +256,15 @@ class DayProvider extends ChangeNotifier {
 
   Future<void> leaveDay(String dayId) async {
     await _dayService.leaveDayInFirebase(dayId);
+    notifyListeners();
+  }
+
+  void resetDay() async {
+    _day = null;
+    _moments = [];
+    _commentsByDayId = {};
+    _votedMomentIds = [];
+
     notifyListeners();
   }
 }
