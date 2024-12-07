@@ -62,10 +62,8 @@ class _DaySpacePageState extends State<DaySpacePage>
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
-          print('Reversing animation');
           _animationController.reverse();
         } else {
-          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
@@ -176,9 +174,22 @@ class _DaySpacePageState extends State<DaySpacePage>
       _isParticipant().then((isParticipant) {
         if (!isParticipant) _showNicknameAndAvatarDialog();
       });
+      _checkIsHost();
       _loadDay();
     });
   }
+
+  bool _isHost = false;
+
+  Future<void> _checkIsHost() async {
+    if (day != null) {
+      final result = await _dayProvider.isHost(day!.id);
+      setState(() {
+        _isHost = result;
+      });
+    }
+  }
+
 
   Future<bool> _isParticipant() async {
     return await _dayProvider.isParticipant(widget.dayCode);
@@ -448,13 +459,11 @@ class _DaySpacePageState extends State<DaySpacePage>
                           Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, top: 20, bottom: 10),
+                                padding: const EdgeInsets.only(left: 10, top: 20, bottom: 10),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
                                   child: GestureDetector(
                                     onTap: () => _showDayCode(day?.code ?? ''),
@@ -463,13 +472,10 @@ class _DaySpacePageState extends State<DaySpacePage>
                                       child: Text(
                                         'DAY CODE: ${day?.code ?? ''}',
                                         style: TextStyle(
-                                          fontSize: _getClampedFontSize(
-                                              context, 0.03),
+                                          fontSize: _getClampedFontSize(context, 0.03),
                                           fontFamily: 'Sora',
                                           fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface,
+                                          color: Theme.of(context).colorScheme.surface,
                                         ),
                                       ),
                                     ),
@@ -478,20 +484,27 @@ class _DaySpacePageState extends State<DaySpacePage>
                               ),
                               Spacer(),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 8, top: 20, bottom: 10),
-                                child: IconButton(
-                                    onPressed: _showSettings,
+                                padding: const EdgeInsets.only(right: 8, top: 20, bottom: 10),
+                                child: _isHost
+                                    ? IconButton(
+                                  onPressed: _showSettings,
                                   icon: Image.asset(
                                     'lib/assets/images/edit_icon.png',
                                     width: 30,
                                     height: 30,
                                   ),
+                                )
+                                    : IconButton(
+                                  onPressed: _showSettings,
+                                  icon: Image.asset(
+                                    'lib/assets/images/leave_icon.png',
+                                    width: 24,
+                                    height: 24,
                                   ),
+                                ),
                               ),
                             ],
                           ),
-
                           // Moments Grid
                           Expanded(
                             child: MasonryGridView.builder(

@@ -56,10 +56,8 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
-          print('Reversing animation');
           _animationController.reverse();
         } else {
-          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
