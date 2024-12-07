@@ -110,6 +110,12 @@ flutter:
     - lib/assets/avatars/male_avatar_1.png
     - lib/assets/avatars/male_avatar_2.png
     - lib/assets/avatars/female_avatar_1.png
+    - lib/assets/avatars/male_avatar_3.png
+    - lib/assets/avatars/male_avatar_4.png
+    - lib/assets/avatars/female_avatar_2.png
+    - lib/assets/avatars/female_avatar_3.png
+    - lib/assets/avatars/female_avatar_4.png
+    - lib/assets/avatars/female_avatar_5.png
     - lib/assets/images/Logo.jpg
     - lib/assets/images/edit_icon.png
     - lib/assets/images/leave_icon.png

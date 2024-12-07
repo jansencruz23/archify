@@ -38,12 +38,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text('Select a Photo and Enter Nickanme'),
+              title: Text(
+                'Be the best you~',
+                style: TextStyle(
+                  fontFamily: 'Sora',
+                  color: Color(0xFF333333),
+                ),
+              ),
               content: Container(
                 width: double.infinity,
                 child: MyNicknameAndAvatarDialog(
                   nicknameController: _nicknameController,
-                  avatarController: _avatarController, onSubmit: () {  },
+                  avatarController: _avatarController,
+                  onSubmit: () {},
                 ),
               ),
               actions: [
