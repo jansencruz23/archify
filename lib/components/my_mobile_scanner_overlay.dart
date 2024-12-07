@@ -5,7 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 class QRScannerScreen extends StatefulWidget {
   final Function(String) onScan;
 
-  const QRScannerScreen({required this.onScan, super.key});
+  const QRScannerScreen({required this.onScan, Key? key}) : super(key: key);
 
   @override
   _QRScannerScreenState createState() => _QRScannerScreenState();
@@ -30,15 +30,55 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _checkPermissions(); // Re-check permissions when the app resumes
+      _checkPermissions();
     }
   }
 
   Future<void> _checkPermissions() async {
     final status = await Permission.camera.status;
-    setState(() {
-      _permissionGranted = status.isGranted;
-    });
+
+    if (status.isGranted) {
+      setState(() {
+        _permissionGranted = true;
+      });
+    } else if (status.isDenied || status.isRestricted || status.isLimited) {
+      final result = await Permission.camera.request();
+
+      setState(() {
+        _permissionGranted = result.isGranted;
+      });
+
+      if (!result.isGranted) {
+        _showPermissionDeniedDialog();
+      }
+    }
+  }
+
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Permission Required'),
+        content: const Text(
+          'Camera permission is required to scan QR codes. Please enable it in your device settings.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await openAppSettings();
+            },
+            child: const Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -87,32 +127,21 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
                 ),
               ),
             ),
-          if (_permissionGranted)
           Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
               height: MediaQuery.of(context).size.width * 0.7,
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 10.0),
+                  border: Border.all(
+                    color: _permissionGranted ? Colors.white : Colors.black54,
+                    width: 10.0,
+                  ),
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
-          )
-          else
-            Center(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
-                height: MediaQuery.of(context).size.width * 0.7,
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black54, width: 10.0),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-            )
+          ),
         ],
       ),
     );
