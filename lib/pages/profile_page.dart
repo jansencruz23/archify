@@ -384,6 +384,9 @@ class _ProfilePageState extends State<ProfilePage>
                                             builder: (context) =>
                                                 DaySettingsPage()),
                                       );
+                                    } else if (item['title'] ==
+                                        'Scan QR code') {
+                                      _scanQRCode();
                                     }
                                   },
                                   child: ListTile(

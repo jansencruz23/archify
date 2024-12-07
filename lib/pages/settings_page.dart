@@ -69,6 +69,11 @@ class _SettingsPageState extends State<SettingsPage>
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
+  //rated or not
+  bool _isRated = false;
+  bool isClicked = false;
+  bool isLongPressed = false;
+
   //Qrcode string
   String qrCode = '';
 
@@ -320,6 +325,8 @@ class _SettingsPageState extends State<SettingsPage>
             child: Column(
               children: [
                 MySettingsButton(
+                  isClicked: isClicked,
+                  isLongPressed: isLongPressed,
                   text: 'Rate Us',
                   icon: Image.asset(
                     'lib/assets/images/rate_icon.png',
@@ -327,72 +334,62 @@ class _SettingsPageState extends State<SettingsPage>
                     height: 24,
                   ),
                   onTap: () {
-                    // print('rate');
-                    print('Is dialog shown? $_isDialogShown'); // for debuging
-
-                    _rateMyApp.showStarRateDialog(
-                      context,
-                      title: 'Enjoying Archify?',
-                      message: 'Please leave a rating!',
-                      dialogStyle: DialogStyle(
-                        titleAlign: TextAlign.center, // Align the title text
-                        titleStyle: TextStyle(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .inversePrimary, // Set the title color
-                          fontWeight: FontWeight
-                              .bold, // Set additional styles if needed
-                          fontSize: 20.0,
-                        ),
-                        messageAlign:
-                            TextAlign.center, // Align the message text
-                        messageStyle: TextStyle(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .inversePrimary, // Set the message color
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      actionsBuilder: (context, stars) {
-                        return [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  _rateMyApp.callEvent(
-                                      RateMyAppEventType.laterButtonPressed);
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  'Later',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  _rateMyApp.callEvent(
-                                      RateMyAppEventType.rateButtonPressed);
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  'Rate Now',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary),
-                                ),
-                              ),
-                            ],
+                    if (!_isRated) { // Only show the dialog if the user hasn't rated yet.
+                      _rateMyApp.showStarRateDialog(
+                        context,
+                        title: 'Enjoying Archify?',
+                        message: 'Please leave a rating!',
+                        dialogStyle: DialogStyle(
+                          titleAlign: TextAlign.center,
+                          titleStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
                           ),
-                        ];
-                      },
-                    );
+                          messageAlign: TextAlign.center,
+                          messageStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        actionsBuilder: (context, stars) {
+                          return [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    'Later',
+                                    style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
+                                    setState(() {
+                                      _isRated = true; // Set the state to true after rating.
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    'Rate Now',
+                                    style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ];
+                        },
+                      );
+                    }
                   },
+                  isEnabled: !_isRated, // Disable the button if the user has rated.
                 ),
+
                 MySettingsButton(
                   text: 'Share',
                   icon: Image.asset(

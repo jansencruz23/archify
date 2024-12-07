@@ -10,6 +10,7 @@ class MyTextField extends StatefulWidget {
   final Color? focusColor;
   final ValueChanged<String>? onChanged;
   final TextInputType? inputType;
+  final bool showToggleIcon;
 
   const MyTextField({
     this.onChanged,
@@ -22,6 +23,7 @@ class MyTextField extends StatefulWidget {
     required this.focusNode,
     this.onSubmitted,
     this.inputType,
+    this.showToggleIcon = false,
   });
 
   @override
@@ -30,11 +32,12 @@ class MyTextField extends StatefulWidget {
 
 class _MyTextFieldState extends State<MyTextField> {
   final ValueNotifier<bool> focusNotifier = ValueNotifier<bool>(false);
+  bool isObscured = true;
 
   @override
   void initState() {
     super.initState();
-
+    isObscured = widget.obscureText;
     widget.focusNode.addListener(_onFocusChange);
   }
 
@@ -43,12 +46,17 @@ class _MyTextFieldState extends State<MyTextField> {
     widget.focusNode.removeListener(_onFocusChange);
     widget.focusNode.dispose();
     focusNotifier.dispose();
-
     super.dispose();
   }
 
   void _onFocusChange() {
     focusNotifier.value = widget.focusNode.hasFocus;
+  }
+
+  void _toggleObscureText() {
+    setState(() {
+      isObscured = !isObscured;
+    });
   }
 
   @override
@@ -74,7 +82,7 @@ class _MyTextFieldState extends State<MyTextField> {
               fontSize: 18,
             ),
             controller: widget.controller,
-            obscureText: widget.obscureText,
+            obscureText: isObscured,
             focusNode: widget.focusNode,
             onSubmitted: widget.onSubmitted,
             decoration: InputDecoration(
@@ -93,7 +101,16 @@ class _MyTextFieldState extends State<MyTextField> {
                 fontFamily: 'Sora',
                 fontSize: 18,
               ),
-                contentPadding: const EdgeInsets.only(left: 30),
+              contentPadding: const EdgeInsets.only(left: 30),
+              suffixIcon: widget.showToggleIcon
+                  ? IconButton(
+                      icon: Icon(
+                        isObscured ? Icons.visibility_off : Icons.visibility,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      onPressed: _toggleObscureText,
+                    )
+                  : null,
             ),
           );
         },

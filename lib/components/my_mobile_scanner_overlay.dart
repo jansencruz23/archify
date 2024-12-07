@@ -33,7 +33,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed && !_permissionGranted) {
       _checkPermissions();
     }
   }
@@ -45,7 +45,9 @@ class _QRScannerScreenState extends State<QRScannerScreen>
       setState(() {
         _permissionGranted = true;
       });
-    } else if (status.isDenied || status.isRestricted || status.isLimited) {
+    } else if (status.isPermanentlyDenied) {
+      _showPermissionDeniedDialog();
+    } else {
       final result = await Permission.camera.request();
 
       setState(() {
@@ -71,14 +73,28 @@ class _QRScannerScreenState extends State<QRScannerScreen>
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 14,
+                fontFamily: 'Sora',
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
               await openAppSettings();
             },
-            child: const Text('Open Settings'),
+            child: Text(
+              'Open Settings',
+              style: TextStyle(
+                fontSize: 14,
+                fontFamily: 'Sora',
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
+            ),
           ),
         ],
       ),
@@ -147,7 +163,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-
                 Padding(
                   padding: const EdgeInsets.only(top: 20, bottom: 100),
                   child: SizedBox(
@@ -158,7 +173,8 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                         color: Colors.black12.withOpacity(0.8),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                       alignment: Alignment.center,
                       child: Text(
                         _permissionGranted
@@ -174,7 +190,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                     ),
                   ),
                 ),
-
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.7,
                   height: MediaQuery.of(context).size.width * 0.7,
@@ -190,7 +205,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
