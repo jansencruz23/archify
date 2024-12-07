@@ -49,6 +49,8 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> loadUserProfile() async {
+    setLoading(true);
+
     final user = await getCurrentUserProfile();
     if (user == null) return;
 
@@ -65,6 +67,7 @@ class UserProvider extends ChangeNotifier {
     _moments = await _userService.getUserMomentsFromFirebase();
     _favoriteDaysIds = user.favoriteDays.map((day) => day.dayId).toList();
 
+    setLoading(false);
     notifyListeners();
   }
 

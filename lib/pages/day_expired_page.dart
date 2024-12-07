@@ -49,11 +49,6 @@ class _DayExpiredPageState extends State<DayExpiredPage>
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
-      } else if (index == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
-        );
       } else if (index == 2) {
         if (_showVerticalBar) {
           print('Reversing animation');
@@ -79,7 +74,6 @@ class _DayExpiredPageState extends State<DayExpiredPage>
       }
     });
   }
-
 
   void _toggleRotation() {
     setState(() {
@@ -186,7 +180,6 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     _animationController.dispose();
     super.dispose();
   }
-
 
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;

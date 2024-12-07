@@ -63,11 +63,6 @@ class _EmptyDayPageState extends State<EmptyDayPage>
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
-      } else if (index == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => DayCodePage(dayId: '')),
-        );
       } else if (index == 2) {
         if (_showVerticalBar) {
           print('Reversing animation');

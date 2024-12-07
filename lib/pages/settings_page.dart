@@ -24,8 +24,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:archify/pages/terms_and_condition_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
-
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -227,8 +225,10 @@ class _SettingsPageState extends State<SettingsPage>
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0))
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0))
+            .animate(CurvedAnimation(
+                parent: _animationController, curve: Curves.easeInOut));
     _setupNavigationTriggered = false;
 
     _email = "";
@@ -313,53 +313,49 @@ class _SettingsPageState extends State<SettingsPage>
     final listeningProvider = Provider.of<UserProvider>(context);
     final userProfile = listeningProvider.userProfile;
 
-    return Consumer<UserProvider>(builder: (context, userProvider, child) {
-      return _userProvider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SafeArea(
-              child: Scaffold(
-              appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(80.0),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                      bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0),
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 33.0),
-                  alignment: Alignment.centerLeft,
-                  child: const SafeArea(
-                    child: Text(
-                      "Settings",
-                      style: TextStyle(
-                        fontFamily: 'Sora',
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
+    return SafeArea(
+        child: Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80.0),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 33.0),
+          alignment: Alignment.centerLeft,
+          child: const SafeArea(
+            child: Text(
+              "Settings",
+              style: TextStyle(
+                fontFamily: 'Sora',
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
               ),
-              body: Stack(children: [
-                SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      children: [
-                        MySettingsButton(
-                          text: 'Rate Us',
-                          icon: Image.asset(
-                            'lib/assets/images/rate_icon.png',
-                            width: 24,
-                            height: 24,
-                          ),
-                          onTap: () {
-                            // print('rate');
-                            print(
-                                'Is dialog shown? $_isDialogShown'); // for debuging
+            ),
+          ),
+        ),
+      ),
+      body: Stack(children: [
+        SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              children: [
+                MySettingsButton(
+                  text: 'Rate Us',
+                  icon: Image.asset(
+                    'lib/assets/images/rate_icon.png',
+                    width: 24,
+                    height: 24,
+                  ),
+                  onTap: () {
+                    // print('rate');
+                    print('Is dialog shown? $_isDialogShown'); // for debuging
 
                             _rateMyApp.showStarRateDialog(
                               context,
@@ -678,6 +674,6 @@ class _SettingsPageState extends State<SettingsPage>
                   ),
               ]),
             ));
-    });
+    }
   }
-}
+

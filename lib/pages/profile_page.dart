@@ -65,11 +65,6 @@ class _ProfilePageState extends State<ProfilePage>
       } else if (_showVerticalBar) {
         _animationController.reverse();
         _showVerticalBar = false;
-      } else if (index == 3) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
-        );
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
@@ -228,299 +223,196 @@ class _ProfilePageState extends State<ProfilePage>
     final userProfile = listeningProvider.userProfile;
     final favoriteDays = userProfile?.favoriteDays ?? [];
 
-    return Consumer<UserProvider>(builder: (context, userProvider, child) {
-      return userProvider.isLoading
-          ? Center(
-              child: Container(
-                width: MediaQuery.sizeOf(context).width,
-                height: MediaQuery.sizeOf(context).height,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                ),
-                child: const Center(child: CircularProgressIndicator()),
+    return SafeArea(
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(180),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: AppBar(
+              leadingWidth: 120,
+              toolbarHeight: 75,
+              titleSpacing: 0,
+              leading: MyProfilePicture(
+                height: 150,
+                width: 120,
+                onProfileTapped: () {},
+                hasBorder: true,
               ),
-            )
-          : SafeArea(
-              child: Scaffold(
-                appBar: PreferredSize(
-                  preferredSize: Size.fromHeight(180),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: AppBar(
-                      leadingWidth: 120,
-                      toolbarHeight: 75,
-                      titleSpacing: 0,
-                      leading: MyProfilePicture(
-                        height: 150,
-                        width: 120,
-                        onProfileTapped: () {},
-                        hasBorder: true,
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            userProfile == null ? 'Loading' : userProfile.name,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary,
-                              fontSize: 18,
-                            ),
-                          ),
-                          Text(
-                            userProfile == null ? 'Loading' : userProfile.bio,
-                            maxLines: 3,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      bottom: PreferredSize(
-                        preferredSize: Size.fromHeight(30),
-                        child: MyButton(
-                          text: 'Edit Profile',
-                          onTap: () => goEditProfile(context),
-                          padding: 8,
-                        ),
-                      ),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    userProfile == null ? 'Loading' : userProfile.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: 18,
                     ),
                   ),
+                  Text(
+                    userProfile == null ? 'Loading' : userProfile.bio,
+                    maxLines: 3,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
+                ],
+              ),
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(30),
+                child: MyButton(
+                  text: 'Edit Profile',
+                  onTap: () => goEditProfile(context),
+                  padding: 8,
                 ),
-                body: Stack(
-                  children: [
-                    RefreshIndicator(
-                      onRefresh: _loadUserMoments,
-                      color: Theme.of(context).colorScheme.secondary,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 80),
-                        child: MasonryGridView.builder(
-                            gridDelegate:
-                                SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2),
-                            shrinkWrap: true,
-                            itemCount: favoriteDays.length, //sample
+              ),
+            ),
+          ),
+        ),
+        body: Stack(
+          children: [
+            RefreshIndicator(
+              onRefresh: _loadUserMoments,
+              color: Theme.of(context).colorScheme.secondary,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 80),
+                child: MasonryGridView.builder(
+                    gridDelegate:
+                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
+                    shrinkWrap: true,
+                    itemCount: favoriteDays.length, //sample
+                    itemBuilder: (context, index) {
+                      final imagePath = favoriteDays[index].imageUrl; //sample
+                      if (imagePath.isEmpty) return SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.0),
+                          child: Image.network(
+                            imagePath, //sample
+                            width: double.infinity,
+                            height: (index % 3 == 0) ? 180 : 230,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+            ),
+            const SizedBox(height: 800),
+            Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom)),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: Colors.white,
+                child: MyNavbar(
+                  selectedIndex: _selectedIndex,
+                  onItemTapped: _onItemTapped,
+                  showVerticalBar: _showVerticalBar,
+                  isRotated: _isRotated,
+                  toggleRotation: _toggleRotation,
+                  showEnterDayCodeDialog: _showEnterDayCodeDialog,
+                ),
+              ),
+            ),
+            if (_showVerticalBar)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    height: (_menuItems.length * 50).toDouble() + 100,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFF6F61),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down,
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _animationController.reverse();
+                                _showVerticalBar = false;
+                              });
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: _menuItems.length,
                             itemBuilder: (context, index) {
-                              final imagePath =
-                                  favoriteDays[index].imageUrl; //sample
-                              if (imagePath.isEmpty) return SizedBox.shrink();
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  child: Image.network(
-                                    imagePath, //sample
-                                    width: double.infinity,
-                                    height: (index % 3 == 0) ? 180 : 230,
-                                    fit: BoxFit.cover,
+                              final item = _menuItems[index];
+                              return MouseRegion(
+                                onEnter: (_) {
+                                  setState(() {
+                                    _hoveredIndex = index;
+                                  });
+                                },
+                                onExit: (_) {
+                                  setState(() {
+                                    _hoveredIndex = -1;
+                                  });
+                                },
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (item['title'] == 'Enter a day code') {
+                                      _showEnterDayCodeDialog(context);
+                                    } else if (item['title'] ==
+                                        'Create a day') {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                DaySettingsPage()),
+                                      );
+                                    }
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(
+                                      item['icon'],
+                                      color: Colors.white,
+                                    ),
+                                    title: Text(
+                                      item['title'],
+                                      style: const TextStyle(
+                                        fontFamily: 'Sora',
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               );
-                            }),
-                      ),
-                    ),
-                    const SizedBox(height: 800),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context)
-                                .viewInsets
-                                .bottom)),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        color: Colors.white,
-                        child: MyNavbar(
-                          selectedIndex: _selectedIndex,
-                          onItemTapped: _onItemTapped,
-                          showVerticalBar: _showVerticalBar,
-                          isRotated: _isRotated,
-                          toggleRotation: _toggleRotation,
-                          showEnterDayCodeDialog: _showEnterDayCodeDialog,
-                        ),
-                      ),
-                    ),
-                    if (_showVerticalBar)
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: SlideTransition(
-                          position: _slideAnimation,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 500),
-                            height: (_menuItems.length * 50).toDouble() + 100,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFF6F61),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.keyboard_arrow_down,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _animationController.reverse();
-                                        _showVerticalBar = false;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                Expanded(
-                                  child: ListView.builder(
-                                    itemCount: _menuItems.length,
-                                    itemBuilder: (context, index) {
-                                      final item = _menuItems[index];
-                                      return MouseRegion(
-                                        onEnter: (_) {
-                                          setState(() {
-                                            _hoveredIndex = index;
-                                          });
-                                        },
-                                        onExit: (_) {
-                                          setState(() {
-                                            _hoveredIndex = -1;
-                                          });
-                                        },
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            if (item['title'] ==
-                                                'Enter a day code') {
-                                              _showEnterDayCodeDialog(context);
-                                            } else if (item['title'] ==
-                                                'Create a day') {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DaySettingsPage()),
-                                              );
-                                            }
-                                            else if (item['title'] == 'Scan QR code') {
-                                              _scanQRCode();
-                                            }
-                                          },
-                                          child: ListTile(
-                                            leading: Icon(
-                                              item['icon'],
-                                              color: Colors.white,
-                                            ),
-                                            title: Text(
-                                              item['title'],
-                                              style: const TextStyle(
-                                                fontFamily: 'Sora',
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
+                            },
                           ),
                         ),
-                      ),
-                  ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            );
-      //   child: Scaffold(
-      //   appBar: PreferredSize(
-      //       preferredSize: Size.fromHeight(180),
-      //       child: Padding(
-      //         padding: const EdgeInsets.only(top: 20.0),
-      //         child: AppBar(
-      //           leadingWidth: 120,
-      //           toolbarHeight: 75,
-      //           titleSpacing: 0,
-      //           leading: MyProfilePicture(
-      //             height: 150,
-      //             width: 120,
-      //             onProfileTapped: () {},
-      //             hasBorder: true,
-      //           ),
-      //           title: Column(
-      //             crossAxisAlignment: CrossAxisAlignment.start,
-      //             children: [
-      //               Text(
-      //                   userProfile == null
-      //                       ? 'Loading'
-      //                       : userProfile.name,
-      //                   style: TextStyle(
-      //                     fontWeight: FontWeight.bold,
-      //                     color: Theme.of(context)
-      //                         .colorScheme
-      //                         .inversePrimary,
-      //                     fontSize: 18,
-      //                   )),
-      //               Text(
-      //                 userProfile == null ? 'Loading' : userProfile.bio,
-      //                 maxLines: 3,
-      //                 style: TextStyle(
-      //                   fontSize: 12,
-      //                   color:
-      //                       Theme.of(context).colorScheme.inversePrimary,
-      //                 ),
-      //               ),
-      //             ],
-      //           ),
-      //           bottom: PreferredSize(
-      //               preferredSize: Size.fromHeight(30),
-      //               child: MyButton(
-      //                 text: 'Edit Profile',
-      //                 onTap: () {
-      //                   Navigator.push(
-      //                     context,
-      //                     MaterialPageRoute(builder: (context) => EditProfilePage()),
-      //                   );
-      //                 },
-      //                 padding: 8,
-      //               )),
-      //         ),
-      //       )),
-      //   body: RefreshIndicator(
-      //     onRefresh: _loadData,
-      //     color: Theme.of(context).colorScheme.secondary,
-      //     child: MasonryGridView.builder(
-      //         gridDelegate:
-      //             SliverSimpleGridDelegateWithFixedCrossAxisCount(
-      //                 crossAxisCount: 2),
-      //         shrinkWrap: true,
-      //         itemCount: favoriteDays.length, //sample
-      //         itemBuilder: (context, index) {
-      //           final imagePath = favoriteDays[index].imageUrl; //sample
-      //           if (imagePath.isEmpty) return SizedBox.shrink();
-      //           return Padding(
-      //             padding: const EdgeInsets.all(8.0),
-      //             child: ClipRRect(
-      //               borderRadius: BorderRadius.circular(16.0),
-      //               child: Image.network(
-      //                 imagePath, //sample
-      //                 width: double.infinity,
-      //                 height: (index % 3 == 0) ? 180 : 230,
-      //                 fit: BoxFit.cover,
-      //               ),
-      //             ),
-      //           );
-      //         }),
-      //   ),
-      // ));
-    });
+          ],
+        ),
+      ),
+    );
   }
 }

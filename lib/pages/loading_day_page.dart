@@ -1,37 +1,34 @@
-import 'package:archify/services/database/day/day_gate.dart';
+import 'package:archify/helpers/navigate_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
+import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/pages/day_settings_page.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import '../components/my_mobile_scanner_overlay.dart';
-import '../helpers/navigate_pages.dart';
-import '../models/day.dart';
-import '../services/database/day/day_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/pages/home_page.dart';
-import 'package:archify/pages/empty_day_page.dart';
+import 'package:archify/pages/day_code_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:archify/components/my_mobile_scanner_overlay.dart';
 
-class NoMomentUploadedPage extends StatefulWidget {
-  final void Function() imageUploadClicked;
-  const NoMomentUploadedPage({super.key, required this.imageUploadClicked});
+class LoadingDayPage extends StatefulWidget {
+  const LoadingDayPage({super.key}); //try scanner
 
   @override
-  State<NoMomentUploadedPage> createState() => _NoMomentUploadedPageState();
+  State<LoadingDayPage> createState() => _LoadingDayPage();
 }
 
-class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
+class _LoadingDayPage extends State<LoadingDayPage>
     with TickerProviderStateMixin {
-  late Day? day;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
-  //Qrcode string
+  //Try lang qr scanner
   String qrCode = '';
 
   final List<Map<String, dynamic>> _menuItems = [
@@ -39,6 +36,24 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     {'icon': Icons.qr_code_scanner, 'title': 'Scan QR code'},
     {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
   ];
+
+  //try lang qr scanner
+  void _scanQRCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRScannerScreen(
+          onScan: (String code) {
+            setState(() {
+              qrCode = code;
+            });
+            goDaySpace(context, qrCode);
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -78,60 +93,6 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     setState(() {
       _isRotated = !_isRotated;
     });
-  }
-
-  void _showDayCode(String code) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            "QR Code",
-            style: TextStyle(
-              fontFamily: 'Sora',
-              color: Theme.of(context).colorScheme.inversePrimary,
-            ),
-          ),
-          content: Container(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  QrImageView(
-                    data: code,
-                    version: QrVersions.auto,
-                    size: 200.0,
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    code,
-                    style: TextStyle(
-                        fontFamily: 'Sora',
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).colorScheme.secondary),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                "Close",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                  fontFamily: 'Sora',
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _showEnterDayCodeDialog(BuildContext context) {
@@ -195,30 +156,12 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     );
   }
 
-  //QR Scanner
-  void _scanQRCode() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => QRScannerScreen(
-          onScan: (String code) {
-            setState(() {
-              qrCode = code;
-            });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      vsync: this,
       duration: const Duration(milliseconds: 1000),
+      vsync: this,
     );
 
     _slideAnimation = Tween<Offset>(
@@ -236,14 +179,11 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
 
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0);
+    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
   }
 
   @override
   Widget build(BuildContext context) {
-    final listeningProvider = Provider.of<DayProvider>(context);
-    day = listeningProvider.day;
-
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
@@ -290,51 +230,13 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
         ),
         body: Stack(
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(23.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'DAY CODE: ${day?.code == null ? '' : day!.code}',
-                        style: TextStyle(
-                          fontSize: _getClampedFontSize(context, 0.03),
-                          fontFamily: 'Sora',
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.surface,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(36.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Oops, no peeking! \nYou haven\'t uploaded a moment yet.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
-                        fontFamily: 'Sora',
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      ),
-                    ),
-                    MyButton(
-                      text: 'Upload your masterpiece',
-                      onTap: widget.imageUploadClicked,
-                    ),
-                  ],
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [],
                 ),
               ),
             ),
@@ -406,9 +308,6 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                                               DaySettingsPage()),
                                     );
                                   }
-                                  else if (item['title'] == 'Scan QR code') {
-                                  _scanQRCode();
-                                  }
                                 },
                               );
                             },
@@ -425,3 +324,39 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     );
   }
 }
+
+// class QRScannerScreen extends StatelessWidget {
+//   final Function(String) onScan;
+//
+//   const QRScannerScreen({required this.onScan, Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Scan QR Code')),
+//       body: Stack(
+//         children: [
+//           MobileScanner(
+//             onDetect: (capture) {
+//               final List<Barcode> barcodes = capture.barcodes;
+//               for (final barcode in barcodes) {
+//                 if (barcode.rawValue != null) {
+//                   onScan(barcode.rawValue!); // Pass the scanned value back
+//                   break;
+//                 }
+//               }
+//             },
+//           ),
+//           MobileScannerOverlay(
+//             overlayColor: Colors.black.withOpacity(0.5), // Adjust the opacity for the overlay
+//             borderWidth: 2.0, // Width of the border around the scanning area
+//             borderColor: Colors.green, // Color of the border
+//             borderRadius: BorderRadius.circular(12), // Rounded corners for the border
+//             borderLength: 50, // Length of the border
+//             child: Container(), // Optional child widget to display above the overlay
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
