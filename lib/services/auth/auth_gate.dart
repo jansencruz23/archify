@@ -1,5 +1,5 @@
 import 'package:archify/pages/no_moment_uploaded_page.dart';
-import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/day_expired_page.dart';
 import 'package:archify/pages/join_or_create_page.dart';
 import 'package:archify/pages/settings_page.dart';
 import 'package:archify/pages/day_space_page.dart';
@@ -18,10 +18,7 @@ class AuthGate extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return NoMomentUploadedPage(
-              imageUploadClicked: () {
-              },
-            );
+            return const DayExpiredPage();
           } else {
             return const LoginOrRegister();
           }
