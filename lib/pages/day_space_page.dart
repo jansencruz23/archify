@@ -227,32 +227,35 @@ class _DaySpacePageState extends State<DaySpacePage>
   void _showNicknameAndAvatarDialog() {
     showDialog(
         context: context,
-        barrierDismissible: false,
         builder: (context) => AlertDialog(
-              title: Text(
-                'Be the best you~',
-                style: TextStyle(
-                  fontFamily:
-                      'Sora',
-                  color: Color(0xFF333333),
-                ),
+          title: Padding(
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Text(
+              'Who are you today?',
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Sora',
+                color: Color(0xFF333333),
               ),
-              content: Container(
-                width: double.infinity,
-                child: MyNicknameAndAvatarDialog(
-                  onSubmit: _startDay,
-                  avatarController: _avatarController,
-                  nicknameController: _nicknameController,
-                ),
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Close'))
-              ],
-            ));
+            ),
+          ),
+          content: Container(
+            height: 410,
+            width: double.infinity,
+            child: MyNicknameAndAvatarDialog(
+              nicknameController: _nicknameController,
+              avatarController: _avatarController,
+              onSubmit: () {},
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Close'))
+          ],
+        ));
   }
 
   Future<void> _loadDay() async {
