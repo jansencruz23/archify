@@ -87,6 +87,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
                 ),
               ),
             ),
+          if (_permissionGranted)
           Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
@@ -98,7 +99,20 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
                 ),
               ),
             ),
-          ),
+          )
+          else
+            Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                height: MediaQuery.of(context).size.width * 0.7,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black54, width: 10.0),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            )
         ],
       ),
     );
