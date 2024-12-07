@@ -394,14 +394,13 @@ class _DaySpacePageState extends State<DaySpacePage>
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
+        preferredSize: const Size.fromHeight(80),
         child: AppBar(
           titleSpacing: 0,
           leadingWidth: 600,
           leading: Padding(
-            padding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 0),
+            child: Stack(
               children: [
                 Text(
                   'Let’s keep the moment,',
@@ -411,29 +410,27 @@ class _DaySpacePageState extends State<DaySpacePage>
                     color: Theme.of(context).colorScheme.inversePrimary,
                   ),
                 ),
-                Text(
-                  'Pick the best shot!',
-                  style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.05),
-                    fontFamily: 'Sora',
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                Positioned(
+                  bottom: -6,
+                  left: 0,
+                  child: Text(
+                    'Pick the best shot!',
+                    style: TextStyle(
+                      fontSize: _getClampedFontSize(context, 0.05),
+                      fontFamily: 'Sora',
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          actions: [
-            IconButton(
-              onPressed: _showSettings,
-              icon: const Icon(Icons.settings_rounded),
-            ),
-          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
             child: Divider(
               height: 2,
-              color: Theme.of(context).colorScheme.outline,
+              color: Color(0xFFD9D9D9),
             ),
           ),
         ),
@@ -479,8 +476,22 @@ class _DaySpacePageState extends State<DaySpacePage>
                                   ),
                                 ),
                               ),
+                              Spacer(),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    right: 8, top: 20, bottom: 10),
+                                child: IconButton(
+                                    onPressed: _showSettings,
+                                  icon: Image.asset(
+                                    'lib/assets/images/edit_icon.png',
+                                    width: 30,
+                                    height: 30,
+                                  ),
+                                  ),
+                              ),
                             ],
                           ),
+
                           // Moments Grid
                           Expanded(
                             child: MasonryGridView.builder(
