@@ -18,7 +18,7 @@ class AuthGate extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const DayExpiredPage();
+            return DaySpacePage(dayCode: '');
           } else {
             return const LoginOrRegister();
           }
