@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:archify/pages/about_us_page.dart';
 import 'package:archify/pages/my_feedback_form.dart';
+import 'package:archify/services/database/day/day_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:archify/pages/empty_day_page.dart';
@@ -81,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage>
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
+          MaterialPageRoute(builder: (context) => DayGate()),
         );
       } else if (index == 2) {
         if (_showVerticalBar) {

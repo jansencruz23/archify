@@ -1,6 +1,7 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/services/database/day/day_gate.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/pages/edit_profile_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
@@ -46,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage>
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
+          MaterialPageRoute(builder: (context) => DayGate()),
         );
       } else if (index == 2) {
         if (_showVerticalBar) {

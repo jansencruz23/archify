@@ -42,11 +42,7 @@ class _DayGateState extends State<DayGate> {
         future: _checkJoinedDay(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
+            return LoadingDayPage();
           } else if (snapshot.hasData) {
             return FutureBuilder(
               future: _hasVotingDeadlineExpired(),
@@ -57,7 +53,7 @@ class _DayGateState extends State<DayGate> {
                     votingSnapshot.data == true) {
                   return DayExpiredPage(dayCode: code!);
                 } else {
-                  return DaySpacePage(dayCode: snapshot.data.toString());
+                  return DayExpiredPage(dayCode: code!);
                 }
               },
             );
