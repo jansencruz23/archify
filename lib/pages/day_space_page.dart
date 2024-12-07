@@ -34,6 +34,7 @@ class _DaySpacePageState extends State<DaySpacePage>
   late final FocusNode _nicknameFocusNode;
   late final DayProvider _dayProvider;
   late Day? day;
+  late String _dayCode;
 
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
@@ -156,6 +157,7 @@ class _DaySpacePageState extends State<DaySpacePage>
   @override
   void initState() {
     super.initState();
+    _dayCode = widget.dayCode;
 
     _avatarController = TextEditingController();
     _nicknameController = TextEditingController();
@@ -181,7 +183,7 @@ class _DaySpacePageState extends State<DaySpacePage>
   }
 
   Future<bool> _isParticipant() async {
-    return await _dayProvider.isParticipant(widget.dayCode);
+    return await _dayProvider.isParticipant(_dayCode);
   }
 
   void _showImageDialog(Moment moment, int index) {
@@ -212,6 +214,7 @@ class _DaySpacePageState extends State<DaySpacePage>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+    _dayCode = '';
   }
 
   void _showNicknameAndAvatarDialog() {
@@ -253,14 +256,14 @@ class _DaySpacePageState extends State<DaySpacePage>
   // }
 
   Future<void> _loadDay() async {
-    await _dayProvider.loadDayByCode(widget.dayCode);
-    await _dayProvider.loadMoments(widget.dayCode);
-    await _dayProvider.loadHasUploaded(widget.dayCode);
+    await _dayProvider.loadDayByCode(_dayCode);
+    await _dayProvider.loadMoments(_dayCode);
+    await _dayProvider.loadHasUploaded(_dayCode);
   }
 
   Future<void> _startDay() async {
     await _dayProvider.startDay(
-      widget.dayCode,
+      _dayCode,
       _nicknameController.text,
       _avatarController.text,
     );
@@ -269,14 +272,14 @@ class _DaySpacePageState extends State<DaySpacePage>
   Future<void> _imageUploadClicked() async {
     await _dayProvider.openImagePicker(
       isCameraSource: false,
-      dayCode: widget.dayCode,
+      dayCode: _dayCode,
     );
   }
 
   Future<void> _cameraUploadClicked() async {
     await _dayProvider.openImagePicker(
       isCameraSource: true,
-      dayCode: widget.dayCode,
+      dayCode: _dayCode,
     );
   }
 
@@ -375,7 +378,7 @@ class _DaySpacePageState extends State<DaySpacePage>
   }
 
   Future<void> _toggleVote(String momentId) async {
-    await _dayProvider.toggleVote(widget.dayCode, momentId);
+    await _dayProvider.toggleVote(_dayCode, momentId);
   }
 
   //Font responsiveness
@@ -390,7 +393,7 @@ class _DaySpacePageState extends State<DaySpacePage>
     day = listeningProvider.day;
     final moments = listeningProvider.moments;
     final hasUploaded = listeningProvider.hasUploaded;
-    listeningProvider.listenToMoments(widget.dayCode);
+    listeningProvider.listenToMoments(_dayCode);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -481,13 +484,13 @@ class _DaySpacePageState extends State<DaySpacePage>
                                 padding: const EdgeInsets.only(
                                     right: 8, top: 20, bottom: 10),
                                 child: IconButton(
-                                    onPressed: _showSettings,
+                                  onPressed: _showSettings,
                                   icon: Image.asset(
                                     'lib/assets/images/edit_icon.png',
                                     width: 30,
                                     height: 30,
                                   ),
-                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -578,7 +581,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                                         _showEnterDayCodeDialog(context);
                                       } else if (item['title'] ==
                                           'Create a day') {
-                                        Navigator.push(
+                                        Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>

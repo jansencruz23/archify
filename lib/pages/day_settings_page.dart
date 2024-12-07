@@ -107,7 +107,8 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
       votingDeadline: _votingDeadline,
     );
 
-    goDayCode(context, dayId);
+    final dayCode = await _dayProvider.getDayCode(dayId);
+    if (mounted) goDaySpace(context, dayCode);
   }
 
   @override
