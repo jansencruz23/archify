@@ -38,12 +38,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(
-                'Be the best you~',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontFamily: 'Sora',
-                  color: Color(0xFF333333),
+              title: Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Text(
+                  'Who are you today?',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Sora',
+                    color: Color(0xFF333333),
+                  ),
                 ),
               ),
               content: Container(
