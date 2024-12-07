@@ -324,6 +324,9 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                                               DaySettingsPage()),
                                     );
                                   }
+                                  else if (item['title'] == 'Scan QR code') {
+                                    _scanQRCode();
+                                  }
                                 },
                               );
                             },

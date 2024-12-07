@@ -11,8 +11,11 @@ class QRScannerScreen extends StatefulWidget {
   _QRScannerScreenState createState() => _QRScannerScreenState();
 }
 
-class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObserver {
+class _QRScannerScreenState extends State<QRScannerScreen>
+    with WidgetsBindingObserver {
   bool _permissionGranted = false;
+  bool _flashlightEnabled = false;
+  MobileScannerController _controller = MobileScannerController();
 
   @override
   void initState() {
@@ -24,6 +27,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _controller.dispose();
     super.dispose();
   }
 
@@ -81,12 +85,23 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
     );
   }
 
+  void _toggleFlashlight() async {
+    setState(() {
+      _flashlightEnabled = !_flashlightEnabled;
+    });
+    if (_flashlightEnabled) {
+      _controller.toggleTorch();
+    } else {
+      _controller.toggleTorch();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Scan QR Code',
+          'Join a day via QR',
           style: TextStyle(
             fontFamily: 'Sora',
             fontWeight: FontWeight.w500,
@@ -99,6 +114,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
         children: [
           if (_permissionGranted)
             MobileScanner(
+              controller: _controller,
               onDetect: (capture) {
                 final List<Barcode> barcodes = capture.barcodes;
                 for (final barcode in barcodes) {
@@ -128,20 +144,79 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
               ),
             ),
           Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.7,
-              height: MediaQuery.of(context).size.width * 0.7,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 100),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    height: MediaQuery.of(context).size.width * 0.1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black12.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                      alignment: Alignment.center,
+                      child: Text(
+                        _permissionGranted
+                            ? 'Find a code to scan'
+                            : 'No camera found',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Sora',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  height: MediaQuery.of(context).size.width * 0.7,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: _permissionGranted
+                            ? Colors.white.withOpacity(0.7)
+                            : Colors.black54,
+                        width: 10.0,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+          if (_permissionGranted)
+            Positioned(
+              bottom: 60,
+              left: MediaQuery.of(context).size.width * 0.5 - 30,
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: _permissionGranted ? Colors.white : Colors.black54,
-                    width: 10.0,
+                  color: Colors.black12.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(90),
+                ),
+                padding: EdgeInsets.all(6),
+                alignment: Alignment.center,
+                child: IconButton(
+                  icon: Icon(
+                    _flashlightEnabled
+                        ? Icons.flashlight_on_outlined
+                        : Icons.flashlight_off_outlined,
+                    color: Colors.white,
+                    size: 35,
                   ),
-                  borderRadius: BorderRadius.circular(20),
+                  onPressed: _toggleFlashlight,
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
