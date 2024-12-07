@@ -85,20 +85,23 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Got Feedback? Submit it here.',
-                  style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.08),
-                    fontFamily: 'Sora',
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 16.0,),
+                  child: Text(
+                    'Got Feedback? Submit it here.',
+                    style: TextStyle(
+                      fontSize: _getClampedFontSize(context, 0.08),
+                      fontFamily: 'Sora',
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
                   ),
                 ),
                 SizedBox(
                   height: 24,
                 ),
                 //Subject
-                //If mas maganda may text na "Subject sa taas"
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
@@ -137,6 +140,7 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                   height: 20,
                 ),
                 Divider(
+                  height: 7,
                   color: Theme.of(context).colorScheme.inversePrimary,
                 ),
                 //Body

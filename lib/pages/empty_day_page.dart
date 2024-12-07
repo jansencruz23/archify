@@ -65,10 +65,8 @@ class _EmptyDayPageState extends State<EmptyDayPage>
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
-          print('Reversing animation');
           _animationController.reverse();
         } else {
-          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
@@ -220,9 +218,9 @@ class _EmptyDayPageState extends State<EmptyDayPage>
               ),
             ),
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
+              preferredSize: const Size.fromHeight(5),
               child: Divider(
-                height: 2,
+                height: 5,
                 color: Color(0xFFD9D9D9),
               ),
             ),

@@ -34,7 +34,11 @@ class _SetupNamePageState extends State<SetupNamePage> {
       _nameSuggestions = nameSuggestions;
     });
   }
-
+  //For Responsiveness
+  double _getClampedFontSize(BuildContext context, double scale) {
+    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
+    return calculatedFontSize.clamp(12.0, 24.0); // Ang min and max nyaa
+  }
   @override
   Widget build(BuildContext context) {
     final names = _nameSuggestions;
@@ -44,26 +48,43 @@ class _SetupNamePageState extends State<SetupNamePage> {
         padding: const EdgeInsets.all(40),
         child: Column(
           children: [
-            const Text('What should we call you?'),
-            MyTextField(
-              controller: widget.nameController,
-              hintText: 'Your Name',
-              obscureText: false,
-              focusNode: nameFocusNode,
+             Padding(
+               padding: const EdgeInsets.fromLTRB(10, 40, 10, 30),
+               child: Text('What should we call you?', style: TextStyle(
+                fontFamily: 'Sora',
+                color: Theme.of(context).colorScheme.inversePrimary,
+                fontSize: _getClampedFontSize(context, 0.05),
+                           ),),
+             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: MyTextField(
+                controller: widget.nameController,
+                hintText: 'Your Name',
+                obscureText: false,
+                focusNode: nameFocusNode,
+              ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: names.length,
-                itemBuilder: (context, index) {
-                  final name = names[index];
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  itemCount: names.length,
+                  itemBuilder: (context, index) {
+                    final name = names[index];
 
-                  return ListTile(
-                    title: Text(names[index]),
-                    onTap: () {
-                      widget.nameController.text = names[index];
-                    },
-                  );
-                },
+                    return ListTile(
+                      title: Text(names[index], style: TextStyle(
+                      fontFamily: 'Sora',
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: _getClampedFontSize(context, 0.04),
+                    ),),
+                      onTap: () {
+                        widget.nameController.text = names[index];
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],

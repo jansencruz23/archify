@@ -119,10 +119,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
-          print('Reversing animation');
           _animationController.reverse();
         } else {
-          print('Starting animation');
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
@@ -373,7 +371,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   //For Responsiveness
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
+    return calculatedFontSize.clamp(12.0, 24.0); // Ang min and max nyaa
   }
 
   //Out ng comment textfield pag click anywhere
@@ -469,9 +467,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                   ],
                   bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(1),
+                    preferredSize: Size.fromHeight(5),
                     child: Divider(
-                      height: 2,
+                      height: 5,
                       color: Color(0xFFD9D9D9),
                     ),
                   ),
@@ -656,7 +654,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   image: userProfile == null ||
                                           userProfile.pictureUrl.isEmpty
                                       ? const AssetImage(
-                                          'lib/assets/images/Bestday_img.png')
+                                          'lib/assets/images/user_icon.png')
                                       : Image.network(userProfile.pictureUrl)
                                           .image,
                                   shape: BoxShape.circle,
