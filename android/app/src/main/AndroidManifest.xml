@@ -53,4 +53,11 @@
             <data android:scheme="mailto"/>
         </intent>
     </queries>
+
+<!--for camera-->
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
 </manifest>
