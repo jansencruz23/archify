@@ -359,14 +359,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   child: Scaffold(
                     // AppBar with custom height
                     appBar: PreferredSize(
-                      preferredSize: Size.fromHeight(70),
+                      preferredSize: Size.fromHeight(80),
                       child: AppBar(
                         // Leading section with profile picture and welcome text
                         titleSpacing: 0,
                         leadingWidth: 80,
                         leading: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(8.0, 16.0, 0, 16.0),
+                          padding: const EdgeInsets.fromLTRB(8.0, 20.0, 0, 16.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,7 +381,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         ),
                         title: Padding(
                           padding:
-                              const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 8.0),
+                              const EdgeInsets.fromLTRB(0, 24.0, 8.0, 8.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,7 +394,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .inversePrimary,
-                                  fontSize: 13,
+                                  fontSize: 14,
                                 ),
                               ),
                               // User's name text
@@ -406,7 +405,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 style: TextStyle(
                                   fontFamily: 'Sora',
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 17,
                                   color: Theme.of(context)
                                       .colorScheme
                                       .inversePrimary,
@@ -418,15 +417,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         // Notification icon button
                         actions: [
                           Padding(
-                            padding: const EdgeInsets.only(right: 5),
+                            padding: const EdgeInsets.fromLTRB(5, 14, 7, 0),
                             child: IconButton(
                               onPressed: () {},
-                              icon: Icon(
-                                Icons.notifications_outlined,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary,
-                                size: 30,
+                              icon: Image.asset(
+                                'lib/assets/images/notification_icon.png',
+                                width: 30,
+                                height: 30,
                               ),
                             ),
                           ),
@@ -435,7 +432,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           preferredSize: Size.fromHeight(1),
                           child: Divider(
                             height: 2,
-                            color: Theme.of(context).colorScheme.outline,
+                            color: Color(0xFFD9D9D9),
                           ),
                         ),
                       ),

@@ -123,14 +123,14 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
               bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0),
             ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 33.0),
           alignment: Alignment.centerLeft,
           child: const SafeArea(
             child: Text(
               "Create a Day",
               style: TextStyle(
                 fontFamily: 'Sora',
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),

@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
   day_night_time_picker: ^1.0.1
 
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -97,6 +98,14 @@ flutter:
     - lib/assets/images/Book_img.png
     - lib/assets/images/JCruz_img.png
     - lib/assets/images/Trophy.png
+    - lib/assets/images/rate_icon.png
+    - lib/assets/images/about_icon.png
+    - lib/assets/images/contact_icon.png
+    - lib/assets/images/feedback_icon.png
+    - lib/assets/images/logout_icon.png
+    - lib/assets/images/privacy_icon.png
+    - lib/assets/images/share_icon.png
+    - lib/assets/images/notification_icon.png
     - lib/assets/avatars/male_avatar_1.png
     - lib/assets/avatars/male_avatar_2.png
     - lib/assets/avatars/female_avatar_1.png

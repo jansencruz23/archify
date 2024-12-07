@@ -1,7 +1,10 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:archify/pages/about_us_page.dart';
+import 'package:archify/pages/my_feedback_form.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:archify/pages/empty_day_page.dart';
+import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/home_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
@@ -39,7 +42,8 @@ class DoNotOpenAgainCondition {
   }
 }
 
-class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMixin{
+class _SettingsPageState extends State<SettingsPage>
+    with TickerProviderStateMixin {
   late final AuthProvider _authProvider;
   late final UserProvider _userProvider;
   late bool _setupNavigationTriggered;
@@ -57,7 +61,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
     googlePlayIdentifier: 'com.archify.app',
   );
 
-  int _selectedIndex = 3;
+  int _selectedIndex = 4;
   bool _showVerticalBar = false;
   bool _isRotated = false;
   int _hoveredIndex = -1;
@@ -191,6 +195,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
       },
     );
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -214,28 +219,25 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
       // _loadUserProfile();
       // _checkIfNewUser();
     });
-    @override
-    void dispose() {
-      _animationController.dispose();
-      super.dispose();
-    }
 
-    Future<void> loadUserProfile() async {
-      await _userProvider.loadUserProfile();
-    }
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
 
-    Future<void> checkIfNewUser() async {
-      if (_setupNavigationTriggered) return;
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1), // Off-screen (bottom)
+      end: const Offset(0, 0), // On-screen
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
 
-      final user = await _userProvider.getCurrentUserProfile();
-
-      if (user != null && user.isNew) {
-        _setupNavigationTriggered = true;
-        if (mounted) {
-          goSetup(context);
-        }
-      }
-    }
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   //For Responsiveness
@@ -247,6 +249,23 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
   //hover for button and mouse change
   bool amIHovering = false;
   Offset exitFrom = Offset(0, 0);
+
+  Future<void> _loadUserProfile() async {
+    await _userProvider.loadUserProfile();
+  }
+
+  Future<void> _checkIfNewUser() async {
+    if (_setupNavigationTriggered) return;
+
+    final user = await _userProvider.getCurrentUserProfile();
+
+    if (user != null && user.isNew) {
+      _setupNavigationTriggered = true;
+      if (mounted) {
+        goSetup(context);
+      }
+    }
+  }
 
   Future<void> _logout() async {
     await AuthService().logoutInFirebase();
@@ -273,93 +292,112 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
     final listeningProvider = Provider.of<UserProvider>(context);
     final userProfile = listeningProvider.userProfile;
 
-    return Consumer<UserProvider>(
-      builder: (context, userProvider, child) {
-        return _userProvider.isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SafeArea(
-          child: Scaffold(
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(80.0),
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0),
+    return Consumer<UserProvider>(builder: (context, userProvider, child) {
+      return _userProvider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: Scaffold(
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(80.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFD9D9D9), width: 1.0),
+                    ),
                   ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                alignment: Alignment.centerLeft,
-                child: const SafeArea(
-                  child: Text(
-                    "Settings",
-                    style: TextStyle(
-                      fontFamily: 'Sora',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 33.0),
+                  alignment: Alignment.centerLeft,
+                  child: const SafeArea(
+                    child: Text(
+                      "Settings",
+                      style: TextStyle(
+                        fontFamily: 'Sora',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            body: Stack(
-              children: [
+              body: Stack(children: [
                 SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Padding(
-                    padding: const EdgeInsets.all(18.0),
+                    padding: const EdgeInsets.all(15.0),
                     child: Column(
                       children: [
                         MySettingsButton(
                           text: 'Rate Us',
-                          icon: Icon(
-                            Icons.star_border_outlined,
-                            color: Theme.of(context).colorScheme.inversePrimary,
+                          icon: Image.asset(
+                            'lib/assets/images/rate_icon.png',
+                            width: 24,
+                            height: 24,
                           ),
                           onTap: () {
+                            // print('rate');
+                            print(
+                                'Is dialog shown? $_isDialogShown'); // for debuging
+
                             _rateMyApp.showStarRateDialog(
                               context,
                               title: 'Enjoying Archify?',
                               message: 'Please leave a rating!',
                               dialogStyle: DialogStyle(
-                                titleAlign: TextAlign.center,
+                                titleAlign:
+                                    TextAlign.center, // Align the title text
                                 titleStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.inversePrimary,
-                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary, // Set the title color
+                                  fontWeight: FontWeight
+                                      .bold, // Set additional styles if needed
                                   fontSize: 20.0,
                                 ),
-                                messageAlign: TextAlign.center,
+                                messageAlign:
+                                    TextAlign.center, // Align the message text
                                 messageStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.inversePrimary,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary, // Set the message color
                                   fontSize: 16.0,
                                 ),
                               ),
                               actionsBuilder: (context, stars) {
                                 return [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       TextButton(
                                         onPressed: () {
-                                          _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
+                                          _rateMyApp.callEvent(
+                                              RateMyAppEventType
+                                                  .laterButtonPressed);
                                           Navigator.pop(context);
                                         },
                                         child: Text(
                                           'Later',
                                           style: TextStyle(
-                                              color: Theme.of(context).colorScheme.inversePrimary),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .inversePrimary),
                                         ),
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
+                                          _rateMyApp.callEvent(
+                                              RateMyAppEventType
+                                                  .rateButtonPressed);
                                           Navigator.pop(context);
                                         },
                                         child: Text(
                                           'Rate Now',
                                           style: TextStyle(
-                                              color: Theme.of(context).colorScheme.inversePrimary),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .inversePrimary),
                                         ),
                                       ),
                                     ],
@@ -371,16 +409,23 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                         ),
                         MySettingsButton(
                           text: 'Share',
-                          icon: Icon(Icons.share_outlined,
-                              color: Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/share_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () async {
+                            //pang share ng link from appstore or google playstore but hindi publish app natin
                             Share.share('com.archify.app');
                           },
                         ),
                         MySettingsButton(
                           text: 'Privacy',
-                          icon: Icon(Icons.lock_outline_sharp,
-                              color: Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/privacy_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -394,8 +439,11 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                         ),
                         MySettingsButton(
                           text: 'About',
-                          icon: Icon(Icons.file_present_outlined,
-                              color: Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/about_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -409,9 +457,11 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                         ),
                         MySettingsButton(
                           text: 'Contact',
-                          icon: Icon(Icons.mail_outline_rounded,
-                              color:
-                              Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/contact_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -461,9 +511,11 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                         ),
                         MySettingsButton(
                           text: 'Feedback',
-                          icon: Icon(Icons.feedback_outlined,
-                              color:
-                              Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/feedback_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -471,9 +523,9 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                 return Dialog(
                                   child: MyFeedbackForm(
                                       onSubmit: (String subject, String body) {
-                                        debugPrint('Subject: $subject');
-                                        debugPrint('Body: $body');
-                                      }),
+                                    debugPrint('Subject: $subject');
+                                    debugPrint('Body: $body');
+                                  }),
                                 );
                               },
                             );
@@ -481,13 +533,20 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                         ),
                         MySettingsButton(
                           text: 'Logout',
-                          icon: Icon(Icons.logout,
-                              color:
-                              Theme.of(context).colorScheme.inversePrimary),
+                          icon: Image.asset(
+                            'lib/assets/images/logout_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
                           onTap: () {
                             _logout();
                           },
                         ),
+                        const SizedBox(height: 300),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom)),
                       ],
                     ),
                   ),
@@ -530,11 +589,8 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                             Align(
                               alignment: Alignment.topRight,
                               child: IconButton(
-                                icon: const Icon(
-                                  Icons.keyboard_arrow_down,
-                                  size: 30,
-                                  color: Colors.white,
-                                ),
+                                icon: const Icon(Icons.keyboard_arrow_down,
+                                    size: 30, color: Colors.white),
                                 onPressed: () {
                                   setState(() {
                                     _animationController.reverse();
@@ -563,13 +619,14 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                       onTap: () {
                                         if (item['title'] ==
                                             'Enter a day code') {
-                                          _showEnterDayCodeDialog(
-                                              context);
+                                          _showEnterDayCodeDialog(context);
                                         } else if (item['title'] ==
                                             'Create a day') {
                                           Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context) => DaySettingsPage()),
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DaySettingsPage()),
                                           );
                                         }
                                       },
@@ -596,13 +653,8 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                       ),
                     ),
                   ),
-                // Vertical Bar SlideTransition
-              ],
-            ),
-          ),
-        );
-      },
-    );
+              ]),
+            ));
+    });
   }
-
 }
