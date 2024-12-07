@@ -35,7 +35,6 @@ class _EmptyDayPageState extends State<EmptyDayPage>
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
     {'icon': Icons.qr_code_scanner, 'title': 'Scan QR code'},
     {'icon': Icons.add_circle_outline, 'title': 'Create a day'},
-    {'icon': Icons.settings, 'title': 'Settings'},
   ];
 
   //try lang qr scanner
