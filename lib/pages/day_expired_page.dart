@@ -5,6 +5,8 @@ import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/services/database/user/user_provider.dart';
+import '../components/my_mobile_scanner_overlay.dart';
+import '../helpers/navigate_pages.dart';
 import '../models/day.dart';
 import '../services/database/day/day_provider.dart';
 import 'package:archify/pages/home_page.dart';
@@ -29,6 +31,9 @@ class _DayExpiredPageState extends State<DayExpiredPage>
   bool _isRotated = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+
+  //Qrcode string
+  String qrCode = '';
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -143,6 +148,23 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     );
   }
 
+  //QR Scanner
+  void _scanQRCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRScannerScreen(
+          onScan: (String code) {
+            setState(() {
+              qrCode = code;
+            });
+            goDaySpace(context, qrCode);
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
   @override
   void initState() {
     super.initState();
@@ -332,6 +354,9 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                                         builder: (context) =>
                                             DaySettingsPage()),
                                   );
+                                }
+                                else if (item['title'] == 'Scan QR code') {
+                                  _scanQRCode();
                                 }
                               },
                             );

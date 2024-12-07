@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import '../components/my_mobile_scanner_overlay.dart';
 import '../components/my_text_field.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/services/database/day/day_provider.dart';
@@ -73,6 +74,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _hoveredIndex = -1;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+
+  //Qrcode string
+  String qrCode = '';
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -332,6 +336,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   //Out ng comment textfield pag click anywhere
   void _unfocusAllFields() {
     FocusScope.of(context).unfocus();
+  }
+
+  //QR Scanner
+  void _scanQRCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRScannerScreen(
+          onScan: (String code) {
+            setState(() {
+              qrCode = code;
+            });
+            goDaySpace(context, qrCode);
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -773,6 +795,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             builder: (context) =>
                                                                 DaySettingsPage()),
                                                       );
+                                                    }
+                                                    else if (item['title'] == 'Scan QR code') {
+                                                      _scanQRCode();
                                                     }
                                                   },
                                                   child: ListTile(
