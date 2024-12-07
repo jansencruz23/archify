@@ -458,9 +458,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                   ],
                   bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(1),
+                    preferredSize: Size.fromHeight(5),
                     child: Divider(
-                      height: 2,
+                      height: 5,
                       color: Color(0xFFD9D9D9),
                     ),
                   ),
