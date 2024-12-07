@@ -226,9 +226,9 @@ class _DayExpiredPageState extends State<DayExpiredPage>
             ),
           ),
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1),
+            preferredSize: const Size.fromHeight(5),
             child: Divider(
-              height: 2,
+              height: 5,
               color: Color(0xFFD9D9D9),
             ),
           ),
