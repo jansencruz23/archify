@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:archify/components/my_mobile_scanner_overlay.dart';
+import 'package:archify/models/day.dart';
 import 'package:archify/pages/about_us_page.dart';
 import 'package:archify/pages/my_feedback_form.dart';
 import 'package:archify/services/database/day/day_gate.dart';
@@ -49,6 +50,7 @@ class _SettingsPageState extends State<SettingsPage>
   DateTime? minimumDate;
   late final DayProvider _dayProvider;
   late final UserProvider _userProvider;
+  late Day? _currentDay;
 
   String subject = '';
   String body = '';
@@ -250,6 +252,10 @@ class _SettingsPageState extends State<SettingsPage>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _userProvider.updateCurrentDay();
+    });
   }
 
   @override
@@ -293,6 +299,9 @@ class _SettingsPageState extends State<SettingsPage>
 
   @override
   Widget build(BuildContext context) {
+    final _userListeningProvider = Provider.of<UserProvider>(context);
+    _currentDay = _userListeningProvider.currentDay;
+
     return SafeArea(
         child: Scaffold(
       appBar: PreferredSize(
@@ -336,7 +345,8 @@ class _SettingsPageState extends State<SettingsPage>
                     height: 24,
                   ),
                   onTap: () {
-                    if (!_isRated) { // Only show the dialog if the user hasn't rated yet.
+                    if (!_isRated) {
+                      // Only show the dialog if the user hasn't rated yet.
                       _rateMyApp.showStarRateDialog(
                         context,
                         title: 'Enjoying Archify?',
@@ -361,25 +371,34 @@ class _SettingsPageState extends State<SettingsPage>
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
+                                    _rateMyApp.callEvent(
+                                        RateMyAppEventType.laterButtonPressed);
                                     Navigator.pop(context);
                                   },
                                   child: Text(
                                     'Later',
-                                    style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary),
                                   ),
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
+                                    _rateMyApp.callEvent(
+                                        RateMyAppEventType.rateButtonPressed);
                                     setState(() {
-                                      _isRated = true; // Set the state to true after rating.
+                                      _isRated =
+                                          true; // Set the state to true after rating.
                                     });
                                     Navigator.pop(context);
                                   },
                                   child: Text(
                                     'Rate Now',
-                                    style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary),
                                   ),
                                 ),
                               ],
@@ -389,9 +408,9 @@ class _SettingsPageState extends State<SettingsPage>
                       );
                     }
                   },
-                  isEnabled: !_isRated, // Disable the button if the user has rated.
+                  isEnabled:
+                      !_isRated, // Disable the button if the user has rated.
                 ),
-
                 MySettingsButton(
                   text: 'Share',
                   icon: Image.asset(
@@ -588,41 +607,39 @@ class _SettingsPageState extends State<SettingsPage>
                         itemBuilder: (context, index) {
                           final item = _menuItems[index];
                           return MouseRegion(
-                            onEnter: (_) {
-                              setState(() {
-                                _hoveredIndex = index;
-                              });
-                            },
-                            onExit: (_) {
-                              setState(() {
-                                _hoveredIndex = -1;
-                              });
-                            },
                             child: GestureDetector(
-                              onTap: () {
-                                if (item['title'] == 'Enter a day code') {
-                                  _showEnterDayCodeDialog(context);
-                                } else if (item['title'] == 'Create a day') {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DaySettingsPage()),
-                                  );
-                                } else if (item['title'] == 'Scan QR code') {
-                                  _scanQRCode();
-                                }
-                              },
+                              onTap: _currentDay != null
+                                  ? () {}
+                                  : () {
+                                      if (item['title'] == 'Enter a day code') {
+                                        _showEnterDayCodeDialog(context);
+                                      } else if (item['title'] ==
+                                          'Create a day') {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DaySettingsPage()),
+                                        );
+                                      } else if (item['title'] ==
+                                          'Scan QR code') {
+                                        _scanQRCode();
+                                      }
+                                    },
                               child: ListTile(
                                 leading: Icon(
                                   item['icon'],
-                                  color: Colors.white,
+                                  color: _currentDay != null
+                                      ? Colors.grey[300]
+                                      : Colors.white,
                                 ),
                                 title: Text(
                                   item['title'],
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'Sora',
-                                    color: Colors.white,
+                                    color: _currentDay != null
+                                        ? Colors.grey[300]
+                                        : Colors.white,
                                   ),
                                 ),
                               ),

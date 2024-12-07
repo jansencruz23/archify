@@ -1,4 +1,5 @@
 import 'package:archify/services/database/day/day_gate.dart';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
@@ -31,11 +32,13 @@ class NoMomentUploadedPage extends StatefulWidget {
 class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     with TickerProviderStateMixin {
   late Day? day;
+  late Day? _currentDay;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  late final UserProvider _userProvider;
 
   //Qrcode string
   String qrCode = '';
@@ -222,6 +225,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
   @override
   void initState() {
     super.initState();
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -232,6 +236,10 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
       end: const Offset(0, 0),
     ).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _userProvider.updateCurrentDay();
+    });
   }
 
   @override
@@ -288,6 +296,8 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
+    final userListeningProvider = Provider.of<UserProvider>(context);
+    _currentDay = userListeningProvider.currentDay;
     day = listeningProvider.day;
 
     return SafeArea(
@@ -395,27 +405,45 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                             itemCount: _menuItems.length,
                             itemBuilder: (context, index) {
                               final item = _menuItems[index];
-                              return ListTile(
-                                leading:
-                                    Icon(item['icon'], color: Colors.white),
-                                title: Text(item['title'],
-                                    style: const TextStyle(
+                              return MouseRegion(
+                                child: GestureDetector(
+                                  onTap: _currentDay != null
+                                      ? () {}
+                                      : () {
+                                          if (item['title'] ==
+                                              'Enter a day code') {
+                                            _showEnterDayCodeDialog(context);
+                                          } else if (item['title'] ==
+                                              'Create a day') {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DaySettingsPage()),
+                                            );
+                                          } else if (item['title'] ==
+                                              'Scan QR code') {
+                                            _scanQRCode();
+                                          }
+                                        },
+                                  child: ListTile(
+                                    leading: Icon(
+                                      item['icon'],
+                                      color: _currentDay != null
+                                          ? Colors.grey[300]
+                                          : Colors.white,
+                                    ),
+                                    title: Text(
+                                      item['title'],
+                                      style: TextStyle(
                                         fontFamily: 'Sora',
-                                        color: Colors.white)),
-                                onTap: () {
-                                  if (item['title'] == 'Enter a day code') {
-                                    _showEnterDayCodeDialog(context);
-                                  } else if (item['title'] == 'Create a day') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              DaySettingsPage()),
-                                    );
-                                  } else if (item['title'] == 'Scan QR code') {
-                                    _scanQRCode();
-                                  }
-                                },
+                                        color: _currentDay != null
+                                            ? Colors.grey[300]
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               );
                             },
                           ),
