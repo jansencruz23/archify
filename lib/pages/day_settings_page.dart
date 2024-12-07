@@ -150,7 +150,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 50,
+                    height: 100,
                   ),
                   Container(
                     decoration: BoxDecoration(
