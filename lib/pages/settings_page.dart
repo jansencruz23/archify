@@ -42,8 +42,6 @@ class DoNotOpenAgainCondition {
 
 class _SettingsPageState extends State<SettingsPage>
     with TickerProviderStateMixin {
-  late final AuthProvider _authProvider;
-  late final UserProvider _userProvider;
   late bool _setupNavigationTriggered;
   DateTime? minimumDate;
 
@@ -206,14 +204,6 @@ class _SettingsPageState extends State<SettingsPage>
 
     _email = "";
 
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
-    _userProvider = Provider.of<UserProvider>(context, listen: false);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // _loadUserProfile();
-      // _checkIfNewUser();
-    });
-
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -244,23 +234,6 @@ class _SettingsPageState extends State<SettingsPage>
   bool amIHovering = false;
   Offset exitFrom = Offset(0, 0);
 
-  Future<void> _loadUserProfile() async {
-    await _userProvider.loadUserProfile();
-  }
-
-  Future<void> _checkIfNewUser() async {
-    if (_setupNavigationTriggered) return;
-
-    final user = await _userProvider.getCurrentUserProfile();
-
-    if (user != null && user.isNew) {
-      _setupNavigationTriggered = true;
-      if (mounted) {
-        goSetup(context);
-      }
-    }
-  }
-
   Future<void> _logout() async {
     await AuthService().logoutInFirebase();
     if (mounted) goRootPage(context);
@@ -283,9 +256,6 @@ class _SettingsPageState extends State<SettingsPage>
 
   @override
   Widget build(BuildContext context) {
-    final listeningProvider = Provider.of<UserProvider>(context);
-    final userProfile = listeningProvider.userProfile;
-
     return SafeArea(
         child: Scaffold(
       appBar: PreferredSize(

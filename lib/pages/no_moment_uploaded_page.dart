@@ -216,6 +216,44 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     return calculatedFontSize.clamp(12.0, 24.0);
   }
 
+  void _showCameraOrGalleryDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Choose an option'),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.camera_alt),
+                  iconSize: 50.0,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.photo_rounded),
+                  iconSize: 50.0,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
@@ -269,22 +307,25 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
           children: [
             Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(23.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'DAY CODE: ${day?.code == null ? '' : day!.code}',
-                        style: TextStyle(
-                          fontSize: _getClampedFontSize(context, 0.03),
-                          fontFamily: 'Sora',
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.surface,
+                GestureDetector(
+                  onTap: () => _showDayCode(day?.code ?? ''),
+                  child: Padding(
+                    padding: const EdgeInsets.all(23.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'DAY CODE: ${day?.code ?? ''}',
+                          style: TextStyle(
+                            fontSize: _getClampedFontSize(context, 0.03),
+                            fontFamily: 'Sora',
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
                         ),
                       ),
                     ),
@@ -309,7 +350,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                     ),
                     MyButton(
                       text: 'Upload your masterpiece',
-                      onTap: widget.imageUploadClicked,
+                      onTap: () => _showCameraOrGalleryDialog(context),
                     ),
                   ],
                 ),

@@ -75,26 +75,27 @@ class _DaySpacePageState extends State<DaySpacePage> {
   //New dialog
   void _showNicknameAndAvatarDialog() {
     showDialog(
-        context: context,
-        // barrierDismissible: false, para di skippable
-        builder: (context) => AlertDialog(
-              title: Text('Be the best you~'),
-              content: Container(
-                width: double.infinity,
-                child: MyNicknameAndAvatarDialog(
-                  onSubmit: _startDay,
-                  avatarController: _avatarController,
-                  nicknameController: _nicknameController,
-                ),
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Close'))
-              ],
-            ));
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text('Be the best you~'),
+        content: Container(
+          width: double.infinity,
+          child: MyNicknameAndAvatarDialog(
+            onSubmit: _startDay,
+            avatarController: _avatarController,
+            nicknameController: _nicknameController,
+          ),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'))
+        ],
+      ),
+    );
   }
 
   // OLD Dialog for testing only
