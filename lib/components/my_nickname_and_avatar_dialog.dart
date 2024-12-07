@@ -146,7 +146,7 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
               itemBuilder: (context, index) {
                 final avatarId = avatarMap.keys.elementAt(index);
                 final avatarPath = avatarMap[avatarId]!;
-                final isSelected = selectedAvatarPath == avatarId;
+                final isSelected = selectedAvatarPath == avatarMap[avatarId];
 
                 return GestureDetector(
                   onTap: () {
