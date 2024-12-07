@@ -238,6 +238,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _passwordController,
                     hintText: 'Password',
                     obscureText: true,
+                    showToggleIcon: true,
                     onSubmitted: (value) {
                       _fieldPass.unfocus();
                     },
@@ -245,8 +246,6 @@ class _LoginPageState extends State<LoginPage> {
 
                   // Space
                   const SizedBox(height: 10),
-
-
 
 
                 ],),
