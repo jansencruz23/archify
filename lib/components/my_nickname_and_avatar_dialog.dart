@@ -217,18 +217,42 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: Text('Nickname Required'),
-                              content: Text('Please enter a nickname before confirming.'),
+                              title: DefaultTextStyle(
+                                style: TextStyle(
+                                  fontFamily: 'Sora',
+                                  color: Color(0xFF333333),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                child: Text('Nickname Required'),
+                              ),
+                              content: DefaultTextStyle(
+                                style: TextStyle(
+                                  fontFamily: 'Sora',
+                                  color: Color(0xFF333333),
+                                  fontSize: 18,
+                                ),
+                                child: Text('Please enter a nickname before confirming.'),
+                              ),
                               actions: [
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: Text('OK'),
+                                  child: Text(
+                                    'OK',
+                                    style: TextStyle(
+                                      fontFamily: 'Sora',
+                                      color: Color(0xFFFF6F61), // Custom color for 'OK'
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
                           );
+
                         } else {
                           // Confirmation dialog
                           widget.onSubmit();

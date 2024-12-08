@@ -285,20 +285,6 @@ class _DaySpacePageState extends State<DaySpacePage>
     );
   }
 
-  // OLD Dialog for testing only
-  // void _showNicknameInputDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => MyInputAlertBox(
-  //       textController: _nicknameController,
-  //       hintText: 'Enter Nickname',
-  //       confirmButtonText: 'Enter Day',
-  //       onConfirmPressed: _startDay,
-  //       focusNode: _nicknameFocusNode,
-  //     ),
-  //   );
-  // }
-
   Future<void> _loadDay() async {
     await _dayProvider.loadDayByCode(_dayCode);
     await _dayProvider.loadMoments(_dayCode);
