@@ -190,7 +190,8 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
               Transform.translate(
                 offset: Offset(0, 40),
                 child: SizedBox(
-                  width: 275, // Set the desired width here
+                  width: 275,
+                  height: 50,
                   child: ElevatedButton(
                     onPressed: () {
                       if (selectedAvatarPath.isEmpty) {
@@ -273,7 +274,7 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                       'Confirm Selection',
                       style: TextStyle(
                         fontFamily: 'Sora',
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
