@@ -255,33 +255,57 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Choose an option'),
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        title: DefaultTextStyle(
+          style: TextStyle(
+            fontFamily: 'Sora',
+            color: Color(0xFF333333),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+          child: Text('Choose an option'),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
+            Row(
               children: [
-                IconButton(
-                  icon: Icon(Icons.camera_alt_rounded),
-                  iconSize: 50.0,
+                Icon(Icons.camera_alt_rounded, color: Color(0xFF333333)),
+                SizedBox(width: 8), // Space between the icon and text
+                TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                     widget.cameraUploadClicked();
                   },
+                  child: Text(
+                    'Take Photo',
+                    style: TextStyle(
+                      fontFamily: 'Sora',
+                      fontSize: 16,
+                      color: Color(0xFF333333),
+                    ),
+                  ),
                 ),
               ],
             ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
+            SizedBox(height: 16), // Space between the two options
+            Row(
               children: [
-                IconButton(
-                  icon: Icon(Icons.photo_rounded),
-                  iconSize: 50.0,
+                Icon(Icons.photo_rounded, color: Color(0xFF333333)),
+                SizedBox(width: 8), // Space between the icon and text
+                TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                     widget.imageUploadClicked();
                   },
+                  child: Text(
+                    'Upload Photo',
+                    style: TextStyle(
+                      fontFamily: 'Sora',
+                      fontSize: 16,
+                      color: Color(0xFF333333),
+                    ),
+                  ),
                 ),
               ],
             ),
