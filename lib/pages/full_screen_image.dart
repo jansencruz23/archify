@@ -25,7 +25,14 @@ class FullScreenImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(caption),
+        title: DefaultTextStyle(
+          style: TextStyle(
+            fontFamily: 'Sora',
+            color: Color(0xFF333333),
+            fontSize: 20,
+          ),
+          child: Text(caption),
+        ),
       ),
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
@@ -33,20 +40,33 @@ class FullScreenImage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: Image.network(imageUrl),
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    width: 370,
+                    height: 500,
+                  ),
+                ),
+              ),
             ),
             Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                    onPressed: _downloadImage,
-                    icon: Icon(
-                      Icons.download_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 50,
-                    ))),
+              padding: const EdgeInsets.fromLTRB(8.0, 8, 8, 35),
+              child: IconButton(
+                onPressed: _downloadImage,
+                icon: Icon(
+                  Icons.download_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 50,
+                ),
+              ),
+            ),
           ],
         ),
       ),
+
     );
   }
 }
