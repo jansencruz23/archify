@@ -75,7 +75,7 @@ class _MySettingsButtonState extends State<MySettingsButton> {
                   Text(
                     widget.text,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
+                      color: _isClicked ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.inversePrimary,
                       fontFamily: 'Sora',
                       fontSize: 18,
                     ),
