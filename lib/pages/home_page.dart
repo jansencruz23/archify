@@ -41,19 +41,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Text(
-                  'Who are you today?',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: 'Sora',
-                    color: Color(0xFF333333),
-                  ),
-                ),
-              ),
+              title: Text('Select a Photo and Enter Nickanme'),
               content: Container(
-                height: 410,
                 width: double.infinity,
                 child: MyNicknameAndAvatarDialog(
                   nicknameController: _nicknameController,
@@ -499,7 +488,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         children: [
                           Padding(
                             padding:
-                                const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 25.0),
+                                const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 8.0),
                             child: Row(
                               children: [
                                 const SizedBox(width: 10),
@@ -510,7 +499,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   width: 36,
                                   height: 36,
                                 ),
-                                const SizedBox(width: 20),
+                                const SizedBox(width: 10),
                                 Text(
                                   'Best of the Day',
                                   style: TextStyle(
@@ -573,7 +562,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                           //View Comment Icon
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(8.0, 25, 8, 8),
+                            padding: const EdgeInsets.all(8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
