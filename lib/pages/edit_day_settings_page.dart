@@ -329,6 +329,8 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
+                          width: 150,
+                          height: 55,
                           padding: EdgeInsets.symmetric(
                               horizontal: 30, vertical: 14),
                           decoration: BoxDecoration(
@@ -337,6 +339,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                                 Border.all(color: Color(0xFFFF6F61), width: 1),
                             borderRadius: BorderRadius.circular(35),
                           ),
+                          alignment: Alignment.center,
                           child: Text(
                             "Cancel",
                             style: TextStyle(
@@ -367,6 +370,8 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                             });
                           },
                           child: Container(
+                            width: 150,
+                            height: 55,
                             padding: EdgeInsets.all(15),
                             decoration: BoxDecoration(
                               color: amIHovering
