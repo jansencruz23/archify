@@ -1,4 +1,5 @@
 import 'package:archify/components/my_input_alert_box.dart';
+import 'package:archify/components/my_mobile_scanner_overlay.dart';
 import 'package:archify/components/my_moment_tile.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/components/my_navbar.dart';
@@ -6,6 +7,7 @@ import 'package:archify/models/day.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/pages/no_moment_uploaded_page.dart';
 import 'package:archify/services/database/day/day_provider.dart';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -33,8 +35,11 @@ class _DaySpacePageState extends State<DaySpacePage>
   late final TextEditingController _nicknameController;
   late final FocusNode _nicknameFocusNode;
   late final DayProvider _dayProvider;
+  late final UserProvider _userProvider;
   late Day? day;
+  late Day? _currentDay;
   late String _dayCode;
+  String qrCode = '';
 
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
@@ -192,6 +197,7 @@ class _DaySpacePageState extends State<DaySpacePage>
     }
   }
 
+
   Future<bool> _isParticipant() async {
     return await _dayProvider.isParticipant(_dayCode);
   }
@@ -230,6 +236,7 @@ class _DaySpacePageState extends State<DaySpacePage>
   void _showNicknameAndAvatarDialog() {
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) => AlertDialog(
           title: Padding(
             padding: const EdgeInsets.only(left: 10.0),
@@ -260,6 +267,37 @@ class _DaySpacePageState extends State<DaySpacePage>
           ],
         ));
   }
+
+  void _scanQRCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRScannerScreen(
+          onScan: (String code) {
+            setState(() {
+              qrCode = code;
+            });
+            goDaySpace(context, qrCode);
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
+
+  // OLD Dialog for testing only
+  // void _showNicknameInputDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => MyInputAlertBox(
+  //       textController: _nicknameController,
+  //       hintText: 'Enter Nickname',
+  //       confirmButtonText: 'Enter Day',
+  //       onConfirmPressed: _startDay,
+  //       focusNode: _nicknameFocusNode,
+  //     ),
+  //   );
+  // }
 
   Future<void> _loadDay() async {
     await _dayProvider.loadDayByCode(_dayCode);
@@ -396,6 +434,8 @@ class _DaySpacePageState extends State<DaySpacePage>
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
+    final userListeningProvider = Provider.of<UserProvider>(context);
+    _currentDay = userListeningProvider.currentDay;
     day = listeningProvider.day;
     final moments = listeningProvider.moments;
     final hasUploaded = listeningProvider.hasUploaded;
@@ -583,26 +623,46 @@ class _DaySpacePageState extends State<DaySpacePage>
                                 itemCount: _menuItems.length,
                                 itemBuilder: (context, index) {
                                   final item = _menuItems[index];
-                                  return ListTile(
-                                    leading:
-                                        Icon(item['icon'], color: Colors.white),
-                                    title: Text(item['title'],
-                                        style: const TextStyle(
+                                  return MouseRegion(
+                                    child: GestureDetector(
+                                      onTap: _currentDay != null
+                                          ? () {}
+                                          : () {
+                                              if (item['title'] ==
+                                                  'Enter a day code') {
+                                                _showEnterDayCodeDialog(
+                                                    context);
+                                              } else if (item['title'] ==
+                                                  'Create a day') {
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DaySettingsPage()),
+                                                );
+                                              } else if (item['title'] ==
+                                                  'Scan QR code') {
+                                                _scanQRCode();
+                                              }
+                                            },
+                                      child: ListTile(
+                                        leading: Icon(
+                                          item['icon'],
+                                          color: _currentDay != null
+                                              ? Colors.grey[300]
+                                              : Colors.white,
+                                        ),
+                                        title: Text(
+                                          item['title'],
+                                          style: TextStyle(
                                             fontFamily: 'Sora',
-                                            color: Colors.white)),
-                                    onTap: () {
-                                      if (item['title'] == 'Enter a day code') {
-                                        _showEnterDayCodeDialog(context);
-                                      } else if (item['title'] ==
-                                          'Create a day') {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DaySettingsPage()),
-                                        );
-                                      }
-                                    },
+                                            color: _currentDay != null
+                                                ? Colors.grey[300]
+                                                : Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   );
                                 },
                               ),

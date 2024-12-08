@@ -7,6 +7,7 @@ import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/models/day.dart';
 import 'package:archify/pages/empty_day_page.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
@@ -79,6 +80,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final DayProvider _dayProvider;
   late final UserProvider _userProvider;
   late bool _setupNavigationTriggered;
+  late Day? _currentDay;
 
   bool _isKeyboardVisible =
       false; //For Keyboard to remove navbar visibility -AAlfonso
@@ -323,9 +325,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _loadData() async {
+    await _loadCurrentDay();
     await _loadUserProfile();
     await _loadUserMoments();
-    await _loadCurrentDay();
     _refreshComments();
   }
 
@@ -392,6 +394,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final userListeningProvider = Provider.of<UserProvider>(context);
     final dayListeningProvider = Provider.of<DayProvider>(context);
+    _currentDay = userListeningProvider.currentDay;
     final userProfile = userListeningProvider.userProfile;
     final days = userListeningProvider.moments;
     if (_isInitialLoad && days.isNotEmpty) {
@@ -536,10 +539,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               final moment = days[index];
                               bool isMainPhoto = this.realIndex == index;
 
-                              return MyDay(
-                                moment: moment,
-                                isMainPhoto: isMainPhoto,
-                                toggleFavorites: _toggleFavorites,
+                              return GestureDetector(
+                                onTap: () => goFullScreenImage(
+                                  context,
+                                  moment.imageUrl,
+                                  moment.dayName,
+                                ),
+                                onDoubleTap: () => _toggleFavorites(),
+                                child: MyDay(
+                                  moment: moment,
+                                  isMainPhoto: isMainPhoto,
+                                  toggleFavorites: _toggleFavorites,
+                                ),
                               );
                             },
                             options: CarouselOptions(
@@ -598,7 +609,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           //Comment Section
                           Padding(
                             padding:
-                                const EdgeInsets.only(right: 35, left: 8.0),
+                                const EdgeInsets.only(right: 20, left: 20.0),
                             child: SizedBox(
                               height: MediaQuery.of(context).size.height * 0.28,
                               width: MediaQuery.of(context).size.width,
@@ -607,8 +618,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   padding: const EdgeInsets.only(
                                       bottom: 8.0,
                                       top: 8.0,
-                                      right: 8.0,
-                                      left: 0.0),
+                                      right: 4.0,
+                                      left: 4.0),
                                   child: comments[_currentDayId] == null ||
                                           comments[_currentDayId]!.isEmpty
                                       ? const Center(
@@ -787,33 +798,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                           });
                                         },
                                         child: GestureDetector(
-                                          onTap: () {
-                                            if (item['title'] ==
-                                                'Enter a day code') {
-                                              _showEnterDayCodeDialog(context);
-                                            } else if (item['title'] ==
-                                                'Create a day') {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DaySettingsPage()),
-                                              );
-                                            } else if (item['title'] ==
-                                                'Scan QR code') {
-                                              _scanQRCode();
-                                            }
-                                          },
+                                          onTap: _currentDay != null
+                                              ? () {}
+                                              : () {
+                                                  if (item['title'] ==
+                                                      'Enter a day code') {
+                                                    _showEnterDayCodeDialog(
+                                                        context);
+                                                  } else if (item['title'] ==
+                                                      'Create a day') {
+                                                    Navigator.pushReplacement(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              DaySettingsPage()),
+                                                    );
+                                                  } else if (item['title'] ==
+                                                      'Scan QR code') {
+                                                    _scanQRCode();
+                                                  }
+                                                },
                                           child: ListTile(
                                             leading: Icon(
                                               item['icon'],
-                                              color: Colors.white,
+                                              color: _currentDay != null
+                                                  ? Colors.grey[300]
+                                                  : Colors.white,
                                             ),
                                             title: Text(
                                               item['title'],
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontFamily: 'Sora',
-                                                color: Colors.white,
+                                                color: _currentDay != null
+                                                    ? Colors.grey[300]
+                                                    : Colors.white,
                                               ),
                                             ),
                                           ),

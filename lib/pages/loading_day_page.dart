@@ -1,4 +1,5 @@
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/models/day.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
@@ -22,6 +23,8 @@ class LoadingDayPage extends StatefulWidget {
 
 class _LoadingDayPage extends State<LoadingDayPage>
     with TickerProviderStateMixin {
+  late final UserProvider _userProvider;
+  late Day? _currentDay;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -159,6 +162,7 @@ class _LoadingDayPage extends State<LoadingDayPage>
   @override
   void initState() {
     super.initState();
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -169,6 +173,10 @@ class _LoadingDayPage extends State<LoadingDayPage>
       end: const Offset(0, 0),
     ).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _userProvider.updateCurrentDay();
+    });
   }
 
   @override
@@ -184,6 +192,9 @@ class _LoadingDayPage extends State<LoadingDayPage>
 
   @override
   Widget build(BuildContext context) {
+    final _userListeningProvider = Provider.of<UserProvider>(context);
+    _currentDay = _userListeningProvider.currentDay;
+
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
@@ -290,25 +301,45 @@ class _LoadingDayPage extends State<LoadingDayPage>
                             itemCount: _menuItems.length,
                             itemBuilder: (context, index) {
                               final item = _menuItems[index];
-                              return ListTile(
-                                leading:
-                                    Icon(item['icon'], color: Colors.white),
-                                title: Text(item['title'],
-                                    style: const TextStyle(
+                              return MouseRegion(
+                                child: GestureDetector(
+                                  onTap: _currentDay != null
+                                      ? () {}
+                                      : () {
+                                          if (item['title'] ==
+                                              'Enter a day code') {
+                                            _showEnterDayCodeDialog(context);
+                                          } else if (item['title'] ==
+                                              'Create a day') {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DaySettingsPage()),
+                                            );
+                                          } else if (item['title'] ==
+                                              'Scan QR code') {
+                                            _scanQRCode();
+                                          }
+                                        },
+                                  child: ListTile(
+                                    leading: Icon(
+                                      item['icon'],
+                                      color: _currentDay != null
+                                          ? Colors.grey[300]
+                                          : Colors.white,
+                                    ),
+                                    title: Text(
+                                      item['title'],
+                                      style: TextStyle(
                                         fontFamily: 'Sora',
-                                        color: Colors.white)),
-                                onTap: () {
-                                  if (item['title'] == 'Enter a day code') {
-                                    _showEnterDayCodeDialog(context);
-                                  } else if (item['title'] == 'Create a day') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              DaySettingsPage()),
-                                    );
-                                  }
-                                },
+                                        color: _currentDay != null
+                                            ? Colors.grey[300]
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               );
                             },
                           ),

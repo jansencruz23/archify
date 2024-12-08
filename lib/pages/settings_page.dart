@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:archify/components/my_mobile_scanner_overlay.dart';
+import 'package:archify/models/day.dart';
 import 'package:archify/pages/about_us_page.dart';
 import 'package:archify/pages/my_feedback_form.dart';
 import 'package:archify/services/database/day/day_gate.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:archify/pages/empty_day_page.dart';
@@ -46,6 +48,9 @@ class _SettingsPageState extends State<SettingsPage>
     with TickerProviderStateMixin {
   late bool _setupNavigationTriggered;
   DateTime? minimumDate;
+  late final DayProvider _dayProvider;
+  late final UserProvider _userProvider;
+  late Day? _currentDay;
 
   String subject = '';
   String body = '';
@@ -212,6 +217,9 @@ class _SettingsPageState extends State<SettingsPage>
     // TODO: implement initState
     super.initState();
 
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -237,6 +245,10 @@ class _SettingsPageState extends State<SettingsPage>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _userProvider.updateCurrentDay();
+    });
   }
 
   @override
@@ -257,6 +269,8 @@ class _SettingsPageState extends State<SettingsPage>
 
   Future<void> _logout() async {
     await AuthService().logoutInFirebase();
+    _dayProvider.resetDay();
+    _userProvider.resetUserProfile();
     if (mounted) goRootPage(context);
   }
 
@@ -277,6 +291,9 @@ class _SettingsPageState extends State<SettingsPage>
 
   @override
   Widget build(BuildContext context) {
+    final _userListeningProvider = Provider.of<UserProvider>(context);
+    _currentDay = _userListeningProvider.currentDay;
+
     return SafeArea(
         child: Scaffold(
       appBar: PreferredSize(
@@ -580,41 +597,39 @@ class _SettingsPageState extends State<SettingsPage>
                         itemBuilder: (context, index) {
                           final item = _menuItems[index];
                           return MouseRegion(
-                            onEnter: (_) {
-                              setState(() {
-                                _hoveredIndex = index;
-                              });
-                            },
-                            onExit: (_) {
-                              setState(() {
-                                _hoveredIndex = -1;
-                              });
-                            },
                             child: GestureDetector(
-                              onTap: () {
-                                if (item['title'] == 'Enter a day code') {
-                                  _showEnterDayCodeDialog(context);
-                                } else if (item['title'] == 'Create a day') {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DaySettingsPage()),
-                                  );
-                                } else if (item['title'] == 'Scan QR code') {
-                                  _scanQRCode();
-                                }
-                              },
+                              onTap: _currentDay != null
+                                  ? () {}
+                                  : () {
+                                      if (item['title'] == 'Enter a day code') {
+                                        _showEnterDayCodeDialog(context);
+                                      } else if (item['title'] ==
+                                          'Create a day') {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DaySettingsPage()),
+                                        );
+                                      } else if (item['title'] ==
+                                          'Scan QR code') {
+                                        _scanQRCode();
+                                      }
+                                    },
                               child: ListTile(
                                 leading: Icon(
                                   item['icon'],
-                                  color: Colors.white,
+                                  color: _currentDay != null
+                                      ? Colors.grey[300]
+                                      : Colors.white,
                                 ),
                                 title: Text(
                                   item['title'],
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'Sora',
-                                    color: Colors.white,
+                                    color: _currentDay != null
+                                        ? Colors.grey[300]
+                                        : Colors.white,
                                   ),
                                 ),
                               ),

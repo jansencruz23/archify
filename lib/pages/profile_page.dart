@@ -1,6 +1,7 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_profile_picture.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/models/day.dart';
 import 'package:archify/services/database/day/day_gate.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/pages/edit_profile_page.dart';
@@ -31,6 +32,7 @@ class _ProfilePageState extends State<ProfilePage>
   int _hoveredIndex = -1;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  late Day? _currentDay;
 
   //Qrcode string
   String qrCode = '';
@@ -204,6 +206,7 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   Future<void> _loadData() async {
+    await _userProvider.updateCurrentDay();
     await _loadUserProfile();
     await _loadUserMoments();
   }
@@ -219,6 +222,7 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<UserProvider>(context);
+    _currentDay = listeningProvider.currentDay;
     final userProfile = listeningProvider.userProfile;
     final favoriteDays = userProfile?.favoriteDays ?? [];
 
@@ -308,19 +312,27 @@ class _ProfilePageState extends State<ProfilePage>
                         SliverSimpleGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2),
                     shrinkWrap: true,
-                    itemCount: favoriteDays.length, //sample
+                    itemCount: favoriteDays.length,
                     itemBuilder: (context, index) {
-                      final imagePath = favoriteDays[index].imageUrl; //sample
+                      final imagePath = favoriteDays[index].imageUrl;
+                      final caption = favoriteDays[index].dayName;
                       if (imagePath.isEmpty) return SizedBox.shrink();
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16.0),
-                          child: Image.network(
-                            imagePath, //sample
-                            width: double.infinity,
-                            height: (index % 3 == 0) ? 180 : 230,
-                            fit: BoxFit.cover,
+                          child: GestureDetector(
+                            onTap: () => goFullScreenImage(
+                              context,
+                              imagePath,
+                              caption,
+                            ),
+                            child: Image.network(
+                              imagePath, //sample
+                              width: double.infinity,
+                              height: (index % 3 == 0) ? 180 : 230,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       );
@@ -388,43 +400,40 @@ class _ProfilePageState extends State<ProfilePage>
                             itemBuilder: (context, index) {
                               final item = _menuItems[index];
                               return MouseRegion(
-                                onEnter: (_) {
-                                  setState(() {
-                                    _hoveredIndex = index;
-                                  });
-                                },
-                                onExit: (_) {
-                                  setState(() {
-                                    _hoveredIndex = -1;
-                                  });
-                                },
                                 child: GestureDetector(
-                                  onTap: () {
-                                    if (item['title'] == 'Enter a day code') {
-                                      _showEnterDayCodeDialog(context);
-                                    } else if (item['title'] ==
-                                        'Create a day') {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DaySettingsPage()),
-                                      );
-                                    } else if (item['title'] ==
-                                        'Scan QR code') {
-                                      _scanQRCode();
-                                    }
-                                  },
+                                  onTap: _currentDay != null
+                                      ? () {}
+                                      : () {
+                                          if (item['title'] ==
+                                              'Enter a day code') {
+                                            _showEnterDayCodeDialog(context);
+                                          } else if (item['title'] ==
+                                              'Create a day') {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DaySettingsPage()),
+                                            );
+                                          } else if (item['title'] ==
+                                              'Scan QR code') {
+                                            _scanQRCode();
+                                          }
+                                        },
                                   child: ListTile(
                                     leading: Icon(
                                       item['icon'],
-                                      color: Colors.white,
+                                      color: _currentDay != null
+                                          ? Colors.grey[300]
+                                          : Colors.white,
                                     ),
                                     title: Text(
                                       item['title'],
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontFamily: 'Sora',
-                                        color: Colors.white,
+                                        color: _currentDay != null
+                                            ? Colors.grey[300]
+                                            : Colors.white,
                                       ),
                                     ),
                                   ),

@@ -26,12 +26,14 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Day? day;
+  late Day? _currentDay;
 
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  late final UserProvider _userProvider;
 
   //Qrcode string
   String qrCode = '';
@@ -158,9 +160,11 @@ class _DayExpiredPageState extends State<DayExpiredPage>
       ),
     );
   }
+
   @override
   void initState() {
     super.initState();
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
     _controller = AnimationController(vsync: this);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
@@ -171,6 +175,10 @@ class _DayExpiredPageState extends State<DayExpiredPage>
       end: const Offset(0, 0),
     ).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _userProvider.updateCurrentDay();
+    });
   }
 
   @override
@@ -188,7 +196,10 @@ class _DayExpiredPageState extends State<DayExpiredPage>
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
+    final userListeningProvider = Provider.of<UserProvider>(context);
     day = listeningProvider.day;
+    _currentDay = userListeningProvider.currentDay;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
@@ -331,26 +342,45 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                           itemCount: _menuItems.length,
                           itemBuilder: (context, index) {
                             final item = _menuItems[index];
-                            return ListTile(
-                              leading: Icon(item['icon'], color: Colors.white),
-                              title: Text(item['title'],
-                                  style: const TextStyle(
-                                      fontFamily: 'Sora', color: Colors.white)),
-                              onTap: () {
-                                if (item['title'] == 'Enter a day code') {
-                                  _showEnterDayCodeDialog(context);
-                                } else if (item['title'] == 'Create a day') {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DaySettingsPage()),
-                                  );
-                                }
-                                else if (item['title'] == 'Scan QR code') {
-                                  _scanQRCode();
-                                }
-                              },
+                            return MouseRegion(
+                              child: GestureDetector(
+                                onTap: _currentDay != null
+                                    ? () {}
+                                    : () {
+                                        if (item['title'] ==
+                                            'Enter a day code') {
+                                          _showEnterDayCodeDialog(context);
+                                        } else if (item['title'] ==
+                                            'Create a day') {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DaySettingsPage()),
+                                          );
+                                        } else if (item['title'] ==
+                                            'Scan QR code') {
+                                          _scanQRCode();
+                                        }
+                                      },
+                                child: ListTile(
+                                  leading: Icon(
+                                    item['icon'],
+                                    color: _currentDay != null
+                                        ? Colors.grey[300]
+                                        : Colors.white,
+                                  ),
+                                  title: Text(
+                                    item['title'],
+                                    style: TextStyle(
+                                      fontFamily: 'Sora',
+                                      color: _currentDay != null
+                                          ? Colors.grey[300]
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             );
                           },
                         ),

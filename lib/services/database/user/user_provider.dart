@@ -207,6 +207,9 @@ class UserProvider extends ChangeNotifier {
     if (dayCode == null) return;
 
     _currentDay = await _dayService.getDayByCodeFromFirebase(dayCode);
+    if (_currentDay == null) return;
+
+    _currentDay = _currentDay!.status ? _currentDay : null;
     notifyListeners();
   }
 
