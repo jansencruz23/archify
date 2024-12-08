@@ -188,7 +188,7 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                 ),
               ),
               Transform.translate(
-                offset: Offset(0, 40),
+                offset: Offset(0, 20),
                 child: SizedBox(
                   width: 275,
                   height: 50,
@@ -304,7 +304,6 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),

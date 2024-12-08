@@ -499,7 +499,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         children: [
                           Padding(
                             padding:
-                                const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 8.0),
+                                const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 25.0),
                             child: Row(
                               children: [
                                 const SizedBox(width: 10),
@@ -510,7 +510,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   width: 36,
                                   height: 36,
                                 ),
-                                const SizedBox(width: 10),
+                                const SizedBox(width: 20),
                                 Text(
                                   'Best of the Day',
                                   style: TextStyle(
@@ -573,7 +573,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                           //View Comment Icon
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.fromLTRB(8.0, 25, 8, 8),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
