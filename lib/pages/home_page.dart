@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:archify/components/my_comment_text_field.dart';
 import 'package:archify/components/my_day.dart';
 import 'package:archify/components/my_mobile_scanner_overlay.dart';
@@ -288,6 +290,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
       _checkIfNewUser();
+      //_startCountdown();
     });
 
     _fieldComment.addListener(() {
@@ -322,6 +325,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<void> _loadData() async {
     await _loadUserProfile();
     await _loadUserMoments();
+    await _loadCurrentDay();
     _refreshComments();
   }
 
@@ -333,9 +337,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     await _userProvider.loadUserMoments();
   }
 
+  Future<void> _loadCurrentDay() async {
+    await _userProvider.updateCurrentDay();
+  }
+
   Future<void> _loadUserProfile() async {
     await _userProvider.loadUserProfile();
   }
+
+  // Future<dynamic> _showVotingDeadline(BuildContext context, String? timeLeft) {
+
+  // }
 
   Future<void> _sendComment() async {
     final comment = _commentController.text.trim();
@@ -365,15 +377,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> _logout() async {
-    await AuthService().logoutInFirebase();
-    if (mounted) goRootPage(context);
-  }
-
   //For Responsiveness
   double _getClampedFontSize(BuildContext context, double scale) {
     double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
+    return calculatedFontSize.clamp(12.0, 24.0); // Ang min and max nyaa
   }
 
   //Out ng comment textfield pag click anywhere
@@ -468,9 +475,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                   ],
                   bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(1),
+                    preferredSize: Size.fromHeight(5),
                     child: Divider(
-                      height: 2,
+                      height: 5,
                       color: Color(0xFFD9D9D9),
                     ),
                   ),
@@ -655,7 +662,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   image: userProfile == null ||
                                           userProfile.pictureUrl.isEmpty
                                       ? const AssetImage(
-                                          'lib/assets/images/Bestday_img.png')
+                                          'lib/assets/images/user_icon.png')
                                       : Image.network(userProfile.pictureUrl)
                                           .image,
                                   shape: BoxShape.circle,

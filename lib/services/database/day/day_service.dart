@@ -24,6 +24,8 @@ class DayService {
       final dayMap = day.toMap();
       await docRef.set(dayMap);
 
+      _participantCache.clear();
+
       return day.id;
     } catch (ex) {
       _logger.severe(ex.toString());

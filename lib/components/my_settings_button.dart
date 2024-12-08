@@ -4,18 +4,12 @@ class MySettingsButton extends StatefulWidget {
   final String text;
   final Widget icon;
   final void Function()? onTap;
-  final bool isEnabled;
-  final bool isClicked;
-  final bool isLongPressed;
 
   const MySettingsButton({
     super.key,
     required this.text,
     required this.icon,
     this.onTap,
-    this.isEnabled = true,
-    this.isClicked = false,
-    this.isLongPressed = false,
   });
 
   @override
@@ -31,53 +25,43 @@ class _MySettingsButtonState extends State<MySettingsButton> {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: GestureDetector(
-        onTap: widget.isEnabled ? widget.onTap : null,
-        // Only allow tap if enabled
+        onTap: widget.onTap,
         child: GestureDetector(
           onTap: () {
-            if (widget.isEnabled) {
-              // Check if enabled before responding to tap
-              setState(() {
-                _isClicked = !_isClicked;
-              });
-              if (widget.onTap != null) {
-                widget.onTap!();
-              }
-              Future.delayed(Duration(milliseconds: 300), () {
-                setState(() {
-                  _isClicked = false;
-                });
-              });
+            setState(() {
+              _isClicked = !_isClicked;
+            });
+            if (widget.onTap != null) {
+              widget.onTap!();
             }
+            Future.delayed(Duration(milliseconds: 300), () {
+              setState(() {
+                _isClicked = false;
+              });
+            });
           },
           onLongPressStart: (_) {
-            if (widget.isEnabled) {
-              // Check if enabled before handling long press
-              Future.delayed(const Duration(milliseconds: 100), () {
-                setState(() {
-                  _isLongPressed = true;
-                });
-              });
-            }
-          },
-          onLongPressEnd: (_) {
-            if (widget.isEnabled) {
-              // Check if enabled before handling long press end
+            Future.delayed(const Duration(milliseconds: 100), () {
               setState(() {
-                _isLongPressed = false;
+                _isLongPressed = true;
               });
-            }
+            });
+          },
+
+          onLongPressEnd: (_) {
+            setState(() {
+              _isLongPressed = false;
+            });
           },
           child: AnimatedContainer(
             duration: Duration(microseconds: 100),
             height: 50,
             decoration: BoxDecoration(
-              color: widget.isEnabled
-                  ? (_isLongPressed
+              color:
+              _isLongPressed
                   ? Theme.of(context).colorScheme.secondaryContainer
-                  : _isClicked
+              : _isClicked
                   ? Theme.of(context).colorScheme.secondaryContainer
-                  : Theme.of(context).colorScheme.surface)
                   : Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(15),
             ),
@@ -91,9 +75,7 @@ class _MySettingsButtonState extends State<MySettingsButton> {
                   Text(
                     widget.text,
                     style: TextStyle(
-                      color: widget.isEnabled
-                          ? Theme.of(context).colorScheme.inversePrimary
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: Theme.of(context).colorScheme.inversePrimary,
                       fontFamily: 'Sora',
                       fontSize: 18,
                     ),

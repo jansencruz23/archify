@@ -71,6 +71,7 @@ class DayProvider extends ChangeNotifier {
     required int maxParticipants,
     required TimeOfDay votingDeadline,
   }) async {
+    _day = null;
     final now = DateTime.now();
     final deadline = DateTime(
       now.year,
@@ -222,6 +223,7 @@ class DayProvider extends ChangeNotifier {
     if (expired) {
       _votedMomentIds = [];
       _userProvider.loadUserMoments();
+      _userProvider.resetCurrentDay();
     }
 
     notifyListeners();
@@ -264,7 +266,15 @@ class DayProvider extends ChangeNotifier {
     _moments = [];
     _commentsByDayId = {};
     _votedMomentIds = [];
+    _userProvider.resetCurrentDay();
 
     notifyListeners();
+  }
+
+  Future<String> getDayCode(String dayId) async {
+    final day = await _dayService.getDayFromFirebase(dayId);
+    if (day == null) return '';
+
+    return day.code;
   }
 }

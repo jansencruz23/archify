@@ -36,7 +36,7 @@ void goDaySettings(BuildContext context) {
 }
 
 void goDayCode(BuildContext context, String dayId) {
-  Navigator.push(
+  Navigator.pushReplacement(
     context,
     MaterialPageRoute(builder: (context) => DayCodePage(dayId: dayId)),
   );
@@ -44,7 +44,7 @@ void goDayCode(BuildContext context, String dayId) {
 
 void goDaySpace(BuildContext context, String dayCode) {
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => DaySpacePage(dayCode: dayCode)),
     );
