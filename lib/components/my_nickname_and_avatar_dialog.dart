@@ -199,14 +199,37 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: Text('No Photo Selected'),
-                            content: Text('Please select a photo before confirming.'),
+                            title: DefaultTextStyle(
+                              style: TextStyle(
+                                fontFamily: 'Sora',
+                                color: Color(0xFF333333),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              child: Text('No Photo Selected'),
+                            ),
+                            content: DefaultTextStyle(
+                              style: TextStyle(
+                                fontFamily: 'Sora',
+                                color: Color(0xFF333333),
+                                fontSize: 18,
+                              ),
+                              child: Text('Please select a photo before confirming.'),
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('OK'),
+                                child: Text(
+                                  'OK',
+                                  style: TextStyle(
+                                    fontFamily: 'Sora',
+                                    color: Color(0xFFFF6F61),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -244,7 +267,7 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                                     'OK',
                                     style: TextStyle(
                                       fontFamily: 'Sora',
-                                      color: Color(0xFFFF6F61), // Custom color for 'OK'
+                                      color: Color(0xFFFF6F61),
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
