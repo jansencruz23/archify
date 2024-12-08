@@ -10,7 +10,8 @@ class TermsAndConditionsPage extends StatelessWidget {
         title: Text(
           'Privacy',
           style: TextStyle(
-              fontSize: 24,
+              fontFamily: 'Sora',
+              fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.inversePrimary),
         ),
@@ -24,6 +25,7 @@ class TermsAndConditionsPage extends StatelessWidget {
             Text(
               'Terms and Conditions',
               style: TextStyle(
+                  fontFamily: 'Sora',
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.inversePrimary),
@@ -51,6 +53,7 @@ class TermsAndConditionsPage extends StatelessWidget {
               child: Text(
                 'Last updated: [30.11.2024]',
                 style: TextStyle(
+                    fontFamily: 'Sora',
                     fontSize: 14,
                     fontStyle: FontStyle.italic,
                     color: Theme.of(context).colorScheme.inversePrimary),

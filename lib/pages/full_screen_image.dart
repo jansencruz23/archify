@@ -38,7 +38,7 @@ class FullScreenImage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.only(top: 45),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center, // Centers horizontally
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
               child: SingleChildScrollView(
