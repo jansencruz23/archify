@@ -167,7 +167,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                       size: 30.0,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   const Text(
                     "Ready for the Challenge?",
                     style: TextStyle(
@@ -261,7 +261,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 35),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -273,14 +273,15 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 14),
+                          width: 150,
+                          height: 55,
+                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border:
-                                Border.all(color: Color(0xFFFF6F61), width: 1),
+                            border: Border.all(color: Color(0xFFFF6F61), width: 1),
                             borderRadius: BorderRadius.circular(35),
                           ),
+                          alignment: Alignment.center,
                           child: Text(
                             "Cancel",
                             style: TextStyle(
@@ -291,11 +292,12 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             ),
                           ),
                         ),
+
                       ),
 
                       // Add spacing between buttons
                       SizedBox(
-                        width: 24,
+                        width: 22,
                       ),
 
                       GestureDetector(
@@ -312,6 +314,8 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             });
                           },
                           child: Container(
+                            width: 150,
+                            height: 55,
                             padding: EdgeInsets.all(15),
                             decoration: BoxDecoration(
                               color: amIHovering
