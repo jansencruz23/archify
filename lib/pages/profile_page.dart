@@ -248,11 +248,10 @@ class _ProfilePageState extends State<ProfilePage>
                   Text(
                     userProfile == null ? 'Loading' : userProfile.name,
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      fontSize: 18,
-                      fontFamily: 'Sora'
-                    ),
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                        fontSize: 18,
+                        fontFamily: 'Sora'),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 23.0, top: 5.0),
@@ -296,7 +295,6 @@ class _ProfilePageState extends State<ProfilePage>
                   ),
                 ),
               ),
-
             ),
           ),
         ),
@@ -306,7 +304,8 @@ class _ProfilePageState extends State<ProfilePage>
               onRefresh: _loadUserMoments,
               color: Theme.of(context).colorScheme.secondary,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 80, left: 15, right: 15, top: 6),
+                padding: const EdgeInsets.only(
+                    bottom: 80, left: 15, right: 15, top: 6),
                 child: MasonryGridView.builder(
                     gridDelegate:
                         SliverSimpleGridDelegateWithFixedCrossAxisCount(
@@ -409,7 +408,7 @@ class _ProfilePageState extends State<ProfilePage>
                                             _showEnterDayCodeDialog(context);
                                           } else if (item['title'] ==
                                               'Create a day') {
-                                            Navigator.pushReplacement(
+                                            Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>

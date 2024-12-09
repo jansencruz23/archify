@@ -41,19 +41,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Text(
-                  'Who are you today?',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: 'Sora',
-                    color: Color(0xFF333333),
-                  ),
-                ),
-              ),
+              title: Text('Select a Photo and Enter Nickanme'),
               content: Container(
-                height: 410,
                 width: double.infinity,
                 child: MyNicknameAndAvatarDialog(
                   nicknameController: _nicknameController,
@@ -499,7 +488,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         children: [
                           Padding(
                             padding:
-                                const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 25.0),
+                                const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 8.0),
                             child: Row(
                               children: [
                                 const SizedBox(width: 10),
@@ -510,7 +499,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   width: 36,
                                   height: 36,
                                 ),
-                                const SizedBox(width: 20),
+                                const SizedBox(width: 10),
                                 Text(
                                   'Best of the Day',
                                   style: TextStyle(
@@ -528,59 +517,58 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
 
                           //Carousel
-                        DefaultTextStyle(
-                          style: const TextStyle(
-                            fontFamily: 'Sora',
-                          ),
-                          child: CarouselSlider.builder(
-                            itemCount: days.length,
-                            itemBuilder: (context, index, realIndex) {
-                              if (days.isEmpty) {
-                                return const Center(
-                                  child: Text('No moments available.'),
-                                );
-                              }
-                              final moment = days[index];
-                              bool isMainPhoto = realIndex == index;
+                          DefaultTextStyle(
+                            style: const TextStyle(
+                              fontFamily: 'Sora',
+                            ),
+                            child: CarouselSlider.builder(
+                              itemCount: days.length,
+                              itemBuilder: (context, index, realIndex) {
+                                if (days.isEmpty) {
+                                  return const Center(
+                                    child: Text('No moments available.'),
+                                  );
+                                }
+                                final moment = days[index];
+                                bool isMainPhoto = realIndex == index;
 
-                              return GestureDetector(
-                                onTap: () => goFullScreenImage(
-                                  context,
-                                  moment.imageUrl,
-                                  moment.dayName,
-                                ),
-                                onDoubleTap: () => _toggleFavorites(),
-                                child: MyDay(
-                                  moment: moment,
-                                  isMainPhoto: isMainPhoto,
-                                  toggleFavorites: _toggleFavorites,
-                                ),
-                              );
-                            },
-                            options: CarouselOptions(
-                              enlargeCenterPage: true,
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              autoPlay: false,
-                              viewportFraction: 0.7,
-                              enableInfiniteScroll: false,
-                              reverse: true,
-                              scrollDirection: Axis.horizontal,
-                              onPageChanged: (index, reason) {
-                                setState(() {
-                                  _currentIndex = index;
-                                  _currentDayId = days[index].dayId;
-                                  _isInitialLoad = false;
-                                });
+                                return GestureDetector(
+                                  onTap: () => goFullScreenImage(
+                                    context,
+                                    moment.imageUrl,
+                                    moment.dayName,
+                                  ),
+                                  onDoubleTap: () => _toggleFavorites(),
+                                  child: MyDay(
+                                    moment: moment,
+                                    isMainPhoto: isMainPhoto,
+                                    toggleFavorites: _toggleFavorites,
+                                  ),
+                                );
                               },
+                              options: CarouselOptions(
+                                enlargeCenterPage: true,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                autoPlay: false,
+                                viewportFraction: 0.7,
+                                enableInfiniteScroll: false,
+                                reverse: true,
+                                scrollDirection: Axis.horizontal,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    _currentIndex = index;
+                                    _currentDayId = days[index].dayId;
+                                    _isInitialLoad = false;
+                                  });
+                                },
+                              ),
                             ),
                           ),
-                        ),
 
-
-
-              //View Comment Icon
+                          //View Comment Icon
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(8.0, 25, 8, 8),
+                            padding: const EdgeInsets.all(8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -814,7 +802,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                         context);
                                                   } else if (item['title'] ==
                                                       'Create a day') {
-                                                    Navigator.pushReplacement(
+                                                    Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>

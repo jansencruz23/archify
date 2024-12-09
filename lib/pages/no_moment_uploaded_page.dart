@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:archify/services/database/day/day_gate.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +17,17 @@ import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
 
 class NoMomentUploadedPage extends StatefulWidget {
+  final DateTime? votingDeadline;
   final void Function() imageUploadClicked;
   final void Function() cameraUploadClicked;
+  final void Function() settingsClicked;
 
   const NoMomentUploadedPage({
     super.key,
     required this.imageUploadClicked,
     required this.cameraUploadClicked,
+    required this.settingsClicked,
+    required this.votingDeadline,
   });
 
   @override
@@ -39,6 +44,9 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   late final UserProvider _userProvider;
+  late final DayProvider _dayProvider;
+  late Timer _timer = Timer.periodic(Duration.zero, (timer) {});
+  late Duration _remainingTime = Duration.zero;
 
   //Qrcode string
   String qrCode = '';
@@ -87,7 +95,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     });
   }
 
-  void _showDayCode(String code) {
+  void _showDayCode(String code, String name) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -105,6 +113,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
+                  Text(name),
                   QrImageView(
                     data: code,
                     version: QrVersions.auto,
@@ -202,6 +211,17 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     );
   }
 
+  bool? _isHost;
+
+  Future<void> _checkIsHost() async {
+    if (day != null) {
+      final result = await _dayProvider.isHost(day!.id);
+      setState(() {
+        _isHost = result;
+      });
+    }
+  }
+
   //QR Scanner
   void _scanQRCode() {
     Navigator.push(
@@ -223,6 +243,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
   @override
   void initState() {
     super.initState();
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
     _animationController = AnimationController(
       vsync: this,
@@ -237,13 +258,53 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _userProvider.updateCurrentDay();
+      _checkIsHost();
+      _startCountdown();
     });
+  }
+
+  void _startCountdown() {
+    if (widget.votingDeadline != null) {
+      _remainingTime = widget.votingDeadline!.difference(DateTime.now());
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        final newRemainingTime =
+            widget.votingDeadline!.difference(DateTime.now());
+        if (newRemainingTime <= Duration.zero) {
+          timer.cancel();
+          setState(() {
+            _remainingTime = Duration.zero;
+            goDayGate(context);
+          });
+        } else {
+          setState(() {
+            _remainingTime = newRemainingTime;
+          });
+        }
+      });
+    } else {
+      _remainingTime = Duration.zero;
+    }
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _timer.cancel();
     super.dispose();
+  }
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+
+    if (duration.inMinutes == 0) {
+      return '$seconds secs';
+    } else if (hours == 0) {
+      return '$minutes mins';
+    } else {
+      return '${hours}hr ${minutes}mins';
+    }
   }
 
   double _getClampedFontSize(BuildContext context, double scale) {
@@ -328,14 +389,17 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
           children: [
             Row(
               children: [
-                GestureDetector(
-                  onTap: () => _showDayCode(day?.code ?? ''),
-                  child: Padding(
-                    padding: const EdgeInsets.all(23.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Theme.of(context).colorScheme.secondary,
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 20, bottom: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    child: GestureDetector(
+                      onTap: () => _showDayCode(
+                        day?.code ?? '',
+                        day?.name ?? '',
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -351,7 +415,53 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                       ),
                     ),
                   ),
-                )
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 20, bottom: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        widget.votingDeadline == null
+                            ? 'VOTE ENDS: N/A'
+                            : 'VOTE ENDS: ${_formatDuration(_remainingTime)}',
+                        style: TextStyle(
+                          fontSize: _getClampedFontSize(context, 0.03),
+                          fontFamily: 'Sora',
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.surface,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8, top: 20, bottom: 10),
+                  child: _isHost == null
+                      ? const SizedBox()
+                      : _isHost!
+                          ? IconButton(
+                              onPressed: widget.settingsClicked,
+                              icon: Image.asset(
+                                'lib/assets/images/edit_icon.png',
+                                width: 30,
+                                height: 30,
+                              ),
+                            )
+                          : IconButton(
+                              onPressed: widget.settingsClicked,
+                              icon: Image.asset(
+                                'lib/assets/images/leave_icon.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
+                ),
               ],
             ),
             Center(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:archify/components/my_input_alert_box.dart';
 import 'package:archify/components/my_mobile_scanner_overlay.dart';
 import 'package:archify/components/my_moment_tile.dart';
@@ -46,6 +48,8 @@ class _DaySpacePageState extends State<DaySpacePage>
   bool _isRotated = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  late Timer _timer = Timer.periodic(Duration.zero, (timer) {});
+  late Duration _remainingTime = Duration.zero;
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -183,7 +187,44 @@ class _DaySpacePageState extends State<DaySpacePage>
       });
       _checkIsHost();
       _loadDay();
+      _startCountdown();
     });
+  }
+
+  void _startCountdown() {
+    if (day?.votingDeadline != null) {
+      _remainingTime = day!.votingDeadline.difference(DateTime.now());
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        final newRemainingTime = day!.votingDeadline.difference(DateTime.now());
+        if (newRemainingTime <= Duration.zero) {
+          timer.cancel();
+          setState(() {
+            _remainingTime = Duration.zero;
+            goDayGate(context);
+          });
+        } else {
+          setState(() {
+            _remainingTime = newRemainingTime;
+          });
+        }
+      });
+    } else {
+      _remainingTime = Duration.zero;
+    }
+  }
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+
+    if (duration.inMinutes == 0) {
+      return '$seconds secs';
+    } else if (hours == 0) {
+      return '$minutes mins';
+    } else {
+      return '${hours}hr ${minutes}mins';
+    }
   }
 
   bool _isHost = false;
@@ -196,7 +237,6 @@ class _DaySpacePageState extends State<DaySpacePage>
       });
     }
   }
-
 
   Future<bool> _isParticipant() async {
     return await _dayProvider.isParticipant(_dayCode);
@@ -228,6 +268,7 @@ class _DaySpacePageState extends State<DaySpacePage>
 
   @override
   void dispose() {
+    _timer.cancel();
     _animationController.dispose();
     super.dispose();
     _dayCode = '';
@@ -238,34 +279,34 @@ class _DaySpacePageState extends State<DaySpacePage>
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          title: Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child: Text(
-              'Who are you today?',
-              style: TextStyle(
-                fontSize: 20,
-                fontFamily: 'Sora',
-                color: Color(0xFF333333),
+              title: Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Text(
+                  'Who are you today?',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Sora',
+                    color: Color(0xFF333333),
+                  ),
+                ),
               ),
-            ),
-          ),
-          content: Container(
-            height: 410,
-            width: double.infinity,
-            child: MyNicknameAndAvatarDialog(
-              nicknameController: _nicknameController,
-              avatarController: _avatarController,
-              onSubmit: () {},
-            ),
-          ),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Close'))
-          ],
-        ));
+              content: Container(
+                height: 410,
+                width: double.infinity,
+                child: MyNicknameAndAvatarDialog(
+                  nicknameController: _nicknameController,
+                  avatarController: _avatarController,
+                  onSubmit: _startDay,
+                ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Close'))
+              ],
+            ));
   }
 
   void _scanQRCode() {
@@ -325,7 +366,7 @@ class _DaySpacePageState extends State<DaySpacePage>
     }
   }
 
-  void _showDayCode(String code) {
+  void _showDayCode(String code, String name) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -343,6 +384,7 @@ class _DaySpacePageState extends State<DaySpacePage>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
+                  Text(name),
                   QrImageView(
                     data: code,
                     version: QrVersions.auto,
@@ -492,7 +534,10 @@ class _DaySpacePageState extends State<DaySpacePage>
                                         Theme.of(context).colorScheme.secondary,
                                   ),
                                   child: GestureDetector(
-                                    onTap: () => _showDayCode(day?.code ?? ''),
+                                    onTap: () => _showDayCode(
+                                      day?.code ?? '',
+                                      day?.name ?? '',
+                                    ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
@@ -506,6 +551,34 @@ class _DaySpacePageState extends State<DaySpacePage>
                                               .colorScheme
                                               .surface,
                                         ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10, top: 20, bottom: 10),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      day?.votingDeadline == null
+                                          ? 'VOTE ENDS: N/A'
+                                          : 'VOTE ENDS: ${_formatDuration(_remainingTime)}',
+                                      style: TextStyle(
+                                        fontSize:
+                                            _getClampedFontSize(context, 0.03),
+                                        fontFamily: 'Sora',
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
                                       ),
                                     ),
                                   ),
@@ -663,6 +736,8 @@ class _DaySpacePageState extends State<DaySpacePage>
           : NoMomentUploadedPage(
               imageUploadClicked: _imageUploadClicked,
               cameraUploadClicked: _cameraUploadClicked,
+              settingsClicked: _showSettings,
+              votingDeadline: day?.votingDeadline,
             ),
     );
   }

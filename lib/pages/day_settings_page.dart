@@ -249,8 +249,10 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'Pick Voting Deadline',
+                                Text(
+                                  _votingDeadline == TimeOfDay.now()
+                                      ? 'Pick Voting Deadline'
+                                      : _votingDeadline.format(context),
                                   style: TextStyle(
                                     color: Color(0xFFC8C1B4),
                                     fontFamily: 'Sora',
@@ -283,10 +285,12 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                           curve: Curves.easeInOut,
                           width: 150,
                           height: 55,
-                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(color: Color(0xFFFF6F61), width: 1),
+                            border:
+                                Border.all(color: Color(0xFFFF6F61), width: 1),
                             borderRadius: BorderRadius.circular(35),
                           ),
                           alignment: Alignment.center,
@@ -300,7 +304,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             ),
                           ),
                         ),
-
                       ),
 
                       // Add spacing between buttons

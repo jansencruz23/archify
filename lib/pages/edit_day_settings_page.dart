@@ -40,8 +40,8 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
     _dayDescriptionFocusNode = FocusNode();
     _maxParticipantsFocusNode = FocusNode();
     _pickVotingDeadlineFocusNode = FocusNode();
-    _votingDeadline = TimeOfDay.now();
     _fillUpFormMessage = 'Please Fill Up The Form';
+    _votingDeadline = TimeOfDay.fromDateTime(widget.day.votingDeadline);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
@@ -51,7 +51,6 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
   void _loadData() {
     _dayNameController.text = widget.day.name;
     _maxParticipantsController.text = widget.day.maxParticipants.toString();
-    _votingDeadline = TimeOfDay.fromDateTime(widget.day.votingDeadline);
   }
 
   Future<void> pickTime() async {
@@ -308,8 +307,8 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'Pick Voting Deadline',
+                                Text(
+                                  _votingDeadline.format(context),
                                   style: TextStyle(
                                     color: Color(0xFFC8C1B4),
                                     fontFamily: 'Sora',
