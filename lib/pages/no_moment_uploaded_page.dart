@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/services/database/day/day_gate.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -332,11 +333,6 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     }
   }
 
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0);
-  }
-
   void _showCameraOrGalleryDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -345,7 +341,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
           style: TextStyle(
             fontFamily: 'Sora',
             color: Color(0xFF333333),
-            fontSize: 20,
+            fontSize: getClampedFontSize(context, 0.045),
             fontWeight: FontWeight.w600,
           ),
           child: Text('Choose an option'),
@@ -367,7 +363,6 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                     'Take Photo',
                     style: TextStyle(
                       fontFamily: 'Sora',
-                      fontSize: 16,
                       color: Color(0xFF333333),
                     ),
                   ),
@@ -388,7 +383,6 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                     'Upload Photo',
                     style: TextStyle(
                       fontFamily: 'Sora',
-                      fontSize: 16,
                       color: Color(0xFF333333),
                     ),
                   ),
@@ -435,7 +429,6 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                         child: Text(
                           'DAY CODE: ${day?.code ?? ''}',
                           style: TextStyle(
-                            fontSize: _getClampedFontSize(context, 0.03),
                             fontFamily: 'Sora',
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.surface,
@@ -459,7 +452,6 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                             ? 'VOTE ENDS: N/A'
                             : 'VOTE ENDS: ${_formatDuration(_remainingTime)}',
                         style: TextStyle(
-                          fontSize: _getClampedFontSize(context, 0.03),
                           fontFamily: 'Sora',
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.surface,
@@ -503,7 +495,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                       'Oops, no peeking! \nYou haven\'t uploaded a moment yet.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
+                        fontSize: getClampedFontSize(context, 0.05),
                         fontFamily: 'Sora',
                         color: Theme.of(context).colorScheme.inversePrimary,
                       ),

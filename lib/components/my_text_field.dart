@@ -79,7 +79,6 @@ class _MyTextFieldState extends State<MyTextField> {
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
               fontFamily: 'Sora',
-              fontSize: 18,
             ),
             controller: widget.controller,
             obscureText: isObscured,
@@ -99,7 +98,6 @@ class _MyTextFieldState extends State<MyTextField> {
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontFamily: 'Sora',
-                fontSize: 18,
               ),
               contentPadding: const EdgeInsets.only(left: 30),
               suffixIcon: widget.showToggleIcon

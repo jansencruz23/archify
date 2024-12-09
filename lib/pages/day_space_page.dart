@@ -1,8 +1,7 @@
 import 'dart:async';
-
-import 'package:archify/components/my_input_alert_box.dart';
 import 'package:archify/components/my_mobile_scanner_overlay.dart';
 import 'package:archify/components/my_moment_tile.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/models/day.dart';
@@ -285,7 +284,6 @@ class _DaySpacePageState extends State<DaySpacePage>
                 child: Text(
                   'Who are you today?',
                   style: TextStyle(
-                    fontSize: 20,
                     fontFamily: 'Sora',
                     color: Color(0xFF333333),
                   ),
@@ -474,12 +472,6 @@ class _DaySpacePageState extends State<DaySpacePage>
     await _dayProvider.toggleVote(_dayCode, momentId);
   }
 
-  //Font responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
@@ -507,9 +499,9 @@ class _DaySpacePageState extends State<DaySpacePage>
                 Text(
                   'Let’s keep the moment,',
                   style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.03),
                     fontFamily: 'Sora',
                     color: Theme.of(context).colorScheme.inversePrimary,
+                    fontSize: 12,
                   ),
                 ),
                 Positioned(
@@ -518,7 +510,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                   child: Text(
                     'Pick the best shot!',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.05),
+                      fontSize: getClampedFontSize(context, 0.05),
                       fontFamily: 'Sora',
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.inversePrimary,
@@ -568,8 +560,6 @@ class _DaySpacePageState extends State<DaySpacePage>
                                       child: Text(
                                         'DAY CODE: ${day?.code ?? ''}',
                                         style: TextStyle(
-                                          fontSize: _getClampedFontSize(
-                                              context, 0.03),
                                           fontFamily: 'Sora',
                                           fontWeight: FontWeight.bold,
                                           color: Theme.of(context)
@@ -597,8 +587,6 @@ class _DaySpacePageState extends State<DaySpacePage>
                                           ? 'DEADLINE: N/A'
                                           : 'DEADLINE: ${_formatDuration(_remainingTime)}',
                                       style: TextStyle(
-                                        fontSize:
-                                            _getClampedFontSize(context, 0.03),
                                         fontFamily: 'Sora',
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context)
@@ -746,6 +734,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                                             color: _currentDay != null
                                                 ? Colors.grey[300]
                                                 : Colors.white,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ),

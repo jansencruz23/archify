@@ -1,6 +1,7 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/components/my_text_field_form.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,8 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
             ),
             dialogBackgroundColor: Colors.white,
             textTheme: const TextTheme(
-              bodyMedium: TextStyle(fontFamily: 'Sora', color: Color(0xFF333333)),
+              bodyMedium:
+                  TextStyle(fontFamily: 'Sora', color: Color(0xFF333333)),
             ),
             timePickerTheme: const TimePickerThemeData(
               dayPeriodTextColor: Color(0xFF333333),
@@ -68,16 +70,12 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
               helpTextStyle: TextStyle(
                 fontFamily: 'Sora',
               ),
-              hourMinuteTextStyle: TextStyle(
-                fontFamily: 'Sora',
-                fontSize: 45
-              ),
+              hourMinuteTextStyle: TextStyle(fontFamily: 'Sora', fontSize: 45),
               dayPeriodTextStyle: const TextStyle(
                 fontFamily: 'Sora',
                 fontSize: 16,
               ),
             ),
-
           ),
           child: child!,
         );
@@ -145,12 +143,12 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 33.0),
           alignment: Alignment.centerLeft,
-          child: const SafeArea(
+          child: SafeArea(
             child: Text(
               "Create a Day",
               style: TextStyle(
                 fontFamily: 'Sora',
-                fontSize: 22,
+                fontSize: getClampedFontSize(context, 0.05),
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -188,12 +186,12 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     "Ready for the Challenge?",
                     style: TextStyle(
                       fontFamily: 'Sora',
                       fontWeight: FontWeight.bold,
-                      fontSize: 21,
+                      fontSize: getClampedFontSize(context, 0.05),
                       color: Color(0xFF333333),
                     ),
                     textAlign: TextAlign.center,
@@ -275,7 +273,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                                               .colorScheme
                                               .inversePrimary,
                                       fontFamily: 'Sora',
-                                      fontSize: 18,
+                                      fontSize: 12,
                                     ),
                                   ),
                                   Icon(
@@ -283,8 +281,8 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                                     color: _votingDeadline == TimeOfDay.now()
                                         ? Color(0xFFC8C1B4)
                                         : Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary,
+                                            .colorScheme
+                                            .inversePrimary,
                                     size: 20,
                                   ),
                                 ],
@@ -323,7 +321,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             style: TextStyle(
                               fontFamily: 'Sora',
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
                               color: Color(0xFFFF6F61),
                             ),
                           ),
@@ -364,11 +361,10 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                               child: Text(
                                 'Create Day',
                                 style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Sora',
-                                    fontSize: 18),
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Sora',
+                                ),
                               ),
                             ),
                           ),

@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 
 showErrorDialog(BuildContext context, String title) {
@@ -5,7 +6,13 @@ showErrorDialog(BuildContext context, String title) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text(title, style: TextStyle(fontFamily: 'Sora', color: Theme.of(context).colorScheme.secondary, ),),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontFamily: 'Sora',
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+      ),
       actions: [
         Center(
           child: TextButton(
@@ -26,7 +33,6 @@ showErrorDialog(BuildContext context, String title) {
                   'OK',
                   style: TextStyle(
                     fontFamily: 'Sora',
-                    fontSize: 16,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
@@ -35,7 +41,6 @@ showErrorDialog(BuildContext context, String title) {
           ),
         ),
       ],
-
     ),
   );
 }

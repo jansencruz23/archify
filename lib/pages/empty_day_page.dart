@@ -1,4 +1,6 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
@@ -193,11 +195,6 @@ class _EmptyDayPageState extends State<EmptyDayPage>
     super.dispose();
   }
 
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -214,7 +211,6 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                   Text(
                     'Let’s keep the moment,',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.03),
                       fontFamily: 'Sora',
                       color: Theme.of(context).colorScheme.inversePrimary,
                     ),
@@ -225,7 +221,7 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                     child: Text(
                       'Pick the best shot!',
                       style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
+                        fontSize: getClampedFontSize(context, 0.05),
                         fontFamily: 'Sora',
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.inversePrimary,
@@ -257,7 +253,7 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                       'Pssst... the room\'s waiting for you. Got the code?',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
+                        fontSize: getClampedFontSize(context, 0.05),
                         fontFamily: 'Sora',
                         color: Theme.of(context).colorScheme.inversePrimary,
                       ),

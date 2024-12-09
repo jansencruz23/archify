@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -65,9 +66,8 @@ class _MyDayState extends State<MyDay> {
             child: Text(
               widget.moment.dayName,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 16,
-              ),
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: getClampedFontSize(context, 0.045)),
             ),
           ),
         ),
@@ -83,7 +83,7 @@ class _MyDayState extends State<MyDay> {
               formattedDate,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.tertiaryContainer,
-                fontSize: 12,
+                fontSize: 10,
               ),
             ),
           ),

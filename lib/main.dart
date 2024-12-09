@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
-
 void main() async {
   // Firebase setup
   Provider.debugCheckInvalidValueType = null;
@@ -40,7 +39,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: lightMode,
+      theme: lightMode(context),
       home: AnimatedSplashScreen(
         splash: Image.asset('lib/assets/images/Logo.jpg'),
         splashIconSize: double.infinity,
@@ -59,7 +58,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: lightMode,
+      theme: lightMode(context),
       initialRoute: '/',
       routes: {'/': (context) => const AuthGate()},
     );

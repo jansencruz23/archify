@@ -61,26 +61,17 @@ class _LoginPageState extends State<LoginPage> {
     } catch (ex) {
       // replace with custom show dialog for errors
       if (mounted) {
-        if(ex.toString() == 'Exception: invalid-email'){
+        if (ex.toString() == 'Exception: invalid-email') {
           showErrorDialog(context, 'Enter a valid email');
-        }
-        else if(ex.toString() == 'Exception: invalid-credentials'){
+        } else if (ex.toString() == 'Exception: invalid-credentials') {
           showErrorDialog(context, 'Error: Invalid Credentials');
-        }
-        else if(ex.toString() == 'Exception: channel-error'){
+        } else if (ex.toString() == 'Exception: channel-error') {
           showErrorDialog(context, 'Enter both email and password');
-        }
-        else {
-          showErrorDialog(context, ex.toString());//'Something went wrong'
+        } else {
+          showErrorDialog(context, ex.toString()); //'Something went wrong'
         }
       }
     }
-  }
-
-//For Responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
   }
 
   //hover for button and mouse change
@@ -218,37 +209,37 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
-                child: Column(children: [
-                  // Login text field
-                  MyTextField(
-                    focusNode: _fieldEmail,
-                    controller: _emailController,
-                    hintText: 'Email',
-                    obscureText: false,
-                    onSubmitted: (value) {
-                      FocusScope.of(context).requestFocus(_fieldPass);
-                    },
-                  ),
-                  // Space
-                  const SizedBox(height: 10),
+                child: Column(
+                  children: [
+                    // Login text field
+                    MyTextField(
+                      focusNode: _fieldEmail,
+                      controller: _emailController,
+                      hintText: 'Email',
+                      obscureText: false,
+                      onSubmitted: (value) {
+                        FocusScope.of(context).requestFocus(_fieldPass);
+                      },
+                    ),
+                    // Space
+                    const SizedBox(height: 10),
 
-                  // Password text field
-                  MyTextField(
-                    focusNode: _fieldPass,
-                    controller: _passwordController,
-                    hintText: 'Password',
-                    obscureText: true,
-                    showToggleIcon: true,
-                    onSubmitted: (value) {
-                      _fieldPass.unfocus();
-                    },
-                  ),
+                    // Password text field
+                    MyTextField(
+                      focusNode: _fieldPass,
+                      controller: _passwordController,
+                      hintText: 'Password',
+                      obscureText: true,
+                      showToggleIcon: true,
+                      onSubmitted: (value) {
+                        _fieldPass.unfocus();
+                      },
+                    ),
 
-                  // Space
-                  const SizedBox(height: 10),
-
-
-                ],),
+                    // Space
+                    const SizedBox(height: 10),
+                  ],
+                ),
               ),
 
               // Login button
@@ -256,10 +247,6 @@ class _LoginPageState extends State<LoginPage> {
                 text: 'Login',
                 onTap: () async => login(),
               ),
-
-
-
-
 
               // Space
 
@@ -272,7 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.inversePrimary,
                       fontFamily: 'Sora',
-                      fontSize: _getClampedFontSize(context, 0.02),
+                      fontSize: 12,
                     ),
                   ),
                   const SizedBox(width: 5),
@@ -298,7 +285,7 @@ class _LoginPageState extends State<LoginPage> {
                               ? Theme.of(context).colorScheme.secondaryContainer
                               : Theme.of(context).colorScheme.secondary,
                           fontFamily: 'Sora',
-                          fontSize: _getClampedFontSize(context, 0.02),
+                          fontSize: 12,
                         ),
                       ),
                     ),
@@ -327,7 +314,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.inversePrimary,
                           fontFamily: 'Sora',
-                          fontSize: _getClampedFontSize(context, 0.02),
+                          fontSize: 12,
                         ),
                       ),
                     ),

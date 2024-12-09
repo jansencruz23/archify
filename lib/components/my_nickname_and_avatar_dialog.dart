@@ -1,5 +1,6 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/helpers/avatar_mapper.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 
 class MyNicknameAndAvatarDialog extends StatefulWidget {
@@ -49,11 +50,6 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
     super.dispose();
   }
 
-  //Font responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
   @override
   Widget build(BuildContext context) {
     final fillColor = Theme.of(context).colorScheme.tertiary;
@@ -120,8 +116,10 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                               decoration: defaultDecoration,
                               style: TextStyle(
                                 fontFamily: 'Sora',
-                                fontSize: 18,
-                                color: Theme.of(context).colorScheme.inversePrimary,
+                                //fontSize: 18,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -155,7 +153,8 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                   itemBuilder: (context, index) {
                     final avatarId = avatarMap.keys.elementAt(index);
                     final avatarPath = avatarMap[avatarId]!;
-                    final isSelected = selectedAvatarPath == avatarMap[avatarId];
+                    final isSelected =
+                        selectedAvatarPath == avatarMap[avatarId];
 
                     return GestureDetector(
                       onTap: () {
@@ -208,7 +207,7 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                               style: TextStyle(
                                 fontFamily: 'Sora',
                                 color: Color(0xFF333333),
-                                fontSize: 20,
+                                //fontSize: 20,
                                 fontWeight: FontWeight.w600,
                               ),
                               child: Text('No Photo Selected'),
@@ -217,9 +216,10 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                               style: TextStyle(
                                 fontFamily: 'Sora',
                                 color: Color(0xFF333333),
-                                fontSize: 18,
+                                //fontSize: 18,
                               ),
-                              child: Text('Please select a photo before confirming.'),
+                              child: Text(
+                                  'Please select a photo before confirming.'),
                             ),
                             actions: [
                               TextButton(
@@ -231,7 +231,7 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                                   style: TextStyle(
                                     fontFamily: 'Sora',
                                     color: Color(0xFFFF6F61),
-                                    fontSize: 16,
+                                    //fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -250,7 +250,7 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                                 style: TextStyle(
                                   fontFamily: 'Sora',
                                   color: Color(0xFF333333),
-                                  fontSize: 20,
+                                  fontSize: getClampedFontSize(context, 0.04),
                                   fontWeight: FontWeight.w600,
                                 ),
                                 child: Text('Nickname Required'),
@@ -259,9 +259,10 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                                 style: TextStyle(
                                   fontFamily: 'Sora',
                                   color: Color(0xFF333333),
-                                  fontSize: 18,
+                                  //fontSize: 18,
                                 ),
-                                child: Text('Please enter a nickname before confirming.'),
+                                child: Text(
+                                    'Please enter a nickname before confirming.'),
                               ),
                               actions: [
                                 TextButton(
@@ -273,7 +274,7 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                                     style: TextStyle(
                                       fontFamily: 'Sora',
                                       color: Color(0xFFFF6F61),
-                                      fontSize: 16,
+                                      //fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -281,7 +282,6 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                               ],
                             ),
                           );
-
                         } else {
                           // Confirmation dialog
                           widget.onSubmit();
@@ -290,7 +290,8 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                       }
                     },
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Color(0xFFFF6F61)),
+                      backgroundColor:
+                          MaterialStateProperty.all(Color(0xFFFF6F61)),
                       foregroundColor: MaterialStateProperty.all(Colors.white),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
@@ -302,7 +303,6 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                       'Confirm Selection',
                       style: TextStyle(
                         fontFamily: 'Sora',
-                        fontSize: _getClampedFontSize(context, 0.04),
                         fontWeight: FontWeight.bold,
                       ),
                     ),

@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 
 class TermsAndConditionsPage extends StatelessWidget {
@@ -11,7 +12,7 @@ class TermsAndConditionsPage extends StatelessWidget {
           'Privacy',
           style: TextStyle(
               fontFamily: 'Sora',
-              fontSize: 22,
+              fontSize: getClampedFontSize(context, 0.04),
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.inversePrimary),
         ),
@@ -26,7 +27,7 @@ class TermsAndConditionsPage extends StatelessWidget {
               'Terms and Conditions',
               style: TextStyle(
                   fontFamily: 'Sora',
-                  fontSize: 22,
+                  fontSize: getClampedFontSize(context, 0.03),
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.inversePrimary),
             ),
@@ -46,7 +47,7 @@ class TermsAndConditionsPage extends StatelessWidget {
               'These terms are governed by the laws of your country.\n\n'
               '7. Contact\n'
               'For any questions regarding these terms, please contact us at support@archify.com.\n',
-              style: TextStyle(fontSize: 16, color: Colors.black87),
+              style: TextStyle(color: Colors.black87),
             ),
             SizedBox(height: 32.0),
             Center(
@@ -54,7 +55,6 @@ class TermsAndConditionsPage extends StatelessWidget {
                 'Last updated: [30.11.2024]',
                 style: TextStyle(
                     fontFamily: 'Sora',
-                    fontSize: 14,
                     fontStyle: FontStyle.italic,
                     color: Theme.of(context).colorScheme.inversePrimary),
               ),

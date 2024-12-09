@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gal/gal.dart';
@@ -49,9 +50,9 @@ class _FullScreenImageState extends State<FullScreenImage> {
               ),
             ),
             duration: Duration(seconds: 2),
-              backgroundColor: Colors.transparent,
-              behavior: SnackBarBehavior.floating,
-              elevation: 0,
+            backgroundColor: Colors.transparent,
+            behavior: SnackBarBehavior.floating,
+            elevation: 0,
           ),
         );
       }
@@ -72,18 +73,16 @@ class _FullScreenImageState extends State<FullScreenImage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           widget.caption,
-          style: const TextStyle(
-            fontFamily: 'Sora',
-            color: Color(0xFF333333),
-            fontSize: 20,
-          ),
+          style: TextStyle(
+              fontFamily: 'Sora',
+              color: Color(0xFF333333),
+              fontSize: getClampedFontSize(context, 0.05)),
         ),
       ),
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -122,12 +121,13 @@ class _FullScreenImageState extends State<FullScreenImage> {
                                 shape: BoxShape.circle,
                                 boxShadow: _isClicked
                                     ? [
-                                  BoxShadow(
-                                    color: Colors.black12.withOpacity(0.1),
-                                    blurRadius: 8,
-                                    spreadRadius: 5,
-                                  ),
-                                ]
+                                        BoxShadow(
+                                          color:
+                                              Colors.black12.withOpacity(0.1),
+                                          blurRadius: 8,
+                                          spreadRadius: 5,
+                                        ),
+                                      ]
                                     : null,
                               ),
                             ),

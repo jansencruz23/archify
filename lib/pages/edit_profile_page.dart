@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +86,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void _unfocusAllFields() {
     FocusScope.of(context).unfocus();
   }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -104,12 +106,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 33.0),
             alignment: Alignment.centerLeft,
-            child: const SafeArea(
+            child: SafeArea(
               child: Text(
                 "Edit Profile",
                 style: TextStyle(
                   fontFamily: 'Sora',
-                  fontSize: 22,
+                  fontSize: getClampedFontSize(context, 0.05),
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
                 ),
@@ -127,7 +129,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      Consumer<UserProvider>(builder: (context, provider, child) {
+                      Consumer<UserProvider>(
+                          builder: (context, provider, child) {
                         return CircleAvatar(
                           radius: 55,
                           backgroundColor: Colors.grey[300],
@@ -140,8 +143,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         onPressed:
                             _changeProfilePicture, // Trigger profile picture change
                         backgroundColor: const Color(0xFFFF6F61),
-                        child:
-                            const Icon(Icons.edit, size: 18, color: Colors.white),
+                        child: const Icon(Icons.edit,
+                            size: 18, color: Colors.white),
                       ),
                     ],
                   ),
@@ -153,23 +156,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       labelText: "Name",
                       labelStyle: const TextStyle(
                         fontFamily: 'Sora',
-                        fontSize: 14,
                         color: Color(0xFF333333),
                       ),
                       fillColor: const Color(0xFFFAF4E8),
                       filled: true,
                       enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Color(0xFFFAF4E8), width: 1),
+                        borderSide: const BorderSide(
+                            color: Color(0xFFFAF4E8), width: 1),
                         borderRadius: BorderRadius.circular(25),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Color(0xFFFAF4E8), width: 2),
+                        borderSide: const BorderSide(
+                            color: Color(0xFFFAF4E8), width: 2),
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    style: TextStyle(fontFamily: 'Sora', color: Theme.of(context).colorScheme.inversePrimary),
+                    style: TextStyle(
+                        fontFamily: 'Sora',
+                        color: Theme.of(context).colorScheme.inversePrimary),
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) {
                       FocusScope.of(context).requestFocus(_bioFocus);
@@ -189,24 +193,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       labelText: "Bio",
                       labelStyle: const TextStyle(
                         fontFamily: 'Sora',
-                        fontSize: 14,
                         color: Color(0xFF333333),
                       ),
                       fillColor: const Color(0xFFFAF4E8),
                       filled: true,
                       enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Color(0xFFFAF4E8), width: 1),
+                        borderSide: const BorderSide(
+                            color: Color(0xFFFAF4E8), width: 1),
                         borderRadius: BorderRadius.circular(25),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Color(0xFFFAF4E8), width: 2),
+                        borderSide: const BorderSide(
+                            color: Color(0xFFFAF4E8), width: 2),
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-
-                    style: TextStyle(fontFamily: 'Sora', color: Theme.of(context).colorScheme.inversePrimary),
+                    style: TextStyle(
+                        fontFamily: 'Sora',
+                        color: Theme.of(context).colorScheme.inversePrimary),
                     maxLines: 3,
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) {
@@ -227,8 +231,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         onPressed: _cancelEdit,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          side:
-                              const BorderSide(color: Color(0xFFFF6F61), width: 1),
+                          side: const BorderSide(
+                              color: Color(0xFFFF6F61), width: 1),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 50, vertical: 15),
                           shape: RoundedRectangleBorder(
@@ -240,7 +244,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           style: TextStyle(
                             fontFamily: 'Sora',
                             fontWeight: FontWeight.w600,
-                            fontSize: 16,
                             color: Color(0xFFFF6F61),
                           ),
                         ),
@@ -260,7 +263,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           style: TextStyle(
                             fontFamily: 'Sora',
                             fontWeight: FontWeight.w600,
-                            fontSize: 16,
                             color: Colors.white,
                           ),
                         ),

@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/services/database/day/day_gate.dart';
 import 'package:archify/services/database/day/day_provider.dart';
@@ -242,21 +243,23 @@ class _HomeScreenState extends State<HomeScreen>
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: const Color(0xFFFF6F61),
-          title: const Text(
+          title: Text(
             'Enter Day Code',
             style: TextStyle(
               fontFamily: 'Sora',
               color: Colors.white,
+              fontSize: getClampedFontSize(context, 0.3),
             ),
           ),
           content: TextField(
             controller: codeController,
             cursorColor: Colors.white,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Enter your code',
               hintStyle: TextStyle(
                 fontFamily: 'Sora',
                 color: Colors.white70,
+                fontSize: getClampedFontSize(context, 0),
               ),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white),
@@ -265,9 +268,10 @@ class _HomeScreenState extends State<HomeScreen>
                 borderSide: BorderSide(color: Colors.white),
               ),
             ),
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Sora',
               color: Colors.white,
+              fontSize: getClampedFontSize(context, 0),
             ),
           ),
           actions: [
@@ -275,11 +279,12 @@ class _HomeScreenState extends State<HomeScreen>
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text(
+              child: Text(
                 'Cancel',
                 style: TextStyle(
                   fontFamily: 'Sora',
                   color: Colors.white,
+                  fontSize: getClampedFontSize(context, 0),
                 ),
               ),
             ),
@@ -296,11 +301,12 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 );
               },
-              child: const Text(
+              child: Text(
                 'Enter',
                 style: TextStyle(
                   fontFamily: 'Sora',
                   color: Colors.white,
+                  fontSize: getClampedFontSize(context, 0),
                 ),
               ),
             ),
@@ -395,9 +401,10 @@ class _HomeScreenState extends State<HomeScreen>
                                   ),
                                   title: Text(
                                     item['title'],
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontFamily: 'Sora',
                                       color: Colors.white,
+                                      fontSize: getClampedFontSize(context, 0),
                                     ),
                                   ),
                                 ),

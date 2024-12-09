@@ -1,4 +1,5 @@
 import 'package:archify/components/my_text_field.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -34,11 +35,7 @@ class _SetupNamePageState extends State<SetupNamePage> {
       _nameSuggestions = nameSuggestions;
     });
   }
-  //For Responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Ang min and max nyaa
-  }
+
   @override
   Widget build(BuildContext context) {
     final names = _nameSuggestions;
@@ -48,14 +45,17 @@ class _SetupNamePageState extends State<SetupNamePage> {
         padding: const EdgeInsets.all(40),
         child: Column(
           children: [
-             Padding(
-               padding: const EdgeInsets.fromLTRB(10, 40, 10, 30),
-               child: Text('What should we call you?', style: TextStyle(
-                fontFamily: 'Sora',
-                color: Theme.of(context).colorScheme.inversePrimary,
-                fontSize: _getClampedFontSize(context, 0.05),
-                           ),),
-             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 40, 10, 30),
+              child: Text(
+                'What should we call you?',
+                style: TextStyle(
+                  fontFamily: 'Sora',
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                  fontSize: getClampedFontSize(context, 0.05),
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: MyTextField(
@@ -74,11 +74,13 @@ class _SetupNamePageState extends State<SetupNamePage> {
                     final name = names[index];
 
                     return ListTile(
-                      title: Text(names[index], style: TextStyle(
-                      fontFamily: 'Sora',
+                      title: Text(
+                        names[index],
+                        style: TextStyle(
+                          fontFamily: 'Sora',
                           color: Theme.of(context).colorScheme.inversePrimary,
-                      fontSize: _getClampedFontSize(context, 0.04),
-                    ),),
+                        ),
+                      ),
                       onTap: () {
                         widget.nameController.text = names[index];
                       },

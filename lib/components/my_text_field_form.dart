@@ -85,7 +85,7 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
             hintStyle: TextStyle(
               color: Theme.of(context).colorScheme.onSurface,
               fontFamily: 'Sora',
-              fontSize: 18,
+              //fontSize: 18,
             ),
             contentPadding: const EdgeInsets.only(left: 30),
           );
@@ -102,13 +102,13 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
               fontFamily: 'Sora',
-              fontSize: 18,
+              //fontSize: 18,
             ),
             decoration: widget.decoration?.copyWith(
-              fillColor: hasFocus
-                  ? widget.decoration?.fillColor ?? focusColor
-                  : widget.decoration?.fillColor ?? fillColor,
-            ) ??
+                  fillColor: hasFocus
+                      ? widget.decoration?.fillColor ?? focusColor
+                      : widget.decoration?.fillColor ?? fillColor,
+                ) ??
                 defaultDecoration,
           );
         },

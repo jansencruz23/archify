@@ -1,8 +1,10 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_profile_picture.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/services/database/day/day_gate.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/pages/edit_profile_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
@@ -266,7 +268,7 @@ class _ProfilePageState extends State<ProfilePage>
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.inversePrimary,
-                        fontSize: 18,
+                        fontSize: getClampedFontSize(context, 0.04),
                         fontFamily: 'Sora'),
                   ),
                   Padding(
@@ -275,7 +277,7 @@ class _ProfilePageState extends State<ProfilePage>
                       userProfile == null ? 'Loading' : userProfile.bio,
                       maxLines: 3,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: getClampedFontSize(context, 0.0),
                         fontFamily: 'Sora',
                         color: Theme.of(context).colorScheme.inversePrimary,
                       ),
@@ -302,7 +304,7 @@ class _ProfilePageState extends State<ProfilePage>
                         'Edit Profile',
                         style: TextStyle(
                           fontFamily: 'Sora',
-                          fontSize: 16,
+                          //fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -449,6 +451,7 @@ class _ProfilePageState extends State<ProfilePage>
                                         color: _currentDay != null
                                             ? Colors.grey[300]
                                             : Colors.white,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ),

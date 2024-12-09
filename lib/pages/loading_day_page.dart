@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/services/database/day/day_provider.dart';
@@ -198,11 +199,6 @@ class _LoadingDayPage extends State<LoadingDayPage>
     super.dispose();
   }
 
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   Widget build(BuildContext context) {
     final _userListeningProvider = Provider.of<UserProvider>(context);
@@ -222,9 +218,9 @@ class _LoadingDayPage extends State<LoadingDayPage>
                   Text(
                     'Let’s keep the moment,',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.03),
                       fontFamily: 'Sora',
                       color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: 12,
                     ),
                   ),
                   Positioned(
@@ -233,7 +229,7 @@ class _LoadingDayPage extends State<LoadingDayPage>
                     child: Text(
                       'Pick the best shot!',
                       style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
+                        fontSize: getClampedFontSize(context, 0.05),
                         fontFamily: 'Sora',
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.inversePrimary,
