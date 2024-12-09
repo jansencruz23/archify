@@ -73,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage>
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          customRoute(EmptyDayPage(), Offset(-1.0, 0.0)), // navigate from left to right
+          customRoute(DayGate(), Offset(-1.0, 0.0)), // navigate from left to right
         );
       } else if (index == 2) {
         if (_showVerticalBar) {

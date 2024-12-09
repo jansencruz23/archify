@@ -111,7 +111,7 @@ class _SettingsPageState extends State<SettingsPage>
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          customRoute(EmptyDayPage()),
+          customRoute(DayGate()),
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
