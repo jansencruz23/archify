@@ -83,15 +83,35 @@ class _SettingsPageState extends State<SettingsPage>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
+      Route customRoute(Widget page) {
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(-1.0, 0.0); // from left magna-navigate
+            const end = Offset.zero;
+            const curve = Curves.ease;
+
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+      }
+
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          customRoute(HomePage()),
         );
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DayGate()),
+          customRoute(DayGate()),
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -106,7 +126,7 @@ class _SettingsPageState extends State<SettingsPage>
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          customRoute(ProfilePage()),
         );
       }
     });

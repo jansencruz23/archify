@@ -134,7 +134,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
               color: Theme.of(context).colorScheme.inversePrimary),
         ),
         content: Text(
-          'Are you sure you want to delete you day?',
+          'Are you sure you want to delete your day?',
           style: TextStyle(
               fontFamily: 'Sora',
               color: Theme.of(context).colorScheme.inversePrimary),
@@ -222,7 +222,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
           alignment: Alignment.centerLeft,
           child: const SafeArea(
             child: Text(
-              "Update your Day",
+              "Update your day",
               style: TextStyle(
                 fontFamily: 'Sora',
                 fontSize: 20,
@@ -449,12 +449,16 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                       ),
                     ],
                   ),
-                  TextButton(
-                    onPressed: _showDeleteDayDialog,
-                    child: const Text(
-                      'Delete Day',
-                      style: TextStyle(
-                        color: Colors.red,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: TextButton(
+                      onPressed: _showDeleteDayDialog,
+                      child: const Text(
+                        'Delete Day',
+                        style: TextStyle(
+                          fontFamily: 'Sora',
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ),

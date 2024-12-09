@@ -60,10 +60,29 @@ class _DaySpacePageState extends State<DaySpacePage>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
+      Route customRoute(Widget page, Offset startOffset) {
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const end = Offset.zero;
+            const curve = Curves.ease;
+
+            var tween =
+            Tween(begin: startOffset, end: end).chain(CurveTween(curve: curve));
+
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+      }
+
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          customRoute(HomePage(), Offset(-1.0, 0.0)), // navigate from left to right
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -78,12 +97,12 @@ class _DaySpacePageState extends State<DaySpacePage>
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          customRoute(ProfilePage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
+          customRoute(SettingsPage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       }
     });
