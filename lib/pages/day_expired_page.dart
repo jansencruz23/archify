@@ -296,6 +296,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                     style: TextStyle(
                       fontFamily: 'Sora',
                       color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: getClampedFontSize(context, 0.05),
                     ),
                   ),
                 ],

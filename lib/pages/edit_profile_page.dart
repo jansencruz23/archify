@@ -154,9 +154,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     controller: _nameController,
                     decoration: InputDecoration(
                       labelText: "Name",
-                      labelStyle: const TextStyle(
+                      labelStyle: TextStyle(
                         fontFamily: 'Sora',
                         color: Color(0xFF333333),
+                        fontSize: getClampedFontSize(context, 0.0),
                       ),
                       fillColor: const Color(0xFFFAF4E8),
                       filled: true,
@@ -191,9 +192,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     focusNode: _bioFocus,
                     decoration: InputDecoration(
                       labelText: "Bio",
-                      labelStyle: const TextStyle(
+                      labelStyle: TextStyle(
                         fontFamily: 'Sora',
                         color: Color(0xFF333333),
+                        fontSize: getClampedFontSize(context, 0.0),
                       ),
                       fillColor: const Color(0xFFFAF4E8),
                       filled: true,
