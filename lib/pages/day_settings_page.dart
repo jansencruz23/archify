@@ -266,9 +266,13 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                                       fontSize: 18,
                                     ),
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.calendar_today,
-                                    color: Color(0xFFC8C1B4),
+                                    color: _votingDeadline == TimeOfDay.now()
+                                        ? Color(0xFFC8C1B4)
+                                        : Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
                                     size: 20,
                                   ),
                                 ],

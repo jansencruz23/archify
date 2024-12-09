@@ -378,13 +378,16 @@ class _DaySpacePageState extends State<DaySpacePage>
               color: Theme.of(context).colorScheme.inversePrimary,
             ),
           ),
-          content: Container(
+          content: SizedBox(
             width: double.maxFinite,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(name),
+                  Text(name,                     style: TextStyle(
+                      fontFamily: 'Sora',
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.inversePrimary),) ,
                   QrImageView(
                     data: code,
                     version: QrVersions.auto,
@@ -569,8 +572,8 @@ class _DaySpacePageState extends State<DaySpacePage>
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                       day?.votingDeadline == null
-                                          ? 'VOTE ENDS: N/A'
-                                          : 'VOTE ENDS: ${_formatDuration(_remainingTime)}',
+                                          ? 'DEADLINE: N/A'
+                                          : 'DEADLINE: ${_formatDuration(_remainingTime)}',
                                       style: TextStyle(
                                         fontSize:
                                             _getClampedFontSize(context, 0.03),
