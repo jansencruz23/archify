@@ -1,7 +1,7 @@
 import 'package:archify/pages/day_space_page.dart';
 import 'package:archify/pages/no_moment_uploaded_page.dart';
 import 'package:archify/pages/day_expired_page.dart';
-import 'package:archify/pages/no_moment_uploaded_page.dart';
+import 'package:archify/pages/setup_pages/setup_intro_page.dart';
 import 'package:archify/pages/home_page.dart';
 import 'package:archify/services/auth/login_or_register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
