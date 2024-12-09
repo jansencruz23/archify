@@ -54,9 +54,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
         _permissionGranted = result.isGranted;
       });
 
-      if (!result.isGranted) {
-        _showPermissionDeniedDialog();
-      }
     }
   }
 
@@ -112,6 +109,12 @@ class _QRScannerScreenState extends State<QRScannerScreen>
     }
   }
 
+  //Font responsiveness
+  double _getClampedFontSize(BuildContext context, double scale) {
+    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
+    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,7 +155,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Sora',
-                      fontSize: 16,
+                      fontSize: _getClampedFontSize(context, 0.03),
                       color: Colors.red,
                     ),
                   ),
@@ -183,7 +186,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'Sora',
-                          fontSize: 18,
+                          fontSize: _getClampedFontSize(context, 0.04),
                           fontWeight: FontWeight.w500,
                         ),
                       ),

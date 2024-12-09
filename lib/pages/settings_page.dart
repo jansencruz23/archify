@@ -471,7 +471,7 @@ class _SettingsPageState extends State<SettingsPage>
                             'archify.app@gmail.com',
                             style: TextStyle(
                                 fontFamily: 'Sora',
-                                fontSize: 22,
+                                fontSize: _getClampedFontSize(context, 0.05),
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
                                     .colorScheme
@@ -481,7 +481,7 @@ class _SettingsPageState extends State<SettingsPage>
                             'Feel free to contact us via our email!',
                             style: TextStyle(
                                 fontFamily: 'Sora',
-                                fontSize: 16,
+                                fontSize: _getClampedFontSize(context, 0.03),
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
                                     .colorScheme
