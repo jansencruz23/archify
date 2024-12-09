@@ -726,6 +726,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             isRotated: _isRotated,
                             toggleRotation: _toggleRotation,
                             showEnterDayCodeDialog: _showEnterDayCodeDialog,
+                            updateCurrentDay: _loadCurrentDay,
                           ),
                         ),
                       ),

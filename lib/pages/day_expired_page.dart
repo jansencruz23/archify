@@ -95,6 +95,9 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     });
   }
 
+  Future<void> _loadCurrentDay() async {
+    await _userProvider.updateCurrentDay();
+  }
 
   void _toggleRotation() {
     setState(() {

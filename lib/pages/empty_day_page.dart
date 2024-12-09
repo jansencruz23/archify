@@ -22,6 +22,7 @@ class EmptyDayPage extends StatefulWidget {
 
 class _EmptyDayPageState extends State<EmptyDayPage>
     with TickerProviderStateMixin {
+  late final UserProvider _userProvider;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -53,6 +54,10 @@ class _EmptyDayPageState extends State<EmptyDayPage>
         ),
       ),
     );
+  }
+
+  Future<void> _loadCurrentDay() async {
+    await _userProvider.updateCurrentDay();
   }
 
   void _onItemTapped(int index) {
@@ -178,6 +183,7 @@ class _EmptyDayPageState extends State<EmptyDayPage>
   @override
   void initState() {
     super.initState();
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -281,6 +287,7 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                 isRotated: _isRotated,
                 toggleRotation: _toggleRotation,
                 showEnterDayCodeDialog: _showEnterDayCodeDialog,
+                updateCurrentDay: _loadCurrentDay,
               ),
             ),
             if (_showVerticalBar)
@@ -337,8 +344,7 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                                           builder: (context) =>
                                               DaySettingsPage()),
                                     );
-                                  }
-                                  else if (item['title'] == 'Scan QR code') {
+                                  } else if (item['title'] == 'Scan QR code') {
                                     _scanQRCode();
                                   }
                                 },

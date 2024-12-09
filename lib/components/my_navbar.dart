@@ -15,6 +15,7 @@ class MyNavbar extends StatelessWidget {
   final bool isRotated;
   final Function toggleRotation;
   final Function(BuildContext)? showEnterDayCodeDialog;
+  final void Function()? updateCurrentDay;
 
   const MyNavbar({
     super.key,
@@ -24,6 +25,7 @@ class MyNavbar extends StatelessWidget {
     required this.isRotated,
     required this.toggleRotation,
     this.showEnterDayCodeDialog,
+    this.updateCurrentDay,
   });
 
   static const double navIconSize = 30.0;
@@ -81,10 +83,12 @@ class MyNavbar extends StatelessWidget {
     );
   }
 
-
   Widget _buildElevatedNavIcon() {
     return GestureDetector(
       onTap: () {
+        if (updateCurrentDay != null) {
+          updateCurrentDay!();
+        }
         toggleRotation();
         onItemTapped(2);
       },
