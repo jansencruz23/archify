@@ -351,6 +351,7 @@ class _SettingsPageState extends State<SettingsPage>
                           fontWeight: FontWeight
                               .bold, // Set additional styles if needed
                           fontSize: 20.0,
+                          fontFamily: 'Sora',
                         ),
                         messageAlign:
                             TextAlign.center, // Align the message text
@@ -359,6 +360,7 @@ class _SettingsPageState extends State<SettingsPage>
                               .colorScheme
                               .inversePrimary, // Set the message color
                           fontSize: 16.0,
+                          fontFamily: 'Sora',
                         ),
                       ),
                       actionsBuilder: (context, stars) {
@@ -375,9 +377,8 @@ class _SettingsPageState extends State<SettingsPage>
                                 child: Text(
                                   'Later',
                                   style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary),
+                                      color: Color(0xFFFF6F61),
+                                    fontFamily: 'Sora',),
                                 ),
                               ),
                               TextButton(
@@ -389,9 +390,8 @@ class _SettingsPageState extends State<SettingsPage>
                                 child: Text(
                                   'Rate Now',
                                   style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary),
+                                      color: Color(0xFFFF6F61),
+                                    fontFamily: 'Sora',),
                                 ),
                               ),
                             ],
@@ -464,6 +464,7 @@ class _SettingsPageState extends State<SettingsPage>
                           title: Text(
                             'archify.app@gmail.com',
                             style: TextStyle(
+                                fontFamily: 'Sora',
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
@@ -473,6 +474,7 @@ class _SettingsPageState extends State<SettingsPage>
                           content: Text(
                             'Feel free to contact us via our email!',
                             style: TextStyle(
+                                fontFamily: 'Sora',
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
@@ -488,11 +490,10 @@ class _SettingsPageState extends State<SettingsPage>
                                 child: Text(
                                   'Close',
                                   style: TextStyle(
+                                      fontFamily: 'Sora',
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary),
+                                      color: Color(0xFFFF6F61)),
                                 ),
                               ),
                             ),
