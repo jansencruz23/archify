@@ -212,7 +212,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             focusNode: _dayNameFocusNode,
                             onSubmitted: (_) {
                               FocusScope.of(context)
-                                  .requestFocus(_dayDescriptionFocusNode);
+                                  .requestFocus(_maxParticipantsFocusNode);
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
