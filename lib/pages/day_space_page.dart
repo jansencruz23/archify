@@ -65,11 +65,6 @@ class _DaySpacePageState extends State<DaySpacePage>
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
-      } else if (index == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
-        );
       } else if (index == 2) {
         if (_showVerticalBar) {
           _animationController.reverse();
