@@ -118,6 +118,10 @@ class _SettingsPageState extends State<SettingsPage>
     });
   }
 
+  Future<void> _loadCurrentDay() async {
+    await _userProvider.updateCurrentDay();
+  }
+
   void _showEnterDayCodeDialog(BuildContext context) {
     TextEditingController _codeController = TextEditingController();
 
@@ -559,6 +563,7 @@ class _SettingsPageState extends State<SettingsPage>
               isRotated: _isRotated,
               toggleRotation: _toggleRotation,
               showEnterDayCodeDialog: _showEnterDayCodeDialog,
+              updateCurrentDay: _loadCurrentDay,
             ),
           ),
         ),

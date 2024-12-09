@@ -17,6 +17,7 @@ import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/settings_page.dart';
 
 class NoMomentUploadedPage extends StatefulWidget {
+  final Day? day;
   final DateTime? votingDeadline;
   final void Function() imageUploadClicked;
   final void Function() cameraUploadClicked;
@@ -28,6 +29,7 @@ class NoMomentUploadedPage extends StatefulWidget {
     required this.cameraUploadClicked,
     required this.settingsClicked,
     required this.votingDeadline,
+    required this.day,
   });
 
   @override
@@ -150,6 +152,10 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     );
   }
 
+  Future<void> _loadCurrentDay() async {
+    await _userProvider.updateCurrentDay();
+  }
+
   void _showEnterDayCodeDialog(BuildContext context) {
     TextEditingController _codeController = TextEditingController();
 
@@ -216,9 +222,11 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
   Future<void> _checkIsHost() async {
     if (day != null) {
       final result = await _dayProvider.isHost(day!.id);
-      setState(() {
-        _isHost = result;
-      });
+      if (mounted) {
+        setState(() {
+          _isHost = result;
+        });
+      }
     }
   }
 
@@ -243,6 +251,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
   @override
   void initState() {
     super.initState();
+    day = widget.day;
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
     _animationController = AnimationController(
@@ -256,10 +265,15 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     ).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
 
+    _startCountdown();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (day != null) {
+        _remainingTime = day!.votingDeadline.difference(DateTime.now());
+      }
+
       _userProvider.updateCurrentDay();
       _checkIsHost();
-      _startCountdown();
     });
   }
 
@@ -267,6 +281,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     if (widget.votingDeadline != null) {
       _remainingTime = widget.votingDeadline!.difference(DateTime.now());
       _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        if (widget.votingDeadline == null) return;
         final newRemainingTime =
             widget.votingDeadline!.difference(DateTime.now());
         if (newRemainingTime <= Duration.zero) {
@@ -382,6 +397,10 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     final userListeningProvider = Provider.of<UserProvider>(context);
     _currentDay = userListeningProvider.currentDay;
     day = listeningProvider.day;
+    if (day != null) {
+      _remainingTime = day!.votingDeadline.difference(DateTime.now());
+      _checkIsHost();
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -492,13 +511,13 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
               left: 0,
               right: 0,
               child: MyNavbar(
-                selectedIndex: _selectedIndex,
-                onItemTapped: _onItemTapped,
-                showVerticalBar: _showVerticalBar,
-                isRotated: _isRotated,
-                toggleRotation: _toggleRotation,
-                showEnterDayCodeDialog: _showEnterDayCodeDialog,
-              ),
+                  selectedIndex: _selectedIndex,
+                  onItemTapped: _onItemTapped,
+                  showVerticalBar: _showVerticalBar,
+                  isRotated: _isRotated,
+                  toggleRotation: _toggleRotation,
+                  showEnterDayCodeDialog: _showEnterDayCodeDialog,
+                  updateCurrentDay: _loadCurrentDay),
             ),
             if (_showVerticalBar)
               Positioned(

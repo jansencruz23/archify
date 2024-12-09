@@ -146,9 +146,20 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context);
-              goRootPage(context);
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+
               await _deleteDay();
+
+              if (mounted) {
+                Navigator.pop(context); // Close the loading dialog
+                goRootPage(context);
+              }
             },
             child: Text('Delete', style: TextStyle(color: Colors.red)),
           ),

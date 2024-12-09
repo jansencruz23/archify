@@ -81,6 +81,10 @@ class _ProfilePageState extends State<ProfilePage>
     });
   }
 
+  Future<void> _loadCurrentDay() async {
+    await _userProvider.updateCurrentDay();
+  }
+
   void _showEnterDayCodeDialog(BuildContext context) {
     TextEditingController codeController = TextEditingController();
 
@@ -349,13 +353,13 @@ class _ProfilePageState extends State<ProfilePage>
               child: Container(
                 color: Colors.white,
                 child: MyNavbar(
-                  selectedIndex: _selectedIndex,
-                  onItemTapped: _onItemTapped,
-                  showVerticalBar: _showVerticalBar,
-                  isRotated: _isRotated,
-                  toggleRotation: _toggleRotation,
-                  showEnterDayCodeDialog: _showEnterDayCodeDialog,
-                ),
+                    selectedIndex: _selectedIndex,
+                    onItemTapped: _onItemTapped,
+                    showVerticalBar: _showVerticalBar,
+                    isRotated: _isRotated,
+                    toggleRotation: _toggleRotation,
+                    showEnterDayCodeDialog: _showEnterDayCodeDialog,
+                    updateCurrentDay: _loadCurrentDay),
               ),
             ),
             if (_showVerticalBar)

@@ -195,6 +195,10 @@ class _DaySpacePageState extends State<DaySpacePage>
     if (day?.votingDeadline != null) {
       _remainingTime = day!.votingDeadline.difference(DateTime.now());
       _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        if (day == null) {
+          timer.cancel();
+          return;
+        }
         final newRemainingTime = day!.votingDeadline.difference(DateTime.now());
         if (newRemainingTime <= Duration.zero) {
           timer.cancel();
@@ -227,14 +231,16 @@ class _DaySpacePageState extends State<DaySpacePage>
     }
   }
 
-  bool _isHost = false;
+  bool? _isHost;
 
   Future<void> _checkIsHost() async {
     if (day != null) {
       final result = await _dayProvider.isHost(day!.id);
-      setState(() {
-        _isHost = result;
-      });
+      if (mounted) {
+        setState(() {
+          _isHost = result;
+        });
+      }
     }
   }
 
@@ -340,6 +346,10 @@ class _DaySpacePageState extends State<DaySpacePage>
     );
   }
 
+  Future<void> _loadCurrentDay() async {
+    await _userProvider.updateCurrentDay();
+  }
+
   Future<void> _imageUploadClicked() async {
     await _dayProvider.openImagePicker(
       isCameraSource: false,
@@ -384,10 +394,13 @@ class _DaySpacePageState extends State<DaySpacePage>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(name,                     style: TextStyle(
-                      fontFamily: 'Sora',
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).colorScheme.inversePrimary),) ,
+                  Text(
+                    name,
+                    style: TextStyle(
+                        fontFamily: 'Sora',
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).colorScheme.inversePrimary),
+                  ),
                   QrImageView(
                     data: code,
                     version: QrVersions.auto,
@@ -471,6 +484,10 @@ class _DaySpacePageState extends State<DaySpacePage>
     final moments = listeningProvider.moments;
     final hasUploaded = listeningProvider.hasUploaded;
     listeningProvider.listenToMoments(_dayCode);
+    if (day != null) {
+      _remainingTime = day!.votingDeadline.difference(DateTime.now());
+      _checkIsHost();
+    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -527,7 +544,6 @@ class _DaySpacePageState extends State<DaySpacePage>
                           // Day Code Container
                           Row(
                             children: [
-
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 10, top: 20, bottom: 10),
@@ -567,7 +583,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
                                     color:
-                                    Theme.of(context).colorScheme.secondary,
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -577,7 +593,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                                           : 'DEADLINE: ${_formatDuration(_remainingTime)}',
                                       style: TextStyle(
                                         fontSize:
-                                        _getClampedFontSize(context, 0.03),
+                                            _getClampedFontSize(context, 0.03),
                                         fontFamily: 'Sora',
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context)
@@ -588,28 +604,29 @@ class _DaySpacePageState extends State<DaySpacePage>
                                   ),
                                 ),
                               ),
-
                               Spacer(),
                               Padding(
                                 padding: const EdgeInsets.only(
                                     right: 8, top: 20, bottom: 10),
-                                child: _isHost
-                                    ? IconButton(
-                                        onPressed: _showSettings,
-                                        icon: Image.asset(
-                                          'lib/assets/images/edit_icon.png',
-                                          width: 30,
-                                          height: 30,
-                                        ),
-                                      )
-                                    : IconButton(
-                                        onPressed: _showSettings,
-                                        icon: Image.asset(
-                                          'lib/assets/images/leave_icon.png',
-                                          width: 24,
-                                          height: 24,
-                                        ),
-                                      ),
+                                child: _isHost == null
+                                    ? const SizedBox()
+                                    : _isHost!
+                                        ? IconButton(
+                                            onPressed: _showSettings,
+                                            icon: Image.asset(
+                                              'lib/assets/images/edit_icon.png',
+                                              width: 30,
+                                              height: 30,
+                                            ),
+                                          )
+                                        : IconButton(
+                                            onPressed: _showSettings,
+                                            icon: Image.asset(
+                                              'lib/assets/images/leave_icon.png',
+                                              width: 24,
+                                              height: 24,
+                                            ),
+                                          ),
                               ),
                             ],
                           ),
@@ -648,6 +665,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                     isRotated: _isRotated,
                     toggleRotation: _toggleRotation,
                     showEnterDayCodeDialog: _showEnterDayCodeDialog,
+                    updateCurrentDay: _loadCurrentDay,
                   ),
                 ),
                 if (_showVerticalBar)
@@ -743,6 +761,7 @@ class _DaySpacePageState extends State<DaySpacePage>
               cameraUploadClicked: _cameraUploadClicked,
               settingsClicked: _showSettings,
               votingDeadline: day?.votingDeadline,
+              day: day ?? null,
             ),
     );
   }
