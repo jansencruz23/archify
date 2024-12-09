@@ -1,6 +1,8 @@
-import 'package:archify/components/my_profile_picture.dart';
+import 'dart:io';
+import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SetupProfilePicPage extends StatefulWidget {
   final void Function()? onTap;
@@ -14,6 +16,8 @@ class SetupProfilePicPage extends StatefulWidget {
 class _SetupProfilePicPageState extends State<SetupProfilePicPage> {
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -31,10 +35,52 @@ class _SetupProfilePicPageState extends State<SetupProfilePicPage> {
           ),
         ),
         Center(
-          child: MyProfilePicture(
-            height: 100,
-            width: 100,
-            onProfileTapped: widget.onTap,
+          child: GestureDetector(
+            onTap: widget.onTap,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              height: 300,
+              width: 300,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFF5DEB3),
+                    Color(0xFFD2691E),
+                    Color(0xFFFF6F61),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: userProvider.picturePath == ''
+                  ? const Center(
+                      child: Icon(
+                        Icons.person_rounded,
+                        color: Colors.white,
+                        size: 200,
+                      ),
+                    )
+                  : Container(
+                      height: 300,
+                      width: 300,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 5,
+                        ),
+                        color: Colors.grey[200],
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: userProvider.picturePath.startsWith('https')
+                              ? Image.network(userProvider.picturePath).image
+                              : Image.file(File(userProvider.picturePath))
+                                  .image,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+            ),
           ),
         ),
       ],

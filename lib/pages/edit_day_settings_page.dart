@@ -131,7 +131,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
               color: Theme.of(context).colorScheme.inversePrimary),
         ),
         content: Text(
-          'Are you sure you want to delete you day?',
+          'Are you sure you want to delete your day?',
           style: TextStyle(
               fontFamily: 'Sora',
               color: Theme.of(context).colorScheme.inversePrimary),
@@ -219,7 +219,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
           alignment: Alignment.centerLeft,
           child: SafeArea(
             child: Text(
-              "Update your Day",
+              "Update your day",
               style: TextStyle(
                 fontFamily: 'Sora',
                 fontSize: getClampedFontSize(context, 0.05),
@@ -346,6 +346,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                                               .colorScheme
                                               .inversePrimary,
                                       fontFamily: 'Sora',
+                                      fontSize: getClampedFontSize(context, 0),
                                     ),
                                   ),
                                   Icon(
@@ -368,7 +369,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                   const SizedBox(height: 12),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       GestureDetector(
                         onTap: () {
@@ -398,11 +399,6 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                           ),
                         ),
                       ),
-                      // Add spacing between buttons
-                      SizedBox(
-                        width: 24,
-                      ),
-
                       GestureDetector(
                         onTap: _updateDay,
                         child: MouseRegion(
@@ -443,13 +439,16 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                       ),
                     ],
                   ),
-                  TextButton(
-                    onPressed: _showDeleteDayDialog,
-                    child: const Text(
-                      'Delete Day',
-                      style: TextStyle(
-                        fontFamily: 'Sora',
-                        color: Colors.red,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: TextButton(
+                      onPressed: _showDeleteDayDialog,
+                      child: const Text(
+                        'Delete Day',
+                        style: TextStyle(
+                          fontFamily: 'Sora',
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ),

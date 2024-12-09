@@ -184,7 +184,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'Sora',
-                          fontSize: getClampedFontSize(context, 0.04),
+                          fontSize: getClampedFontSize(context, 0.03),
                           fontWeight: FontWeight.w500,
                         ),
                       ),

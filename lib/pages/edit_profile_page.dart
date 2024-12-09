@@ -173,8 +173,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                     ),
                     style: TextStyle(
-                        fontFamily: 'Sora',
-                        color: Theme.of(context).colorScheme.inversePrimary),
+                      fontFamily: 'Sora',
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: getClampedFontSize(context, 0.0),
+                    ),
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) {
                       FocusScope.of(context).requestFocus(_bioFocus);
@@ -211,8 +213,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                     ),
                     style: TextStyle(
-                        fontFamily: 'Sora',
-                        color: Theme.of(context).colorScheme.inversePrimary),
+                      fontFamily: 'Sora',
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: getClampedFontSize(context, 0.0),
+                    ),
                     maxLines: 3,
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) {

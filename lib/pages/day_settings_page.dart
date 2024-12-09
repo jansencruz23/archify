@@ -224,6 +224,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             controller: _maxParticipantsController,
                             hintText: 'Max Participants',
                             obscureText: false,
+                            decoration: InputDecoration(),
                             focusNode: _maxParticipantsFocusNode,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
@@ -273,7 +274,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                                               .colorScheme
                                               .inversePrimary,
                                       fontFamily: 'Sora',
-                                      fontSize: 12,
+                                      fontSize: getClampedFontSize(context, 0),
                                     ),
                                   ),
                                   Icon(
@@ -296,7 +297,7 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                   const SizedBox(height: 35),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       GestureDetector(
                         onTap: () {
@@ -326,12 +327,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                           ),
                         ),
                       ),
-
-                      // Add spacing between buttons
-                      SizedBox(
-                        width: 22,
-                      ),
-
                       GestureDetector(
                         onTap: createDay,
                         child: MouseRegion(

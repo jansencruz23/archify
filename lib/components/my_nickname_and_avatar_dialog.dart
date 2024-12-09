@@ -116,7 +116,7 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                               decoration: defaultDecoration,
                               style: TextStyle(
                                 fontFamily: 'Sora',
-                                //fontSize: 18,
+                                fontSize: getClampedFontSize(context, 0),
                                 color: Theme.of(context)
                                     .colorScheme
                                     .inversePrimary,

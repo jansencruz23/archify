@@ -63,10 +63,30 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
+      Route customRoute(Widget page, Offset startOffset) {
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const end = Offset.zero;
+            const curve = Curves.ease;
+
+            var tween = Tween(begin: startOffset, end: end)
+                .chain(CurveTween(curve: curve));
+
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+      }
+
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          customRoute(
+              HomePage(), Offset(-1.0, 0.0)), // navigate from left to right
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -81,12 +101,14 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          customRoute(
+              ProfilePage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
+          customRoute(
+              SettingsPage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       }
     });
@@ -116,7 +138,13 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(name),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontFamily: 'Sora',
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
                   QrImageView(
                     data: code,
                     version: QrVersions.auto,
@@ -410,80 +438,75 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
       child: Scaffold(
         body: Stack(
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 20, bottom: 10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    child: GestureDetector(
-                      onTap: () => _showDayCode(
-                        day?.code ?? '',
-                        day?.name ?? '',
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'DAY CODE: ${day?.code ?? ''}',
-                          style: TextStyle(
-                            fontFamily: 'Sora',
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.surface,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 20, bottom: 10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        widget.votingDeadline == null
-                            ? 'VOTE ENDS: N/A'
-                            : 'VOTE ENDS: ${_formatDuration(_remainingTime)}',
-                        style: TextStyle(
-                          fontFamily: 'Sora',
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.surface,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8, top: 20, bottom: 10),
-                  child: _isHost == null
-                      ? const SizedBox()
-                      : _isHost!
-                          ? IconButton(
-                              onPressed: widget.settingsClicked,
-                              icon: Image.asset(
-                                'lib/assets/images/edit_icon.png',
-                                width: 30,
-                                height: 30,
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 10, top: 15, bottom: 10),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 0, top: 0, bottom: 0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            child: GestureDetector(
+                              onTap: () => _showDayCode(
+                                day?.code ?? '',
+                                day?.name ?? '',
                               ),
-                            )
-                          : IconButton(
-                              onPressed: widget.settingsClicked,
-                              icon: Image.asset(
-                                'lib/assets/images/leave_icon.png',
-                                width: 24,
-                                height: 24,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'DAY CODE: ${day?.code ?? ''}',
+                                  style: TextStyle(
+                                    fontSize: getClampedFontSize(context, 0.0),
+                                    fontFamily: 'Sora',
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.surface,
+                                  ),
+                                ),
                               ),
                             ),
-                ),
-              ],
+                          ),
+                        ),
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              right: 0, top: 0, bottom: 0),
+                          child: _isHost == null
+                              ? const SizedBox()
+                              : _isHost!
+                                  ? IconButton(
+                                      onPressed: widget.settingsClicked,
+                                      icon: Image.asset(
+                                        'lib/assets/images/edit_icon.png',
+                                        width: 26,
+                                        height: 26,
+                                      ),
+                                    )
+                                  : IconButton(
+                                      onPressed: widget.settingsClicked,
+                                      icon: Image.asset(
+                                        'lib/assets/images/leave_icon.png',
+                                        width: 24,
+                                        height: 24,
+                                      ),
+                                    ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             Center(
               child: Padding(
