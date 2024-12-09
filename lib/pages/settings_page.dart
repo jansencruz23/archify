@@ -364,7 +364,7 @@ class _SettingsPageState extends State<SettingsPage>
                               .inversePrimary, // Set the title color
                           fontWeight: FontWeight
                               .bold, // Set additional styles if needed
-                          fontSize: 20.0,
+                          fontSize: _getClampedFontSize(context, 0.05),
                           fontFamily: 'Sora',
                         ),
                         messageAlign:
@@ -373,7 +373,7 @@ class _SettingsPageState extends State<SettingsPage>
                           color: Theme.of(context)
                               .colorScheme
                               .inversePrimary, // Set the message color
-                          fontSize: 16.0,
+                          fontSize: _getClampedFontSize(context, 0.04),
                           fontFamily: 'Sora',
                         ),
                       ),
@@ -481,7 +481,7 @@ class _SettingsPageState extends State<SettingsPage>
                             'archify.app@gmail.com',
                             style: TextStyle(
                                 fontFamily: 'Sora',
-                                fontSize: 22,
+                                fontSize: _getClampedFontSize(context, 0.05),
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
                                     .colorScheme
@@ -491,7 +491,7 @@ class _SettingsPageState extends State<SettingsPage>
                             'Feel free to contact us via our email!',
                             style: TextStyle(
                                 fontFamily: 'Sora',
-                                fontSize: 16,
+                                fontSize: _getClampedFontSize(context, 0.03),
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
                                     .colorScheme
@@ -507,7 +507,7 @@ class _SettingsPageState extends State<SettingsPage>
                                   'Close',
                                   style: TextStyle(
                                       fontFamily: 'Sora',
-                                      fontSize: 22,
+                                      fontSize: _getClampedFontSize(context, 0.045),
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFFFF6F61)),
                                 ),
