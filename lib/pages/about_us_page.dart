@@ -103,6 +103,7 @@ class AboutUsPage extends StatelessWidget {
                     ),
                   ],
                 ),
+                SizedBox(width: 20.0),
               ],
             ),
           ],

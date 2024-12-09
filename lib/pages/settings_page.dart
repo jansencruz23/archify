@@ -464,6 +464,7 @@ class _SettingsPageState extends State<SettingsPage>
                           title: Text(
                             'archify.app@gmail.com',
                             style: TextStyle(
+                                fontFamily: 'Sora',
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
@@ -473,6 +474,7 @@ class _SettingsPageState extends State<SettingsPage>
                           content: Text(
                             'Feel free to contact us via our email!',
                             style: TextStyle(
+                                fontFamily: 'Sora',
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
@@ -488,11 +490,10 @@ class _SettingsPageState extends State<SettingsPage>
                                 child: Text(
                                   'Close',
                                   style: TextStyle(
+                                      fontFamily: 'Sora',
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary),
+                                      color: Color(0xFFFF6F61)),
                                 ),
                               ),
                             ),
