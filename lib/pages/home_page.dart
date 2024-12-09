@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if (index == 1) {
         Navigator.pushReplacement(
           context,
-          customRoute(DayGate()), // transition to EmptyDayPage
+          customRoute(EmptyDayPage()), // transition to EmptyDayPage
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
