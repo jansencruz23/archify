@@ -662,6 +662,8 @@ class _DaySpacePageState extends State<DaySpacePage>
           : NoMomentUploadedPage(
               imageUploadClicked: _imageUploadClicked,
               cameraUploadClicked: _cameraUploadClicked,
+              settingsClicked: _showSettings,
+              votingDeadline: day?.votingDeadline,
             ),
     );
   }

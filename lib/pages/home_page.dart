@@ -517,57 +517,56 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
 
                           //Carousel
-                        DefaultTextStyle(
-                          style: const TextStyle(
-                            fontFamily: 'Sora',
-                          ),
-                          child: CarouselSlider.builder(
-                            itemCount: days.length,
-                            itemBuilder: (context, index, realIndex) {
-                              if (days.isEmpty) {
-                                return const Center(
-                                  child: Text('No moments available.'),
-                                );
-                              }
-                              final moment = days[index];
-                              bool isMainPhoto = realIndex == index;
+                          DefaultTextStyle(
+                            style: const TextStyle(
+                              fontFamily: 'Sora',
+                            ),
+                            child: CarouselSlider.builder(
+                              itemCount: days.length,
+                              itemBuilder: (context, index, realIndex) {
+                                if (days.isEmpty) {
+                                  return const Center(
+                                    child: Text('No moments available.'),
+                                  );
+                                }
+                                final moment = days[index];
+                                bool isMainPhoto = realIndex == index;
 
-                              return GestureDetector(
-                                onTap: () => goFullScreenImage(
-                                  context,
-                                  moment.imageUrl,
-                                  moment.dayName,
-                                ),
-                                onDoubleTap: () => _toggleFavorites(),
-                                child: MyDay(
-                                  moment: moment,
-                                  isMainPhoto: isMainPhoto,
-                                  toggleFavorites: _toggleFavorites,
-                                ),
-                              );
-                            },
-                            options: CarouselOptions(
-                              enlargeCenterPage: true,
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              autoPlay: false,
-                              viewportFraction: 0.7,
-                              enableInfiniteScroll: false,
-                              reverse: true,
-                              scrollDirection: Axis.horizontal,
-                              onPageChanged: (index, reason) {
-                                setState(() {
-                                  _currentIndex = index;
-                                  _currentDayId = days[index].dayId;
-                                  _isInitialLoad = false;
-                                });
+                                return GestureDetector(
+                                  onTap: () => goFullScreenImage(
+                                    context,
+                                    moment.imageUrl,
+                                    moment.dayName,
+                                  ),
+                                  onDoubleTap: () => _toggleFavorites(),
+                                  child: MyDay(
+                                    moment: moment,
+                                    isMainPhoto: isMainPhoto,
+                                    toggleFavorites: _toggleFavorites,
+                                  ),
+                                );
                               },
+                              options: CarouselOptions(
+                                enlargeCenterPage: true,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                autoPlay: false,
+                                viewportFraction: 0.7,
+                                enableInfiniteScroll: false,
+                                reverse: true,
+                                scrollDirection: Axis.horizontal,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    _currentIndex = index;
+                                    _currentDayId = days[index].dayId;
+                                    _isInitialLoad = false;
+                                  });
+                                },
+                              ),
                             ),
                           ),
-                        ),
 
-
-
-              //View Comment Icon
+                          //View Comment Icon
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
@@ -803,7 +802,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                         context);
                                                   } else if (item['title'] ==
                                                       'Create a day') {
-                                                    Navigator.pushReplacement(
+                                                    Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>
