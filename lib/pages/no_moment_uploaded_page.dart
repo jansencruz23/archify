@@ -115,7 +115,10 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(name),
+                  Text(name,  style: TextStyle(
+                    fontFamily: 'Sora',
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),),
                   QrImageView(
                     data: code,
                     version: QrVersions.auto,
