@@ -108,8 +108,12 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Day?'),
-        content: Text('Are you sure you want to delete you day?'),
+        title: Text('Delete Day?', style: TextStyle( fontFamily: 'Sora', color:  Theme.of(context)
+            .colorScheme
+            .inversePrimary),),
+        content: Text('Are you sure you want to delete you day?', style: TextStyle( fontFamily: 'Sora', color:  Theme.of(context)
+            .colorScheme
+            .inversePrimary),),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -205,7 +209,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 50,
+                    height: 100,
                   ),
                   Container(
                     decoration: BoxDecoration(
