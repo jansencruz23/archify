@@ -204,7 +204,11 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> updateCurrentDay() async {
     final dayCode = await getJoinedDayCodeToday();
-    if (dayCode == null) return;
+    if (dayCode == null) {
+      _currentDay = null;
+      notifyListeners();
+      return;
+    }
 
     _currentDay = await _dayService.getDayByCodeFromFirebase(dayCode);
     if (_currentDay == null) {

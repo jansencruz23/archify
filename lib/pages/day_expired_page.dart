@@ -76,6 +76,10 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     });
   }
 
+  Future<void> _loadCurrentDay() async {
+    await _userProvider.updateCurrentDay();
+  }
+
   void _toggleRotation() {
     setState(() {
       _isRotated = !_isRotated;
@@ -303,6 +307,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
               isRotated: _isRotated,
               toggleRotation: _toggleRotation,
               showEnterDayCodeDialog: _showEnterDayCodeDialog,
+              updateCurrentDay: _loadCurrentDay,
             ),
           ),
           if (_showVerticalBar)

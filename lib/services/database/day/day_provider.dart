@@ -118,6 +118,7 @@ class DayProvider extends ChangeNotifier {
   Future<void> deleteDay(String dayId) async {
     await _dayService.deleteDayInFirebase(dayId);
     _day = null;
+    await _userProvider.updateCurrentDay();
 
     notifyListeners();
   }

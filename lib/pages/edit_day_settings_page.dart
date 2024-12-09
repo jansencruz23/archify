@@ -114,12 +114,18 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Day?', style: TextStyle( fontFamily: 'Sora', color:  Theme.of(context)
-            .colorScheme
-            .inversePrimary),),
-        content: Text('Are you sure you want to delete you day?', style: TextStyle( fontFamily: 'Sora', color:  Theme.of(context)
-            .colorScheme
-            .inversePrimary),),
+        title: Text(
+          'Delete Day?',
+          style: TextStyle(
+              fontFamily: 'Sora',
+              color: Theme.of(context).colorScheme.inversePrimary),
+        ),
+        content: Text(
+          'Are you sure you want to delete you day?',
+          style: TextStyle(
+              fontFamily: 'Sora',
+              color: Theme.of(context).colorScheme.inversePrimary),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -127,9 +133,20 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context);
-              goRootPage(context);
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+
               await _deleteDay();
+
+              if (mounted) {
+                Navigator.pop(context); // Close the loading dialog
+                goRootPage(context);
+              }
             },
             child: Text('Delete', style: TextStyle(color: Colors.red)),
           ),
