@@ -528,7 +528,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
 
                           //Carousel
-                          CarouselSlider.builder(
+                        DefaultTextStyle(
+                          style: const TextStyle(
+                            fontFamily: 'Sora',
+                          ),
+                          child: CarouselSlider.builder(
                             itemCount: days.length,
                             itemBuilder: (context, index, realIndex) {
                               if (days.isEmpty) {
@@ -537,7 +541,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 );
                               }
                               final moment = days[index];
-                              bool isMainPhoto = this.realIndex == index;
+                              bool isMainPhoto = realIndex == index;
 
                               return GestureDetector(
                                 onTap: () => goFullScreenImage(
@@ -570,8 +574,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               },
                             ),
                           ),
+                        ),
 
-                          //View Comment Icon
+
+
+              //View Comment Icon
                           Padding(
                             padding: const EdgeInsets.fromLTRB(8.0, 25, 8, 8),
                             child: Row(
