@@ -169,6 +169,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
+                    style: TextStyle(fontFamily: 'Sora', color: Theme.of(context).colorScheme.inversePrimary),
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) {
                       FocusScope.of(context).requestFocus(_bioFocus);
@@ -204,6 +205,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
+
+                    style: TextStyle(fontFamily: 'Sora', color: Theme.of(context).colorScheme.inversePrimary),
                     maxLines: 3,
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) {

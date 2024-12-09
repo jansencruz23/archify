@@ -108,7 +108,6 @@ class _DaySpacePageState extends State<DaySpacePage>
     });
   }
 
-
   void _toggleRotation() {
     setState(() {
       _isRotated = !_isRotated;
