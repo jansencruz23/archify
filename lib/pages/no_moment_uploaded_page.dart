@@ -211,7 +211,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
     );
   }
 
-  bool _isHost = false;
+  bool? _isHost;
 
   Future<void> _checkIsHost() async {
     if (day != null) {
@@ -442,23 +442,25 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                 Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(right: 8, top: 20, bottom: 10),
-                  child: _isHost
-                      ? IconButton(
-                          onPressed: widget.settingsClicked,
-                          icon: Image.asset(
-                            'lib/assets/images/edit_icon.png',
-                            width: 30,
-                            height: 30,
-                          ),
-                        )
-                      : IconButton(
-                          onPressed: widget.settingsClicked,
-                          icon: Image.asset(
-                            'lib/assets/images/leave_icon.png',
-                            width: 24,
-                            height: 24,
-                          ),
-                        ),
+                  child: _isHost == null
+                      ? const SizedBox()
+                      : _isHost!
+                          ? IconButton(
+                              onPressed: widget.settingsClicked,
+                              icon: Image.asset(
+                                'lib/assets/images/edit_icon.png',
+                                width: 30,
+                                height: 30,
+                              ),
+                            )
+                          : IconButton(
+                              onPressed: widget.settingsClicked,
+                              icon: Image.asset(
+                                'lib/assets/images/leave_icon.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
                 ),
               ],
             ),
