@@ -71,6 +71,13 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
               onSurface: Color(0xFF333333),
             ),
             dialogBackgroundColor: Colors.white,
+            textTheme: const TextTheme(
+              bodyMedium: TextStyle(color: Color(0xFF333333)),
+            ),
+            timePickerTheme: const TimePickerThemeData(
+              dayPeriodTextColor: Color(0xFF333333),
+              dayPeriodColor: (Color(0xFFFF6F61)),
+            ),
           ),
           child: child!,
         );
