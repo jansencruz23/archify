@@ -6,7 +6,6 @@ import 'package:archify/components/my_mobile_scanner_overlay.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 import 'package:archify/components/my_profile_picture.dart';
-import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/pages/empty_day_page.dart';
@@ -116,7 +115,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if (index == 1) {
         Navigator.pushReplacement(
           context,
-          customRoute(DayGate()),
+          customRoute(DayGate()), // transition to EmptyDayPage
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -223,22 +222,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) async {
+          onScan: (String code) {
             setState(() {
               qrCode = code;
             });
-            final isExisting = await _dayProvider.isDayExistingAndActive(code);
-
-            if (isExisting && mounted) {
-              goDaySpace(context, qrCode);
-              Navigator.pop(context);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Day does not exist or already finished'),
-                ),
-              );
-            }
+            goDaySpace(context, qrCode);
+            Navigator.pop(context);
           },
         ),
       ),
@@ -379,6 +368,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
+  //For Responsiveness
+  double _getClampedFontSize(BuildContext context, double scale) {
+    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
+    return calculatedFontSize.clamp(12.0, 24.0); // Ang min and max nyaa
+  }
+
   //Out ng comment textfield pag click anywhere
   void _unfocusAllFields() {
     FocusScope.of(context).unfocus();
@@ -439,7 +434,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           style: TextStyle(
                             fontFamily: 'Sora',
                             color: Theme.of(context).colorScheme.inversePrimary,
-                            fontSize: getClampedFontSize(context, 0.03),
+                            fontSize: _getClampedFontSize(context, 0.03),
                           ),
                         ),
                         // User's name text
@@ -448,14 +443,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           style: TextStyle(
                             fontFamily: 'Sora',
                             fontWeight: FontWeight.bold,
-                            fontSize: getClampedFontSize(context, 0.04),
+                            fontSize: _getClampedFontSize(context, 0.045),
                             color: Theme.of(context).colorScheme.inversePrimary,
                           ),
                         ),
                       ],
                     ),
                   ),
-
+                  // Notification icon button
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 14, 7, 0),
+                      child: IconButton(
+                        onPressed: () {
+                          _showNicknameAndAvatarDialog(context);
+                        },
+                        icon: Image.asset(
+                          'lib/assets/images/notification_icon.png',
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                    ),
+                  ],
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(5),
                     child: Divider(
@@ -498,7 +508,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         .inversePrimary,
                                     fontFamily: 'Sora',
                                     fontWeight: FontWeight.bold,
-                                    fontSize: getClampedFontSize(context, 0.05),
+                                    fontSize:
+                                        _getClampedFontSize(context, 0.05),
                                   ),
                                 ),
                               ],
@@ -582,6 +593,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         .colorScheme
                                         .inversePrimary,
                                     fontFamily: 'Sora',
+                                    fontSize:
+                                        _getClampedFontSize(context, 0.04),
                                   ),
                                 ),
                               ],
@@ -630,8 +643,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                       .colorScheme
                                                       .inversePrimary,
                                                   fontFamily: 'Sora',
-                                                  fontSize: getClampedFontSize(
-                                                      context, 0.03),
+                                                  fontSize: _getClampedFontSize(
+                                                      context, 0.04),
                                                 ),
                                               ),
                                             );
@@ -815,7 +828,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 color: _currentDay != null
                                                     ? Colors.grey[300]
                                                     : Colors.white,
-                                                fontSize: 14,
                                               ),
                                             ),
                                           ),

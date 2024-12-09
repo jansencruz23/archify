@@ -224,7 +224,6 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
                             controller: _maxParticipantsController,
                             hintText: 'Max Participants',
                             obscureText: false,
-                            decoration: InputDecoration(),
                             focusNode: _maxParticipantsFocusNode,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(

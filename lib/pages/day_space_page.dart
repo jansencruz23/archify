@@ -502,6 +502,7 @@ class _DaySpacePageState extends State<DaySpacePage>
     day = listeningProvider.day;
     final moments = listeningProvider.moments;
     final hasUploaded = listeningProvider.hasUploaded;
+    final votedMomentIds = listeningProvider.votedMomentIds;
     listeningProvider.listenToMoments(_dayCode);
     if (day != null) {
       _remainingTime = day!.votingDeadline.difference(DateTime.now());
@@ -659,9 +660,15 @@ class _DaySpacePageState extends State<DaySpacePage>
                                 final moment = moments![index];
                                 return MyMomentTile(
                                   moment: moment,
-                                  onTap: _showImageDialog,
                                   index: index,
                                   toggleVote: _toggleVote,
+                                  onTap: () => goViewImage(
+                                    context: context,
+                                    moment: moment,
+                                    toggleVote: () =>
+                                        _toggleVote(moment.momentId),
+                                    isActive: true,
+                                  ),
                                 );
                               },
                             ),

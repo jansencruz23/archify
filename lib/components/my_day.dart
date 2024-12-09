@@ -9,6 +9,7 @@ class MyDay extends StatefulWidget {
   final void Function() toggleFavorites;
   final Moment moment;
   final bool isMainPhoto;
+
   const MyDay(
       {super.key,
       required this.moment,

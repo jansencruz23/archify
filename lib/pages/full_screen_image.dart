@@ -1,4 +1,3 @@
-import 'package:archify/helpers/font_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gal/gal.dart';
@@ -79,10 +78,11 @@ class _FullScreenImageState extends State<FullScreenImage> {
       appBar: AppBar(
         title: Text(
           widget.caption,
-          style: TextStyle(
-              fontFamily: 'Sora',
-              color: Color(0xFF333333),
-              fontSize: getClampedFontSize(context, 0.05)),
+          style: const TextStyle(
+            fontFamily: 'Sora',
+            color: Color(0xFF333333),
+            fontSize: 20,
+          ),
         ),
       ),
       backgroundColor: Theme.of(context).colorScheme.primary,

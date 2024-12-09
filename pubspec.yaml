@@ -122,6 +122,8 @@ flutter:
     - lib/assets/images/leave_icon.png
     - lib/assets/images/download_icon.png
     - lib/assets/images/SetUp-Icon.png
+    - lib/assets/images/send.png
+    - lib/assets/images/send_outlined.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
