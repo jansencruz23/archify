@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MySettingsButton extends StatefulWidget {
   final String text;
-  final Icon icon;
+  final Widget icon;
   final void Function()? onTap;
 
   const MySettingsButton({
@@ -34,29 +34,32 @@ class _MySettingsButtonState extends State<MySettingsButton> {
             if (widget.onTap != null) {
               widget.onTap!();
             }
-            Future.delayed(Duration(milliseconds: 400), () {
+            Future.delayed(Duration(milliseconds: 300), () {
               setState(() {
                 _isClicked = false;
               });
             });
           },
           onLongPressStart: (_) {
-            setState(() {
-              _isLongPressed = true; // Start the long press
+            Future.delayed(const Duration(milliseconds: 100), () {
+              setState(() {
+                _isLongPressed = true;
+              });
             });
           },
+
           onLongPressEnd: (_) {
             setState(() {
-              _isLongPressed = false; // End the long press
+              _isLongPressed = false;
             });
           },
           child: AnimatedContainer(
-            duration: Duration(microseconds: 200),
+            duration: Duration(microseconds: 100),
             height: 50,
             decoration: BoxDecoration(
               color:
               _isLongPressed
-                  ? Theme.of(context).colorScheme.secondaryContainer // Color on long press
+                  ? Theme.of(context).colorScheme.secondaryContainer
               : _isClicked
                   ? Theme.of(context).colorScheme.secondaryContainer
                   : Theme.of(context).colorScheme.surface,
@@ -68,12 +71,11 @@ class _MySettingsButtonState extends State<MySettingsButton> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   widget.icon,
-                  SizedBox(width: 8),
+                  SizedBox(width: 15),
                   Text(
                     widget.text,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      fontWeight: FontWeight.bold,
+                      color: _isClicked ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.inversePrimary,
                       fontFamily: 'Sora',
                       fontSize: 18,
                     ),

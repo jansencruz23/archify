@@ -1,8 +1,7 @@
-import 'package:archify/helpers/navigate_pages.dart';
-import 'package:archify/pages/day_code_page.dart';
 import 'package:archify/pages/day_expired_page.dart';
 import 'package:archify/pages/day_space_page.dart';
 import 'package:archify/pages/empty_day_page.dart';
+import 'package:archify/pages/loading_day_page.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -43,26 +42,18 @@ class _DayGateState extends State<DayGate> {
         future: _checkJoinedDay(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
+            return LoadingDayPage();
           } else if (snapshot.hasData) {
             return FutureBuilder(
               future: _hasVotingDeadlineExpired(),
               builder: (context, votingSnapshot) {
                 if (votingSnapshot.connectionState == ConnectionState.waiting) {
-                  return const Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
+                  return LoadingDayPage();
                 } else if (votingSnapshot.hasData &&
                     votingSnapshot.data == true) {
-                  return DayExpiredPage();
+                  return DayExpiredPage(dayCode: code!);
                 } else {
-                  return DaySpacePage(dayCode: snapshot.data.toString());
+                  return DaySpacePage(dayCode: code!);
                 }
               },
             );

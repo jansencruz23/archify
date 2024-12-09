@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   late final FocusNode _fieldEmail;
   late final FocusNode _fieldPass;
 
-  int _currentIndex = 1;
+  final int _currentIndex = 0;
   @override
   void initState() {
     super.initState();
@@ -61,7 +61,18 @@ class _LoginPageState extends State<LoginPage> {
     } catch (ex) {
       // replace with custom show dialog for errors
       if (mounted) {
-        showErrorDialog(context, ex.toString());
+        if(ex.toString() == 'Exception: invalid-email'){
+          showErrorDialog(context, 'Enter a valid email');
+        }
+        else if(ex.toString() == 'Exception: invalid-credentials'){
+          showErrorDialog(context, 'Error: Invalid Credentials');
+        }
+        else if(ex.toString() == 'Exception: channel-error'){
+          showErrorDialog(context, 'Enter both email and password');
+        }
+        else {
+          showErrorDialog(context, ex.toString());//'Something went wrong'
+        }
       }
     }
   }
@@ -166,8 +177,27 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children:
-                      List.generate(3, (index) => buildDot(context, index)),
+                  children: List.generate(
+                    2,
+                    (index) => FutureBuilder(
+                      future:
+                          Future.delayed(Duration(milliseconds: 300 * index)),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return AnimatedOpacity(
+                            opacity: 1.0,
+                            duration: Duration(milliseconds: 200),
+                            child: buildDot(context, index),
+                          );
+                        }
+                        return AnimatedOpacity(
+                          opacity: 0.0,
+                          duration: Duration(milliseconds: 200),
+                          child: SizedBox(width: 12),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
 
@@ -186,39 +216,50 @@ class _LoginPageState extends State<LoginPage> {
 
               // Space between login and text boxes
               const SizedBox(height: 10),
-              // Login text field
-              MyTextField(
-                focusNode: _fieldEmail,
-                controller: _emailController,
-                hintText: 'Email',
-                obscureText: false,
-                onSubmitted: (value) {
-                  FocusScope.of(context).requestFocus(_fieldPass);
-                },
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+                child: Column(children: [
+                  // Login text field
+                  MyTextField(
+                    focusNode: _fieldEmail,
+                    controller: _emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                    onSubmitted: (value) {
+                      FocusScope.of(context).requestFocus(_fieldPass);
+                    },
+                  ),
+                  // Space
+                  const SizedBox(height: 10),
+
+                  // Password text field
+                  MyTextField(
+                    focusNode: _fieldPass,
+                    controller: _passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                    showToggleIcon: true,
+                    onSubmitted: (value) {
+                      _fieldPass.unfocus();
+                    },
+                  ),
+
+                  // Space
+                  const SizedBox(height: 10),
+
+
+                ],),
               ),
-
-              // Space
-              const SizedBox(height: 10),
-
-              // Password text field
-              MyTextField(
-                focusNode: _fieldPass,
-                controller: _passwordController,
-                hintText: 'Password',
-                obscureText: true,
-                onSubmitted: (value) {
-                  _fieldPass.unfocus();
-                },
-              ),
-
-              // Space
-              const SizedBox(height: 10),
 
               // Login button
               MyButton(
                 text: 'Login',
                 onTap: () async => login(),
               ),
+
+
+
+
 
               // Space
 
@@ -227,7 +268,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Don\'t have an account?",
+                    "Don't have an account?",
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.inversePrimary,
                       fontFamily: 'Sora',

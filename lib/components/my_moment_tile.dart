@@ -1,3 +1,4 @@
+import 'package:archify/helpers/avatar_mapper.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +22,19 @@ class MyMomentTile extends StatefulWidget {
 }
 
 class _MyMomentTileState extends State<MyMomentTile> {
+  late String _avatarPath;
+
+  @override
+  void initState() {
+    super.initState();
+    _avatarPath = avatarMap[widget.moment.avatarId]!;
+  }
+
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
     final votedMomentIds = listeningProvider.votedMomentIds;
+    _avatarPath = avatarMap[widget.moment.avatarId]!;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -37,19 +47,19 @@ class _MyMomentTileState extends State<MyMomentTile> {
           children: [
             if (widget.moment.nickname.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(0),
                 child: Row(
                   children: [
                     ClipOval(
-                      child: Image.network(
-                        widget.moment.imageUrl,
+                      child: Image.asset(
+                        _avatarPath,
                         height: 40,
                         width: 40,
                         fit: BoxFit.cover,
                       ),
                     ),
                     SizedBox(
-                      width: 8,
+                      width: 3,
                     ),
                     Text(
                       widget.moment.nickname,
@@ -64,6 +74,7 @@ class _MyMomentTileState extends State<MyMomentTile> {
                   onTap: widget.onTap == null
                       ? () {}
                       : () => widget.onTap!(widget.moment, widget.index),
+                  onDoubleTap: () => widget.toggleVote(widget.moment.momentId),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
                     child: Image.network(
@@ -83,10 +94,12 @@ class _MyMomentTileState extends State<MyMomentTile> {
                 )),
               ],
             ),
+            SizedBox(
+              height: (widget.index % 3 == 0) ? 10 : 10,
+            )
           ],
         ),
       ),
     );
-    ;
   }
 }

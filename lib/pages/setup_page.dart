@@ -1,6 +1,4 @@
 import 'package:archify/helpers/navigate_pages.dart';
-import 'package:archify/pages/login_page.dart';
-import 'package:archify/pages/register_page.dart';
 import 'package:archify/pages/setup_pages/setup_intro_page.dart';
 import 'package:archify/pages/setup_pages/setup_name_page.dart';
 import 'package:archify/pages/setup_pages/setup_profile_pic_page.dart';
@@ -56,7 +54,7 @@ class _SetupPageState extends State<SetupPage> {
   }
 
   Future<void> finishSetup() async {
-    Navigator.pop(context);
+    goDayGate(context);
     final pictureUrl = await uploadProfilePicture();
     await _userProvider.updateUserAfterSetup(
       name: _nameController.text,

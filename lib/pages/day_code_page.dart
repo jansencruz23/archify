@@ -23,9 +23,7 @@ class _DayCodePageState extends State<DayCodePage> {
 
     _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadDay();
-    });
+    _loadDay();
   }
 
   Future<void> _loadDay() async {
@@ -37,28 +35,24 @@ class _DayCodePageState extends State<DayCodePage> {
     final listeningProvider = Provider.of<DayProvider>(context);
     final day = listeningProvider.day;
 
-    return Consumer<DayProvider>(
-      builder: (context, provider, child) => provider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    QrImageView(
-                      data: day == null ? '' : day.code,
-                      version: QrVersions.auto,
-                      size: 200.0,
-                    ),
-                    Text(day == null ? 'Loading...' : day.code),
-                    MyButton(
-                      text: 'Start Day',
-                      onTap: () => goHome(context),
-                    ),
-                  ],
-                ),
-              ),
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            QrImageView(
+              data: day?.code ?? '',
+              version: QrVersions.auto,
+              size: 200.0,
             ),
+            Text(day?.code ?? 'Loading...'),
+            MyButton(
+              text: 'Start Day',
+              onTap: () => goDaySpace(context, day!.code),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

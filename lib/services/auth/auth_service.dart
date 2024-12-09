@@ -20,21 +20,25 @@ class AuthService {
 
   // Login with google
   Future<UserCredential?> loginWithGoogle() async {
-    // Sign in with google pop up
-    final googleUser = await GoogleSignIn().signIn();
+    try {
+      // Sign in with google pop up
+      final googleUser = await GoogleSignIn().signIn();
 
-    if (googleUser == null) return null;
+      if (googleUser == null) return null;
 
-    // Get auth details from request
-    final googleAuth = await googleUser.authentication;
+      // Get auth details from request
+      final googleAuth = await googleUser.authentication;
 
-    // Create a new credential for user
-    final crendential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      // Create a new credential for user
+      final crendential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    return await _auth.signInWithCredential(crendential);
+      return await _auth.signInWithCredential(crendential);
+    } catch (e) {
+      print(e);
+    }
   }
 
   // Register

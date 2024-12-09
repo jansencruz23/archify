@@ -1,4 +1,12 @@
+import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/services/database/day/day_gate.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/empty_day_page.dart';
+import 'package:archify/pages/profile_page.dart';
+import 'package:archify/pages/settings_page.dart';
+import 'package:provider/provider.dart';
 
 class MyNavbar extends StatelessWidget {
   final int selectedIndex;
@@ -7,16 +15,18 @@ class MyNavbar extends StatelessWidget {
   final bool isRotated;
   final Function toggleRotation;
   final Function(BuildContext)? showEnterDayCodeDialog;
+  final void Function()? updateCurrentDay;
 
   const MyNavbar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
     required this.onItemTapped,
     required this.showVerticalBar,
     required this.isRotated,
     required this.toggleRotation,
     this.showEnterDayCodeDialog,
-  }) : super(key: key);
+    this.updateCurrentDay,
+  });
 
   static const double navIconSize = 30.0;
 
@@ -43,7 +53,12 @@ class MyNavbar extends StatelessWidget {
 
   Widget _buildNavIcon(String assetPath, int index) {
     return GestureDetector(
-      onTap: () => onItemTapped(index),
+      onTap: () {
+        // Only update the selectedIndex if it's not index 2
+        if (index != 2) {
+          onItemTapped(index);
+        }
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -52,7 +67,8 @@ class MyNavbar extends StatelessWidget {
             width: navIconSize,
             height: navIconSize,
           ),
-          if (selectedIndex == index)
+          // Show the dot only for the selectedIndex and exclude index 2
+          if (selectedIndex == index && selectedIndex != 2)
             Container(
               margin: const EdgeInsets.only(top: 4),
               height: 8,
@@ -70,6 +86,9 @@ class MyNavbar extends StatelessWidget {
   Widget _buildElevatedNavIcon() {
     return GestureDetector(
       onTap: () {
+        if (updateCurrentDay != null) {
+          updateCurrentDay!();
+        }
         toggleRotation();
         onItemTapped(2);
       },
@@ -128,6 +147,8 @@ class MyNavbar extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -140,6 +161,7 @@ class _HomeScreenState extends State<HomeScreen>
   int _hoveredIndex = -1;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  late DayProvider _dayProvider;
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -151,6 +173,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -168,7 +191,18 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _onItemTapped(int index) {
     setState(() {
-      if (index == 2) {
+      _selectedIndex = index;
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DayGate()),
+        );
+      } else if (index == 2) {
         if (_showVerticalBar) {
           print('Reversing animation');
           _animationController.reverse();
@@ -177,13 +211,20 @@ class _HomeScreenState extends State<HomeScreen>
           _animationController.forward();
         }
         _showVerticalBar = !_showVerticalBar;
-      } else {
-        if (_showVerticalBar) {
-          _animationController.reverse();
-          _showVerticalBar = false;
-        }
+      } else if (_showVerticalBar) {
+        _animationController.reverse();
+        _showVerticalBar = false;
+      } else if (index == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else if (index == 4) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SettingsPage()),
+        );
       }
-      _selectedIndex = index;
     });
   }
 
@@ -194,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _showEnterDayCodeDialog(BuildContext context) {
-    TextEditingController _codeController = TextEditingController();
+    TextEditingController codeController = TextEditingController();
 
     showDialog(
       context: context,
@@ -209,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
           content: TextField(
-            controller: _codeController,
+            controller: codeController,
             cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Enter your code',
@@ -243,8 +284,8 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
             TextButton(
-              onPressed: () {
-                String enteredCode = _codeController.text;
+              onPressed: () async {
+                String enteredCode = codeController.text;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
