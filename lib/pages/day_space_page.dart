@@ -527,66 +527,72 @@ class _DaySpacePageState extends State<DaySpacePage>
                           // Day Code Container
                           Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, top: 20, bottom: 10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () => _showDayCode(
-                                      day?.code ?? '',
-                                      day?.name ?? '',
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'DAY CODE: ${day?.code ?? ''}',
-                                        style: TextStyle(
-                                          fontSize: _getClampedFontSize(
-                                              context, 0.03),
-                                          fontFamily: 'Sora',
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface,
+
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, top: 20, bottom: 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        color:
+                                            Theme.of(context).colorScheme.secondary,
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () => _showDayCode(
+                                          day?.code ?? '',
+                                          day?.name ?? '',
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'DAY CODE: ${day?.code ?? ''}',
+                                            style: TextStyle(
+                                              fontSize: _getClampedFontSize(
+                                                  context, 0.03),
+                                              fontFamily: 'Sora',
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, top: 20, bottom: 10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color:
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, top: 20, bottom: 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        color:
                                         Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      day?.votingDeadline == null
-                                          ? 'DEADLINE: N/A'
-                                          : 'DEADLINE: ${_formatDuration(_remainingTime)}',
-                                      style: TextStyle(
-                                        fontSize:
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          day?.votingDeadline == null
+                                              ? 'DEADLINE: N/A'
+                                              : 'DEADLINE: ${_formatDuration(_remainingTime)}',
+                                          style: TextStyle(
+                                            fontSize:
                                             _getClampedFontSize(context, 0.03),
-                                        fontFamily: 'Sora',
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
+                                            fontFamily: 'Sora',
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
+
                               Spacer(),
                               Padding(
                                 padding: const EdgeInsets.only(
