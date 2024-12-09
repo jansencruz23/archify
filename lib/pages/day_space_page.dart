@@ -558,12 +558,12 @@ class _DaySpacePageState extends State<DaySpacePage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Day Code Container
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, top: 20, bottom: 10),
-                                child: Padding(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, top: 15, bottom: 10),
+                            child: Row(
+                              children: [
+                                Padding(
                                   padding: const EdgeInsets.only(
                                       left: 0, top: 0, bottom: 0),
                                   child: Container(
@@ -596,41 +596,41 @@ class _DaySpacePageState extends State<DaySpacePage>
                                     ),
                                   ),
                                 ),
-                              ),
 
-                              Spacer(),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 0, top: 0, bottom: 0),
-                                child: _isHost == null
-                                    ? const SizedBox()
-                                    : _isHost!
-                                        ? IconButton(
-                                            onPressed: _showSettings,
-                                            icon: Image.asset(
-                                              'lib/assets/images/edit_icon.png',
-                                              width: 26,
-                                              height: 26,
+                                Spacer(),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 0, top: 0, bottom: 0),
+                                  child: _isHost == null
+                                      ? const SizedBox()
+                                      : _isHost!
+                                          ? IconButton(
+                                              onPressed: _showSettings,
+                                              icon: Image.asset(
+                                                'lib/assets/images/edit_icon.png',
+                                                width: 26,
+                                                height: 26,
+                                              ),
+                                            )
+                                          : IconButton(
+                                              onPressed: _showSettings,
+                                              icon: Image.asset(
+                                                'lib/assets/images/leave_icon.png',
+                                                width: 24,
+                                                height: 24,
+                                              ),
                                             ),
-                                          )
-                                        : IconButton(
-                                            onPressed: _showSettings,
-                                            icon: Image.asset(
-                                              'lib/assets/images/leave_icon.png',
-                                              width: 24,
-                                              height: 24,
-                                            ),
-                                          ),
-                              ),
+                                ),
 
 
 
-                            ],
+                              ],
+                            ),
                           ),
 
                           Padding(
                             padding: const EdgeInsets.only(
-                                left: 15, top: 10, bottom: 0),
+                                left: 15, top: 0, bottom: 0),
                             child: Text(
                               day?.votingDeadline == null
                                   ? 'DEADLINE: N/A'

@@ -436,7 +436,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
                 children: [
                   Padding(
               padding: const EdgeInsets.only(
-                  left: 10, top: 20, bottom: 10),
+                  left: 10, top: 15, bottom: 10),
                     child: Row(
                       children: [
                         Padding(
