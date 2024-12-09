@@ -535,6 +535,8 @@ class _DaySpacePageState extends State<DaySpacePage>
                     padding: const EdgeInsets.only(left: 20, right: 20),
                     child: Center(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Day Code Container
                           Row(
@@ -542,67 +544,45 @@ class _DaySpacePageState extends State<DaySpacePage>
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 10, top: 20, bottom: 10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () => _showDayCode(
-                                      day?.code ?? '',
-                                      day?.name ?? '',
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 0, top: 0, bottom: 0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      color:
+                                          Theme.of(context).colorScheme.secondary,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'DAY CODE: ${day?.code ?? ''}',
-                                        style: TextStyle(
-                                          fontSize: _getClampedFontSize(
-                                              context, 0.03),
-                                          fontFamily: 'Sora',
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface,
+                                    child: GestureDetector(
+                                      onTap: () => _showDayCode(
+                                        day?.code ?? '',
+                                        day?.name ?? '',
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12, top: 5, bottom: 5, right: 12),
+                                        child: Text(
+                                          'DAY CODE: ${day?.code ?? ''}',
+                                          style: TextStyle(
+                                            fontSize: _getClampedFontSize(
+                                                context, 0.03),
+                                            fontFamily: 'Sora',
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, top: 20, bottom: 10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      day?.votingDeadline == null
-                                          ? 'DEADLINE: N/A'
-                                          : 'DEADLINE: ${_formatDuration(_remainingTime)}',
-                                      style: TextStyle(
-                                        fontSize:
-                                            _getClampedFontSize(context, 0.03),
-                                        fontFamily: 'Sora',
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
+
                               Spacer(),
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    right: 8, top: 20, bottom: 10),
+                                    right: 0, top: 0, bottom: 0),
                                 child: _isHost == null
                                     ? const SizedBox()
                                     : _isHost!
@@ -610,8 +590,8 @@ class _DaySpacePageState extends State<DaySpacePage>
                                             onPressed: _showSettings,
                                             icon: Image.asset(
                                               'lib/assets/images/edit_icon.png',
-                                              width: 30,
-                                              height: 30,
+                                              width: 26,
+                                              height: 26,
                                             ),
                                           )
                                         : IconButton(
@@ -623,8 +603,32 @@ class _DaySpacePageState extends State<DaySpacePage>
                                             ),
                                           ),
                               ),
+
+
+
                             ],
                           ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 15, top: 10, bottom: 0),
+                            child: Text(
+                              day?.votingDeadline == null
+                                  ? 'DEADLINE: N/A'
+                                  : 'Voting ends in ${_formatDuration(_remainingTime)}...',
+                              style: TextStyle(
+                                fontSize:
+                                _getClampedFontSize(context, 0.03),
+                                fontFamily: 'Sora',
+
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                              ),
+                            ),
+                          ),
+
+
                           // Moments Grid
                           Expanded(
                             child: MasonryGridView.builder(
