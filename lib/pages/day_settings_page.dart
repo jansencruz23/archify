@@ -60,12 +60,24 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
             ),
             dialogBackgroundColor: Colors.white,
             textTheme: const TextTheme(
-              bodyMedium: TextStyle(color: Color(0xFF333333)),
+              bodyMedium: TextStyle(fontFamily: 'Sora', color: Color(0xFF333333)),
             ),
             timePickerTheme: const TimePickerThemeData(
               dayPeriodTextColor: Color(0xFF333333),
               dayPeriodColor: (Color(0xFFFF6F61)),
+              helpTextStyle: TextStyle(
+                fontFamily: 'Sora',
+              ),
+              hourMinuteTextStyle: TextStyle(
+                fontFamily: 'Sora',
+                fontSize: 45
+              ),
+              dayPeriodTextStyle: const TextStyle(
+                fontFamily: 'Sora',
+                fontSize: 16,
+              ),
             ),
+
           ),
           child: child!,
         );
