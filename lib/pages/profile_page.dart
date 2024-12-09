@@ -26,6 +26,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   late final UserProvider _userProvider;
+  late final DayProvider _dayProvider;
   int _selectedIndex = 3;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -167,12 +168,22 @@ class _ProfilePageState extends State<ProfilePage>
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -184,6 +195,7 @@ class _ProfilePageState extends State<ProfilePage>
     super.initState();
 
     _userProvider = Provider.of<UserProvider>(context, listen: false);
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();

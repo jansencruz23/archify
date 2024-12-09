@@ -1,5 +1,6 @@
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
@@ -24,6 +25,7 @@ class LoadingDayPage extends StatefulWidget {
 class _LoadingDayPage extends State<LoadingDayPage>
     with TickerProviderStateMixin {
   late final UserProvider _userProvider;
+  late final DayProvider _dayProvider;
   late Day? _currentDay;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
@@ -46,12 +48,22 @@ class _LoadingDayPage extends State<LoadingDayPage>
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -163,6 +175,7 @@ class _LoadingDayPage extends State<LoadingDayPage>
   void initState() {
     super.initState();
     _userProvider = Provider.of<UserProvider>(context, listen: false);
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,

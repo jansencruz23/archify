@@ -34,6 +34,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   late final UserProvider _userProvider;
+  late final DayProvider _dayProvider;
 
   //Qrcode string
   String qrCode = '';
@@ -153,12 +154,22 @@ class _DayExpiredPageState extends State<DayExpiredPage>
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -168,6 +179,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
   @override
   void initState() {
     super.initState();
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
     _controller = AnimationController(vsync: this);
     _animationController = AnimationController(
