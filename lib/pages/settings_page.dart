@@ -351,6 +351,7 @@ class _SettingsPageState extends State<SettingsPage>
                           fontWeight: FontWeight
                               .bold, // Set additional styles if needed
                           fontSize: 20.0,
+                          fontFamily: 'Sora',
                         ),
                         messageAlign:
                             TextAlign.center, // Align the message text
@@ -359,6 +360,7 @@ class _SettingsPageState extends State<SettingsPage>
                               .colorScheme
                               .inversePrimary, // Set the message color
                           fontSize: 16.0,
+                          fontFamily: 'Sora',
                         ),
                       ),
                       actionsBuilder: (context, stars) {
@@ -375,9 +377,8 @@ class _SettingsPageState extends State<SettingsPage>
                                 child: Text(
                                   'Later',
                                   style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary),
+                                      color: Color(0xFFFF6F61),
+                                    fontFamily: 'Sora',),
                                 ),
                               ),
                               TextButton(
@@ -389,9 +390,8 @@ class _SettingsPageState extends State<SettingsPage>
                                 child: Text(
                                   'Rate Now',
                                   style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary),
+                                      color: Color(0xFFFF6F61),
+                                    fontFamily: 'Sora',),
                                 ),
                               ),
                             ],
