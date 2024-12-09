@@ -92,36 +92,46 @@ class _SetupPageState extends State<SetupPage> {
               ],
             ),
           ),
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(3, (index) => buildDot(context, index)),
+          Padding(
+            padding: const EdgeInsets.only(right: 0, top: 0, bottom: 30),
+            child: Column(
+              children: [
+
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(3, (index) => buildDot(context, index)),
+                  ),
+                ),
+                Container(
+                  height: 60,
+                  margin: const EdgeInsets.all(40),
+                  width: double.infinity,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                    onPressed: () async {
+                      // Last page
+                      if (_currentIndex == 2) {
+                        await finishSetup();
+                      } else {
+                        // If may kasunod pa
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 100),
+                          curve: Curves.bounceIn,
+                        );
+                        _currentIndex++;
+                      }
+                    },
+                    child: Text(_currentIndex == 2 ? 'Continue' : 'Next', style: TextStyle(fontFamily: 'Sora'),),
+                  ),
+                ),
+              ],
             ),
           ),
-          Container(
-            height: 60,
-            margin: const EdgeInsets.all(40),
-            width: double.infinity,
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-              ),
-              onPressed: () async {
-                // Last page
-                if (_currentIndex == 2) {
-                  await finishSetup();
-                } else {
-                  // If may kasunod pa
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.bounceIn,
-                  );
-                  _currentIndex++;
-                }
-              },
-              child: Text(_currentIndex == 2 ? 'Continue' : 'Next'),
-            ),
-          )
+
+
         ],
       ),
     );

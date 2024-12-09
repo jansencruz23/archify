@@ -19,7 +19,12 @@ class SetupIntroPage extends StatelessWidget {
           fontFamily: 'Sora',
           color: Theme.of(context).colorScheme.inversePrimary,
           fontSize: _getClampedFontSize(context, 0.5),
-        ),),
+        ),
+             ),
+            Padding(
+              padding: const EdgeInsets.only(right: 0, top: 70, bottom: 0),
+              child: Image.asset('lib/assets/images/SetUp-Icon.png'),
+            )
           ],
         ),
       ),
