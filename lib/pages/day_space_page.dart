@@ -394,10 +394,13 @@ class _DaySpacePageState extends State<DaySpacePage>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(name,                     style: TextStyle(
-                      fontFamily: 'Sora',
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).colorScheme.inversePrimary),) ,
+                  Text(
+                    name,
+                    style: TextStyle(
+                        fontFamily: 'Sora',
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).colorScheme.inversePrimary),
+                  ),
                   QrImageView(
                     data: code,
                     version: QrVersions.auto,
@@ -541,7 +544,6 @@ class _DaySpacePageState extends State<DaySpacePage>
                           // Day Code Container
                           Row(
                             children: [
-
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 10, top: 20, bottom: 10),
@@ -581,7 +583,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
                                     color:
-                                    Theme.of(context).colorScheme.secondary,
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -591,7 +593,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                                           : 'DEADLINE: ${_formatDuration(_remainingTime)}',
                                       style: TextStyle(
                                         fontSize:
-                                        _getClampedFontSize(context, 0.03),
+                                            _getClampedFontSize(context, 0.03),
                                         fontFamily: 'Sora',
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context)
@@ -602,7 +604,6 @@ class _DaySpacePageState extends State<DaySpacePage>
                                   ),
                                 ),
                               ),
-
                               Spacer(),
                               Padding(
                                 padding: const EdgeInsets.only(
