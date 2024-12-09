@@ -377,8 +377,9 @@ class _SettingsPageState extends State<SettingsPage>
                                 child: Text(
                                   'Later',
                                   style: TextStyle(
-                                      color: Color(0xFFFF6F61),
-                                    fontFamily: 'Sora',),
+                                    color: Color(0xFFFF6F61),
+                                    fontFamily: 'Sora',
+                                  ),
                                 ),
                               ),
                               TextButton(
@@ -390,8 +391,9 @@ class _SettingsPageState extends State<SettingsPage>
                                 child: Text(
                                   'Rate Now',
                                   style: TextStyle(
-                                      color: Color(0xFFFF6F61),
-                                    fontFamily: 'Sora',),
+                                    color: Color(0xFFFF6F61),
+                                    fontFamily: 'Sora',
+                                  ),
                                 ),
                               ),
                             ],
@@ -606,7 +608,7 @@ class _SettingsPageState extends State<SettingsPage>
                                         _showEnterDayCodeDialog(context);
                                       } else if (item['title'] ==
                                           'Create a day') {
-                                        Navigator.pushReplacement(
+                                        Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>

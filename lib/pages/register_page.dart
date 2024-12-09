@@ -246,6 +246,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       controller: _passwordController,
                       hintText: 'Password',
                       obscureText: true,
+                      showToggleIcon: true,
                       onSubmitted: (value) {
                         FocusScope.of(context).requestFocus(_fieldRepass);
                       },
@@ -260,6 +261,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       controller: _confirmPwController,
                       hintText: 'Confirm Password',
                       obscureText: true,
+                      showToggleIcon: true,
                       onSubmitted: (value) {
                         FocusScope.of(context).unfocus();
                       },

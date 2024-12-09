@@ -40,8 +40,8 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
     _dayDescriptionFocusNode = FocusNode();
     _maxParticipantsFocusNode = FocusNode();
     _pickVotingDeadlineFocusNode = FocusNode();
-    _votingDeadline = TimeOfDay.now();
     _fillUpFormMessage = 'Please Fill Up The Form';
+    _votingDeadline = TimeOfDay.fromDateTime(widget.day.votingDeadline);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
@@ -51,7 +51,6 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
   void _loadData() {
     _dayNameController.text = widget.day.name;
     _maxParticipantsController.text = widget.day.maxParticipants.toString();
-    _votingDeadline = TimeOfDay.fromDateTime(widget.day.votingDeadline);
   }
 
   Future<void> pickTime() async {
@@ -71,6 +70,13 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
               onSurface: Color(0xFF333333),
             ),
             dialogBackgroundColor: Colors.white,
+            textTheme: const TextTheme(
+              bodyMedium: TextStyle(color: Color(0xFF333333)),
+            ),
+            timePickerTheme: const TimePickerThemeData(
+              dayPeriodTextColor: Color(0xFF333333),
+              dayPeriodColor: (Color(0xFFFF6F61)),
+            ),
           ),
           child: child!,
         );
@@ -108,8 +114,18 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Day?'),
-        content: Text('Are you sure you want to delete you day?'),
+        title: Text(
+          'Delete Day?',
+          style: TextStyle(
+              fontFamily: 'Sora',
+              color: Theme.of(context).colorScheme.inversePrimary),
+        ),
+        content: Text(
+          'Are you sure you want to delete you day?',
+          style: TextStyle(
+              fontFamily: 'Sora',
+              color: Theme.of(context).colorScheme.inversePrimary),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -205,7 +221,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 50,
+                    height: 100,
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -294,23 +310,35 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                               ),
                               elevation: WidgetStatePropertyAll(0),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'Pick Voting Deadline',
-                                  style: TextStyle(
-                                    color: Color(0xFFC8C1B4),
-                                    fontFamily: 'Sora',
-                                    fontSize: 18,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _votingDeadline.format(context),
+                                    style: TextStyle(
+                                      color: _votingDeadline == TimeOfDay.now()
+                                          ? Color(0xFFC8C1B4)
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary,
+                                      fontFamily: 'Sora',
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
-                                const Icon(
-                                  Icons.calendar_today,
-                                  color: Color(0xFFC8C1B4),
-                                  size: 20,
-                                ),
-                              ],
+                                  Icon(
+                                    Icons.calendar_today,
+                                    color: _votingDeadline == TimeOfDay.now()
+                                        ? Color(0xFFC8C1B4)
+                                        : Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
