@@ -194,6 +194,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     focusNode: _bioFocus,
                     decoration: InputDecoration(
                       labelText: "Bio",
+                      alignLabelWithHint: true,
                       labelStyle: TextStyle(
                         fontFamily: 'Sora',
                         color: Color(0xFF333333),
@@ -232,6 +233,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       ElevatedButton(
                         onPressed: _cancelEdit,
@@ -240,7 +242,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           side: const BorderSide(
                               color: Color(0xFFFF6F61), width: 1),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
+                              horizontal: 55, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
@@ -254,12 +256,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                         ),
                       ),
+                      SizedBox(width:10),
                       ElevatedButton(
                         onPressed: _saveProfile,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF6F61),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
+                              horizontal: 60, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),

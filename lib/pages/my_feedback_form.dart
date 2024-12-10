@@ -155,13 +155,14 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(16.0),
                       labelText: 'Body',
+                      alignLabelWithHint: true,
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.teal)),
                     ),
                     onSubmitted: (_) {
                       _fieldBody.unfocus();
                     },
-                    maxLines: 5,
+                    maxLines: 10,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.inversePrimary,
                     ),
