@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:archify/components/my_mobile_scanner_overlay.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/pages/about_us_page.dart';
 import 'package:archify/pages/my_feedback_form.dart';
@@ -192,17 +193,10 @@ class _SettingsPageState extends State<SettingsPage>
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 String enteredCode = _codeController.text;
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Code Entered: $enteredCode',
-                      style: const TextStyle(fontFamily: 'Sora'),
-                    ),
-                  ),
-                );
+                await joinDay(enteredCode);
               },
               child: const Text(
                 'Enter',
@@ -224,12 +218,22 @@ class _SettingsPageState extends State<SettingsPage>
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -281,12 +285,6 @@ class _SettingsPageState extends State<SettingsPage>
     super.dispose();
   }
 
-  //For Responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   //hover for button and mouse change
   bool amIHovering = false;
   Offset exitFrom = Offset(0, 0);
@@ -313,6 +311,30 @@ class _SettingsPageState extends State<SettingsPage>
     minimumDate = DateTime.now();
   }
 
+  Future<void> joinDay(String dayCode) async {
+    if (dayCode.isEmpty) return;
+    final dayExists = await _dayProvider.isDayExistingAndActive(dayCode);
+    final isRoomFull = await _dayProvider.isRoomFull(dayCode);
+
+    if (!mounted) return;
+
+    if (isRoomFull) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Room is full')),
+      );
+      return;
+    }
+
+    if (!dayExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Day does not exist or already finished')),
+      );
+      return;
+    }
+
+    goDaySpace(context, dayCode);
+  }
+
   @override
   Widget build(BuildContext context) {
     final _userListeningProvider = Provider.of<UserProvider>(context);
@@ -331,12 +353,12 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           padding: const EdgeInsets.symmetric(horizontal: 33.0),
           alignment: Alignment.centerLeft,
-          child: const SafeArea(
+          child: SafeArea(
             child: Text(
               "Settings",
               style: TextStyle(
                 fontFamily: 'Sora',
-                fontSize: 22,
+                fontSize: getClampedFontSize(context, 0.05),
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -374,7 +396,7 @@ class _SettingsPageState extends State<SettingsPage>
                               .inversePrimary, // Set the title color
                           fontWeight: FontWeight
                               .bold, // Set additional styles if needed
-                          fontSize: _getClampedFontSize(context, 0.05),
+                          fontSize: getClampedFontSize(context, 0.04),
                           fontFamily: 'Sora',
                         ),
                         messageAlign:
@@ -383,7 +405,6 @@ class _SettingsPageState extends State<SettingsPage>
                           color: Theme.of(context)
                               .colorScheme
                               .inversePrimary, // Set the message color
-                          fontSize: _getClampedFontSize(context, 0.04),
                           fontFamily: 'Sora',
                         ),
                       ),
@@ -440,7 +461,7 @@ class _SettingsPageState extends State<SettingsPage>
                   },
                 ),
                 MySettingsButton(
-                  text: 'Terms and Conditions',
+                  text: 'Privacy Policy',
                   icon: Image.asset(
                     'lib/assets/images/privacy_icon.png',
                     width: 24,
@@ -476,7 +497,7 @@ class _SettingsPageState extends State<SettingsPage>
                   },
                 ),
                 MySettingsButton(
-                  text: 'Contact',
+                  text: 'Contact Us',
                   icon: Image.asset(
                     'lib/assets/images/contact_icon.png',
                     width: 24,
@@ -491,8 +512,8 @@ class _SettingsPageState extends State<SettingsPage>
                             'archify.app@gmail.com',
                             style: TextStyle(
                                 fontFamily: 'Sora',
-                                fontSize: _getClampedFontSize(context, 0.05),
                                 fontWeight: FontWeight.bold,
+                                fontSize: getClampedFontSize(context, 0.04),
                                 color: Theme.of(context)
                                     .colorScheme
                                     .inversePrimary),
@@ -501,8 +522,6 @@ class _SettingsPageState extends State<SettingsPage>
                             'Feel free to contact us via our email!',
                             style: TextStyle(
                                 fontFamily: 'Sora',
-                                fontSize: _getClampedFontSize(context, 0.03),
-                                fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
                                     .colorScheme
                                     .inversePrimary),
@@ -517,7 +536,6 @@ class _SettingsPageState extends State<SettingsPage>
                                   'Close',
                                   style: TextStyle(
                                       fontFamily: 'Sora',
-                                      fontSize: _getClampedFontSize(context, 0.045),
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFFFF6F61)),
                                 ),
@@ -658,6 +676,7 @@ class _SettingsPageState extends State<SettingsPage>
                                     color: _currentDay != null
                                         ? Colors.grey[300]
                                         : Colors.white,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ),

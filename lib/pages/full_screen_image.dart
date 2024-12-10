@@ -49,9 +49,9 @@ class _FullScreenImageState extends State<FullScreenImage> {
               ),
             ),
             duration: Duration(seconds: 2),
-              backgroundColor: Colors.transparent,
-              behavior: SnackBarBehavior.floating,
-              elevation: 0,
+            backgroundColor: Colors.transparent,
+            behavior: SnackBarBehavior.floating,
+            elevation: 0,
           ),
         );
       }
@@ -72,7 +72,6 @@ class _FullScreenImageState extends State<FullScreenImage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +87,7 @@ class _FullScreenImageState extends State<FullScreenImage> {
       ),
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: Padding(
-        padding: const EdgeInsets.only(top: 45),
+        padding: const EdgeInsets.only(top: 5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -108,7 +107,7 @@ class _FullScreenImageState extends State<FullScreenImage> {
                     ),
                     Positioned(
                       bottom: 15,
-                      right: 40,
+                      right: 25,
                       child: GestureDetector(
                         onTap: _downloadImage,
                         child: Stack(
@@ -122,12 +121,13 @@ class _FullScreenImageState extends State<FullScreenImage> {
                                 shape: BoxShape.circle,
                                 boxShadow: _isClicked
                                     ? [
-                                  BoxShadow(
-                                    color: Colors.black12.withOpacity(0.1),
-                                    blurRadius: 8,
-                                    spreadRadius: 5,
-                                  ),
-                                ]
+                                        BoxShadow(
+                                          color:
+                                              Colors.black12.withOpacity(0.1),
+                                          blurRadius: 8,
+                                          spreadRadius: 5,
+                                        ),
+                                      ]
                                     : null,
                               ),
                             ),

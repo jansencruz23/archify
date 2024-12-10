@@ -1,8 +1,7 @@
 import 'dart:async';
-
-import 'package:archify/components/my_input_alert_box.dart';
 import 'package:archify/components/my_mobile_scanner_overlay.dart';
 import 'package:archify/components/my_moment_tile.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/models/day.dart';
@@ -68,8 +67,8 @@ class _DaySpacePageState extends State<DaySpacePage>
             const end = Offset.zero;
             const curve = Curves.ease;
 
-            var tween =
-            Tween(begin: startOffset, end: end).chain(CurveTween(curve: curve));
+            var tween = Tween(begin: startOffset, end: end)
+                .chain(CurveTween(curve: curve));
 
             return SlideTransition(
               position: animation.drive(tween),
@@ -82,7 +81,8 @@ class _DaySpacePageState extends State<DaySpacePage>
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          customRoute(HomePage(), Offset(-1.0, 0.0)), // navigate from left to right
+          customRoute(
+              HomePage(), Offset(-1.0, 0.0)), // navigate from left to right
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -97,12 +97,14 @@ class _DaySpacePageState extends State<DaySpacePage>
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          customRoute(ProfilePage(), Offset(1.0, 0.0)), // navigate from right to left
+          customRoute(
+              ProfilePage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
-          customRoute(SettingsPage(), Offset(1.0, 0.0)), // navigate from right to left
+          customRoute(
+              SettingsPage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       }
     });
@@ -304,10 +306,9 @@ class _DaySpacePageState extends State<DaySpacePage>
                 child: Text(
                   'Who are you today?',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: 'Sora',
-                    color: Color(0xFF333333),
-                  ),
+                      fontFamily: 'Sora',
+                      color: Color(0xFF333333),
+                      fontSize: getClampedFontSize(context, 0.045)),
                 ),
               ),
               content: Container(
@@ -334,12 +335,22 @@ class _DaySpacePageState extends State<DaySpacePage>
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -483,12 +494,6 @@ class _DaySpacePageState extends State<DaySpacePage>
     await _dayProvider.toggleVote(_dayCode, momentId);
   }
 
-  //Font responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
@@ -497,6 +502,7 @@ class _DaySpacePageState extends State<DaySpacePage>
     day = listeningProvider.day;
     final moments = listeningProvider.moments;
     final hasUploaded = listeningProvider.hasUploaded;
+    final votedMomentIds = listeningProvider.votedMomentIds;
     listeningProvider.listenToMoments(_dayCode);
     if (day != null) {
       _remainingTime = day!.votingDeadline.difference(DateTime.now());
@@ -516,9 +522,9 @@ class _DaySpacePageState extends State<DaySpacePage>
                 Text(
                   'Let’s keep the moment,',
                   style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.03),
                     fontFamily: 'Sora',
                     color: Theme.of(context).colorScheme.inversePrimary,
+                    fontSize: 12,
                   ),
                 ),
                 Positioned(
@@ -527,7 +533,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                   child: Text(
                     'Pick the best shot!',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.05),
+                      fontSize: getClampedFontSize(context, 0.05),
                       fontFamily: 'Sora',
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.inversePrimary,
@@ -569,8 +575,9 @@ class _DaySpacePageState extends State<DaySpacePage>
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10.0),
-                                      color:
-                                          Theme.of(context).colorScheme.secondary,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                     ),
                                     child: GestureDetector(
                                       onTap: () => _showDayCode(
@@ -579,12 +586,13 @@ class _DaySpacePageState extends State<DaySpacePage>
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.only(
-                                            left: 12, top: 5, bottom: 5, right: 12),
+                                            left: 12,
+                                            top: 5,
+                                            bottom: 5,
+                                            right: 12),
                                         child: Text(
                                           'DAY CODE: ${day?.code ?? ''}',
                                           style: TextStyle(
-                                            fontSize: _getClampedFontSize(
-                                                context, 0.03),
                                             fontFamily: 'Sora',
                                             fontWeight: FontWeight.bold,
                                             color: Theme.of(context)
@@ -596,7 +604,6 @@ class _DaySpacePageState extends State<DaySpacePage>
                                     ),
                                   ),
                                 ),
-
                                 Spacer(),
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -621,9 +628,6 @@ class _DaySpacePageState extends State<DaySpacePage>
                                               ),
                                             ),
                                 ),
-
-
-
                               ],
                             ),
                           ),
@@ -636,17 +640,13 @@ class _DaySpacePageState extends State<DaySpacePage>
                                   ? 'DEADLINE: N/A'
                                   : 'Voting ends in ${_formatDuration(_remainingTime)}...',
                               style: TextStyle(
-                                fontSize:
-                                _getClampedFontSize(context, 0.03),
                                 fontFamily: 'Sora',
-
                                 color: Theme.of(context)
                                     .colorScheme
                                     .inversePrimary,
                               ),
                             ),
                           ),
-
 
                           // Moments Grid
                           Expanded(
@@ -660,9 +660,15 @@ class _DaySpacePageState extends State<DaySpacePage>
                                 final moment = moments![index];
                                 return MyMomentTile(
                                   moment: moment,
-                                  onTap: _showImageDialog,
                                   index: index,
                                   toggleVote: _toggleVote,
+                                  onTap: () => goViewImage(
+                                    context: context,
+                                    moment: moment,
+                                    toggleVote: () =>
+                                        _toggleVote(moment.momentId),
+                                    isActive: true,
+                                  ),
                                 );
                               },
                             ),
@@ -759,6 +765,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                                             color: _currentDay != null
                                                 ? Colors.grey[300]
                                                 : Colors.white,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ),

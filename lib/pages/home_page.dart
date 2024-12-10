@@ -6,6 +6,7 @@ import 'package:archify/components/my_mobile_scanner_overlay.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/components/my_nickname_and_avatar_dialog.dart';
 import 'package:archify/components/my_profile_picture.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/pages/empty_day_page.dart';
@@ -222,12 +223,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -368,12 +379,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
-  //For Responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Ang min and max nyaa
-  }
-
   //Out ng comment textfield pag click anywhere
   void _unfocusAllFields() {
     FocusScope.of(context).unfocus();
@@ -434,7 +439,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           style: TextStyle(
                             fontFamily: 'Sora',
                             color: Theme.of(context).colorScheme.inversePrimary,
-                            fontSize: _getClampedFontSize(context, 0.03),
+                            fontSize: getClampedFontSize(context, 0.03),
                           ),
                         ),
                         // User's name text
@@ -443,7 +448,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           style: TextStyle(
                             fontFamily: 'Sora',
                             fontWeight: FontWeight.bold,
-                            fontSize: _getClampedFontSize(context, 0.045),
+                            fontSize: getClampedFontSize(context, 0.04),
                             color: Theme.of(context).colorScheme.inversePrimary,
                           ),
                         ),
@@ -493,8 +498,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         .inversePrimary,
                                     fontFamily: 'Sora',
                                     fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        _getClampedFontSize(context, 0.05),
+                                    fontSize: getClampedFontSize(context, 0.05),
                                   ),
                                 ),
                               ],
@@ -578,8 +582,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         .colorScheme
                                         .inversePrimary,
                                     fontFamily: 'Sora',
-                                    fontSize:
-                                        _getClampedFontSize(context, 0.04),
                                   ),
                                 ),
                               ],
@@ -628,8 +630,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                       .colorScheme
                                                       .inversePrimary,
                                                   fontFamily: 'Sora',
-                                                  fontSize: _getClampedFontSize(
-                                                      context, 0.04),
+                                                  fontSize: getClampedFontSize(
+                                                      context, 0.03),
                                                 ),
                                               ),
                                             );
@@ -813,6 +815,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 color: _currentDay != null
                                                     ? Colors.grey[300]
                                                     : Colors.white,
+                                                fontSize: 14,
                                               ),
                                             ),
                                           ),

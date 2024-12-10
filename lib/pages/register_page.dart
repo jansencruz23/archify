@@ -58,12 +58,6 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-//For Resposiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   // Register function calling the user provider
   Future<void> register() async {
     final email = _emailController.text;
@@ -176,8 +170,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             bottomRight: Radius.circular(40),
                           ),
                           border: Border(
-                            bottom:
-                                BorderSide(width: 15, color: Colors.transparent),
+                            bottom: BorderSide(
+                                width: 15, color: Colors.transparent),
                           )),
                       child: ClipRRect(
                         borderRadius: const BorderRadius.only(
@@ -197,23 +191,27 @@ class _RegisterPageState extends State<RegisterPage> {
                 Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children:
-                        List.generate(2,
-
-
-                                (index) => FutureBuilder(future: Future.delayed(Duration(milliseconds: 300 * index)),
-                                    builder: (context, snapshot){
-                                  if(snapshot.connectionState == ConnectionState.done){
-                                    return AnimatedOpacity(opacity: 1.0, duration: Duration(milliseconds: 200), child: buildDot(context, index),
-                                    );
-                                  }
-                                  else {
-                                    return AnimatedOpacity(opacity: 0.0, duration: Duration(milliseconds: 200), child: SizedBox(width: 12),);
-                                  }
-                                    })
-
-
-                        ),
+                    children: List.generate(
+                        2,
+                        (index) => FutureBuilder(
+                            future: Future.delayed(
+                                Duration(milliseconds: 300 * index)),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return AnimatedOpacity(
+                                  opacity: 1.0,
+                                  duration: Duration(milliseconds: 200),
+                                  child: buildDot(context, index),
+                                );
+                              } else {
+                                return AnimatedOpacity(
+                                  opacity: 0.0,
+                                  duration: Duration(milliseconds: 200),
+                                  child: SizedBox(width: 12),
+                                );
+                              }
+                            })),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -234,7 +232,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
                   child: Column(
-
                     children: [
                       MyTextField(
                         focusNode: _fieldEmail,
@@ -247,7 +244,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       // Space
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
 
                       // Password text field
                       MyTextField(
@@ -262,7 +259,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       // Space
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
 
                       // Password text field
                       MyTextField(
@@ -275,9 +272,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           FocusScope.of(context).unfocus();
                         },
                       ),
-
-
-
                     ],
                   ),
                 ),
@@ -304,7 +298,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.inversePrimary,
                         fontFamily: 'Sora',
-                        fontSize: _getClampedFontSize(context, 0.02),
+                        fontSize: 12,
                       ),
                     ),
                     const SizedBox(width: 5),
@@ -327,17 +321,19 @@ class _RegisterPageState extends State<RegisterPage> {
                           "Sign in",
                           style: TextStyle(
                             color: amIHovering
-                                ? Theme.of(context).colorScheme.secondaryContainer
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer
                                 : Theme.of(context).colorScheme.secondary,
                             fontFamily: 'Sora',
-                            fontSize: _getClampedFontSize(context, 0.02),
+                            fontSize: 12,
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
                   child: Row(
@@ -355,7 +351,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.inversePrimary,
                             fontFamily: 'Sora',
-                            fontSize: _getClampedFontSize(context, 0.02),
+                            fontSize: 12,
                           ),
                         ),
                       ),
@@ -368,7 +364,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 SizedBox(
                   height: 50,
                   child: MySquareTile(

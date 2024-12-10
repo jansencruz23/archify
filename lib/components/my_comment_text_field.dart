@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -78,7 +79,6 @@ class _MyCommentTextFieldState extends State<MyCommentTextField> {
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
               fontFamily: 'Sora',
-              fontSize: 18,
             ),
             controller: widget.controller,
             obscureText: widget.obscureText,
@@ -98,7 +98,6 @@ class _MyCommentTextFieldState extends State<MyCommentTextField> {
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontFamily: 'Sora',
-                fontSize: 16,
               ),
             ),
           );

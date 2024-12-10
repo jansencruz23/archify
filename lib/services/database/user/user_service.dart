@@ -177,6 +177,21 @@ class UserService {
         final moment = Moment.fromDocument(momentSnapshot.data()!);
         moment.dayName = dayData['name'];
 
+        final participant = await _db
+            .collection('Days')
+            .doc(dayId)
+            .collection('Participants')
+            .doc(moment.uploadedBy)
+            .get();
+
+        if (participant.data()!['avatar'] != null) {
+          moment.avatarId = participant.data()!['avatar'];
+        }
+
+        if (participant.data()!['nickname'] != null) {
+          moment.nickname = participant.data()!['nickname'];
+        }
+
         final votersSnapshot = await _db
             .collection('Days')
             .doc(dayId)

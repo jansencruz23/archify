@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 
 class AboutUsPage extends StatelessWidget {
@@ -11,7 +12,7 @@ class AboutUsPage extends StatelessWidget {
           'About Us',
           style: TextStyle(
               fontFamily: 'Sora',
-              fontSize: 22,
+              fontSize: getClampedFontSize(context, 0.04),
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.inversePrimary),
         ),
@@ -26,7 +27,7 @@ class AboutUsPage extends StatelessWidget {
               'Our Story',
               style: TextStyle(
                   fontFamily: 'Sora',
-                  fontSize: 22,
+                  fontSize: getClampedFontSize(context, 0.03),
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.inversePrimary),
             ),
@@ -35,14 +36,17 @@ class AboutUsPage extends StatelessWidget {
               'Archify, our app was created with the mission to foster deeper, more meaningful connections between friends and loved ones by creating an interactive platform that makes sharing moments more personal and engaging, while encouraging friendly competition.\n\n'
               'We believe that the only way to fight technology that disrupt relationships is through another technological tool. Our team is passionate about creating technologies to benefit our social lives, and we are dedicated to providing you with the best experience possible.\n\n'
               'Thank you for being part of our journey and helping us grow!',
-              style: TextStyle(fontFamily: 'Sora', fontSize: 16, color: Colors.black87),
+              style: TextStyle(
+                fontFamily: 'Sora',
+                color: Colors.black87,
+              ),
             ),
             SizedBox(height: 32.0),
             Text(
               'Meet the Team',
               style: TextStyle(
                   fontFamily: 'Sora',
-                  fontSize: 22,
+                  fontSize: getClampedFontSize(context, 0.03),
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.inversePrimary),
             ),
@@ -60,7 +64,6 @@ class AboutUsPage extends StatelessWidget {
                         'This dev is like the Sherlock Holmes of the team. He finds problems so fast, it’s almost scary.',
                         style: TextStyle(
                             fontFamily: 'Sora',
-                            fontSize: 16,
                             color:
                                 Theme.of(context).colorScheme.inversePrimary),
                       ),
@@ -78,7 +81,6 @@ class AboutUsPage extends StatelessWidget {
                         'This dev will spend hours making sure that button looks just right and that every pixel is perfectly aligned.',
                         style: TextStyle(
                             fontFamily: 'Sora',
-                            fontSize: 16,
                             color:
                                 Theme.of(context).colorScheme.inversePrimary),
                       ),
@@ -96,7 +98,6 @@ class AboutUsPage extends StatelessWidget {
                         'This dev can crank out features faster than anyone else, but they’re the person who writes code like they’re trying to win a sprint race.',
                         style: TextStyle(
                             fontFamily: 'Sora',
-                            fontSize: 16,
                             color:
                                 Theme.of(context).colorScheme.inversePrimary),
                       ),

@@ -1,4 +1,5 @@
 import 'package:archify/helpers/avatar_mapper.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/models/moment.dart';
 import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ import 'package:provider/provider.dart';
 class MyMomentTile extends StatefulWidget {
   final Moment moment;
   final int index;
-  final void Function(Moment moment, int index)? onTap;
+  final void Function()? onTap;
   final void Function(String momentId) toggleVote;
   const MyMomentTile({
     super.key,
@@ -63,7 +64,10 @@ class _MyMomentTileState extends State<MyMomentTile> {
                     ),
                     Text(
                       widget.moment.nickname,
-                      style: TextStyle(fontFamily: 'Sora', fontSize: 16),
+                      style: TextStyle(
+                        fontFamily: 'Sora',
+                        fontSize: getClampedFontSize(context, 0.03),
+                      ),
                     )
                   ],
                 ),
@@ -71,9 +75,7 @@ class _MyMomentTileState extends State<MyMomentTile> {
             Stack(
               children: [
                 GestureDetector(
-                  onTap: widget.onTap == null
-                      ? () {}
-                      : () => widget.onTap!(widget.moment, widget.index),
+                  onTap: widget.onTap,
                   onDoubleTap: () => widget.toggleVote(widget.moment.momentId),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),

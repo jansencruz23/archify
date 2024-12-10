@@ -1,6 +1,7 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_text_field.dart';
 import 'package:archify/components/my_text_field_form.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/services/database/day/day_provider.dart';
@@ -71,7 +72,8 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
             ),
             dialogBackgroundColor: Colors.white,
             textTheme: const TextTheme(
-              bodyMedium: TextStyle(fontFamily: 'Sora', color: Color(0xFF333333)),
+              bodyMedium:
+                  TextStyle(fontFamily: 'Sora', color: Color(0xFF333333)),
             ),
             timePickerTheme: const TimePickerThemeData(
               dayPeriodTextColor: Color(0xFF333333),
@@ -79,22 +81,17 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
               helpTextStyle: TextStyle(
                 fontFamily: 'Sora',
               ),
-              hourMinuteTextStyle: TextStyle(
-                  fontFamily: 'Sora',
-                  fontSize: 45
-              ),
+              hourMinuteTextStyle: TextStyle(fontFamily: 'Sora', fontSize: 45),
               dayPeriodTextStyle: const TextStyle(
                 fontFamily: 'Sora',
                 fontSize: 16,
               ),
             ),
-
           ),
           child: child!,
         );
       },
     );
-
 
     //submission key
     // void _submitForm() async {
@@ -220,12 +217,12 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           alignment: Alignment.centerLeft,
-          child: const SafeArea(
+          child: SafeArea(
             child: Text(
               "Update your day",
               style: TextStyle(
                 fontFamily: 'Sora',
-                fontSize: 20,
+                fontSize: getClampedFontSize(context, 0.05),
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -263,12 +260,12 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    "Ready for the Challenge?",
+                  Text(
+                    "Update the day?",
                     style: TextStyle(
                       fontFamily: 'Sora',
                       fontWeight: FontWeight.bold,
-                      fontSize: 21,
+                      fontSize: getClampedFontSize(context, 0.5),
                       color: Color(0xFF333333),
                     ),
                     textAlign: TextAlign.center,
@@ -349,7 +346,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                                               .colorScheme
                                               .inversePrimary,
                                       fontFamily: 'Sora',
-                                      fontSize: 18,
+                                      fontSize: getClampedFontSize(context, 0),
                                     ),
                                   ),
                                   Icon(
@@ -357,8 +354,8 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                                     color: _votingDeadline == TimeOfDay.now()
                                         ? Color(0xFFC8C1B4)
                                         : Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary,
+                                            .colorScheme
+                                            .inversePrimary,
                                     size: 20,
                                   ),
                                 ],
@@ -372,7 +369,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                   const SizedBox(height: 12),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       GestureDetector(
                         onTap: () {
@@ -397,17 +394,11 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                             style: TextStyle(
                               fontFamily: 'Sora',
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
                               color: Color(0xFFFF6F61),
                             ),
                           ),
                         ),
                       ),
-                      // Add spacing between buttons
-                      SizedBox(
-                        width: 24,
-                      ),
-
                       GestureDetector(
                         onTap: _updateDay,
                         child: MouseRegion(
@@ -437,11 +428,10 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                               child: Text(
                                 'Update Day',
                                 style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Sora',
-                                    fontSize: 18),
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Sora',
+                                ),
                               ),
                             ),
                           ),

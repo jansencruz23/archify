@@ -47,7 +47,6 @@ class _MySettingsButtonState extends State<MySettingsButton> {
               });
             });
           },
-
           onLongPressEnd: (_) {
             setState(() {
               _isLongPressed = false;
@@ -57,12 +56,11 @@ class _MySettingsButtonState extends State<MySettingsButton> {
             duration: Duration(microseconds: 100),
             height: 50,
             decoration: BoxDecoration(
-              color:
-              _isLongPressed
+              color: _isLongPressed
                   ? Theme.of(context).colorScheme.secondaryContainer
-              : _isClicked
-                  ? Theme.of(context).colorScheme.secondaryContainer
-                  : Theme.of(context).colorScheme.surface,
+                  : _isClicked
+                      ? Theme.of(context).colorScheme.secondaryContainer
+                      : Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
@@ -75,9 +73,11 @@ class _MySettingsButtonState extends State<MySettingsButton> {
                   Text(
                     widget.text,
                     style: TextStyle(
-                      color: _isClicked ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.inversePrimary,
+                      color: _isClicked
+                          ? Theme.of(context).colorScheme.surface
+                          : Theme.of(context).colorScheme.inversePrimary,
                       fontFamily: 'Sora',
-                      fontSize: 18,
+                      //fontSize: 18,
                     ),
                   ),
                 ],

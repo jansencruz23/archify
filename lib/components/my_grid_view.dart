@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -17,7 +18,8 @@ class MyGridView extends StatelessWidget {
       required this.nicknames,
       this.showNickname = false,
       this.showLikeButton = false,
-      this.showDecorationBox = false, this.imageHeight = 200.0});
+      this.showDecorationBox = false,
+      this.imageHeight = 200.0});
 
   //AAlfonso For debugging
   void _likeImage(String imageUrl) {
@@ -31,44 +33,44 @@ class MyGridView extends StatelessWidget {
             SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
         shrinkWrap: true,
         physics: BouncingScrollPhysics(),
-        itemCount: photos.length,//occupy ng space needed lang
-        itemBuilder: (context, index){
+        itemCount: photos.length, //occupy ng space needed lang
+        itemBuilder: (context, index) {
           final photo = photos[index];
           final avatar = avatars[index];
           final nickname = nicknames[index];
 
           return Container(
-            decoration: showDecorationBox ? BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-            ):null,
+            decoration: showDecorationBox
+                ? BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                  )
+                : null,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 if (showNickname && nickname.isNotEmpty)
-                Row(
-                  children: [
-                    if (avatar.isNotEmpty)
-                      ClipOval(
-                        child: Image.network(
-                          photo,
-                          width: 30,
-                          height: 30,
-                          fit: BoxFit.cover,
+                  Row(
+                    children: [
+                      if (avatar.isNotEmpty)
+                        ClipOval(
+                          child: Image.network(
+                            photo,
+                            width: 30,
+                            height: 30,
+                            fit: BoxFit.cover,
+                          ),
                         ),
+                      SizedBox(
+                        width: 12,
                       ),
-                      SizedBox(width: 12,),
                       Text(
-                      nickname,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Sora',
-                      ),
-                    )
-
-            ],
-
-
-                ),
+                        nickname,
+                        style: TextStyle(
+                          fontFamily: 'Sora',
+                        ),
+                      )
+                    ],
+                  ),
                 Stack(
                   children: [
                     ClipRRect(
@@ -77,22 +79,16 @@ class MyGridView extends StatelessWidget {
                         photo,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        height: imageHeight, //argument nito (index % 3 == 0) ? 200 : 300, AALFONSO
+                        height:
+                            imageHeight, //argument nito (index % 3 == 0) ? 200 : 300, AALFONSO
                       ),
-
                     ),
-                    if(showLikeButton)
-                      Positioned(child:
-                      GestureDetector(
-
-                      ))
+                    if (showLikeButton) Positioned(child: GestureDetector())
                   ],
                 )
               ],
             ),
-
           );
-
         });
   }
 }

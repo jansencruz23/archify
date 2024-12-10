@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -53,7 +54,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
       setState(() {
         _permissionGranted = result.isGranted;
       });
-
     }
   }
 
@@ -62,8 +62,12 @@ class _QRScannerScreenState extends State<QRScannerScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Permission Required'),
-        content: const Text(
+        content: Text(
           'Camera permission is required to scan QR codes. Please enable it in your device settings.',
+          style: TextStyle(
+            fontFamily: 'Sora',
+            fontSize: getClampedFontSize(context, 0.03),
+          ),
         ),
         actions: [
           TextButton(
@@ -73,7 +77,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
             child: Text(
               'Cancel',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: getClampedFontSize(context, 0.03),
                 fontFamily: 'Sora',
                 color: Theme.of(context).colorScheme.inversePrimary,
               ),
@@ -87,7 +91,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
             child: Text(
               'Open Settings',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: getClampedFontSize(context, 0.03),
                 fontFamily: 'Sora',
                 color: Theme.of(context).colorScheme.inversePrimary,
               ),
@@ -109,12 +113,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
     }
   }
 
-  //Font responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +122,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
           style: TextStyle(
             fontFamily: 'Sora',
             fontWeight: FontWeight.w500,
-            fontSize: 20,
+            fontSize: getClampedFontSize(context, 0.04),
             color: Theme.of(context).colorScheme.inversePrimary,
           ),
         ),
@@ -155,7 +153,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Sora',
-                      fontSize: _getClampedFontSize(context, 0.03),
+                      fontSize: getClampedFontSize(context, 0.03),
                       color: Colors.red,
                     ),
                   ),
@@ -186,7 +184,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'Sora',
-                          fontSize: _getClampedFontSize(context, 0.03),
+                          fontSize: getClampedFontSize(context, 0.03),
                           fontWeight: FontWeight.w500,
                         ),
                       ),

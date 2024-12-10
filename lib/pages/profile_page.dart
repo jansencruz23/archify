@@ -1,8 +1,10 @@
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_profile_picture.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
 import 'package:archify/services/database/day/day_gate.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:archify/services/database/user/user_provider.dart';
 import 'package:archify/pages/edit_profile_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
@@ -26,6 +28,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   late final UserProvider _userProvider;
+  late final DayProvider _dayProvider;
   int _selectedIndex = 3;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -54,8 +57,8 @@ class _ProfilePageState extends State<ProfilePage>
             const end = Offset.zero;
             const curve = Curves.ease;
 
-            var tween =
-            Tween(begin: startOffset, end: end).chain(CurveTween(curve: curve));
+            var tween = Tween(begin: startOffset, end: end)
+                .chain(CurveTween(curve: curve));
 
             return SlideTransition(
               position: animation.drive(tween),
@@ -68,12 +71,14 @@ class _ProfilePageState extends State<ProfilePage>
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          customRoute(HomePage(), Offset(-1.0, 0.0)), // navigate from left to right
+          customRoute(
+              HomePage(), Offset(-1.0, 0.0)), // navigate from left to right
         );
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          customRoute(DayGate(), Offset(-1.0, 0.0)), // navigate from left to right
+          customRoute(
+              DayGate(), Offset(-1.0, 0.0)), // navigate from left to right
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -88,11 +93,13 @@ class _ProfilePageState extends State<ProfilePage>
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
-          customRoute(SettingsPage(), Offset(1.0, 0.0)), // navigate from right to left
+          customRoute(
+              SettingsPage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       }
     });
   }
+
   void _toggleRotation() {
     setState(() {
       _isRotated = !_isRotated;
@@ -153,17 +160,10 @@ class _ProfilePageState extends State<ProfilePage>
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 String enteredCode = codeController.text;
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Code Entered: $enteredCode',
-                      style: const TextStyle(fontFamily: 'Sora'),
-                    ),
-                  ),
-                );
+                await joinDay(enteredCode);
               },
               child: const Text(
                 'Enter',
@@ -179,18 +179,52 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
+  Future<void> joinDay(String dayCode) async {
+    if (dayCode.isEmpty) return;
+    final dayExists = await _dayProvider.isDayExistingAndActive(dayCode);
+    final isRoomFull = await _dayProvider.isRoomFull(dayCode);
+
+    if (!mounted) return;
+
+    if (isRoomFull) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Room is full')),
+      );
+      return;
+    }
+
+    if (!dayExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Day does not exist or already finished')),
+      );
+      return;
+    }
+
+    goDaySpace(context, dayCode);
+  }
+
   //QR Scanner
   void _scanQRCode() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -202,6 +236,7 @@ class _ProfilePageState extends State<ProfilePage>
     super.initState();
 
     _userProvider = Provider.of<UserProvider>(context, listen: false);
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
@@ -272,7 +307,7 @@ class _ProfilePageState extends State<ProfilePage>
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.inversePrimary,
-                        fontSize: 18,
+                        fontSize: getClampedFontSize(context, 0.045),
                         fontFamily: 'Sora'),
                   ),
                   Padding(
@@ -281,7 +316,7 @@ class _ProfilePageState extends State<ProfilePage>
                       userProfile == null ? 'Loading' : userProfile.bio,
                       maxLines: 3,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         fontFamily: 'Sora',
                         color: Theme.of(context).colorScheme.inversePrimary,
                       ),
@@ -308,7 +343,7 @@ class _ProfilePageState extends State<ProfilePage>
                         'Edit Profile',
                         style: TextStyle(
                           fontFamily: 'Sora',
-                          fontSize: 16,
+                          //fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -455,6 +490,7 @@ class _ProfilePageState extends State<ProfilePage>
                                         color: _currentDay != null
                                             ? Colors.grey[300]
                                             : Colors.white,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ),
