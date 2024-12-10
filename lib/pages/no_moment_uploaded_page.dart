@@ -167,7 +167,7 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
               child: Text(
                 "Close",
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontFamily: 'Sora',
                 ),
               ),

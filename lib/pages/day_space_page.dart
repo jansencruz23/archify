@@ -448,7 +448,7 @@ class _DaySpacePageState extends State<DaySpacePage>
               child: Text(
                 "Close",
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontFamily: 'Sora',
                 ),
               ),
