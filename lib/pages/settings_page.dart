@@ -570,7 +570,7 @@ class _SettingsPageState extends State<SettingsPage>
                   },
                 ),
                 MySettingsButton(
-                  text: 'Logout',
+                  text: 'Log Out',
                   icon: Image.asset(
                     'lib/assets/images/logout_icon.png',
                     width: 24,
