@@ -428,7 +428,7 @@ class _SettingsPageState extends State<SettingsPage>
                   },
                 ),
                 MySettingsButton(
-                  text: 'Share',
+                  text: 'Share App',
                   icon: Image.asset(
                     'lib/assets/images/share_icon.png',
                     width: 24,
@@ -440,7 +440,7 @@ class _SettingsPageState extends State<SettingsPage>
                   },
                 ),
                 MySettingsButton(
-                  text: 'Privacy',
+                  text: 'Terms and Conditions',
                   icon: Image.asset(
                     'lib/assets/images/privacy_icon.png',
                     width: 24,
@@ -458,7 +458,7 @@ class _SettingsPageState extends State<SettingsPage>
                   },
                 ),
                 MySettingsButton(
-                  text: 'About',
+                  text: 'About Us',
                   icon: Image.asset(
                     'lib/assets/images/about_icon.png',
                     width: 24,
@@ -552,7 +552,7 @@ class _SettingsPageState extends State<SettingsPage>
                   },
                 ),
                 MySettingsButton(
-                  text: 'Logout',
+                  text: 'Log Out',
                   icon: Image.asset(
                     'lib/assets/images/logout_icon.png',
                     width: 24,
