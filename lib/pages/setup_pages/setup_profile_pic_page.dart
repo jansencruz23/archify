@@ -48,11 +48,15 @@ class _SetupProfilePicPageState extends State<SetupProfilePicPage> {
                 shape: BoxShape.circle,
               ),
               child: userProvider.picturePath == ''
-                  ? Center(
-                      child: Icon(
-                        Icons.account_circle,
-                        color: Theme.of(context).colorScheme.secondary,
-                        size: MediaQuery.of(context).size.height * 0.4,
+                  ? Container(
+                      width: double
+                          .infinity, // Ensures it spans the full width of the parent
+                      child: Center(
+                        child: Icon(
+                          Icons.account_circle,
+                          color: Theme.of(context).colorScheme.secondary,
+                          size: MediaQuery.of(context).size.height * 0.4,
+                        ),
                       ),
                     )
                   : Container(
