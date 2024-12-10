@@ -34,31 +34,26 @@ class _SetupProfilePicPageState extends State<SetupProfilePicPage> {
             maxLines: 2,
           ),
         ),
+
+        //  colors: [
+        //                     Color(0xFFF5DEB3),
         Center(
           child: GestureDetector(
             onTap: widget.onTap,
             child: Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(0),
               height: 300,
               width: 300,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFF5DEB3),
-                    Color(0xFFD2691E),
-                    Color(0xFFFF6F61),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+
                 shape: BoxShape.circle,
               ),
               child: userProvider.picturePath == ''
-                  ? const Center(
+                  ?  Center(
                       child: Icon(
-                        Icons.person_rounded,
-                        color: Colors.white,
-                        size: 200,
+                        Icons.account_circle,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 300,
                       ),
                     )
                   : Container(

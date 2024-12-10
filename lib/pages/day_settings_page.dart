@@ -70,11 +70,18 @@ class _DaySettingsPageState extends State<DaySettingsPage> {
               helpTextStyle: TextStyle(
                 fontFamily: 'Sora',
               ),
+              confirmButtonStyle: ButtonStyle(
+                textStyle: WidgetStatePropertyAll(TextStyle(fontFamily: 'Sora',))
+              ),
+              cancelButtonStyle: ButtonStyle(
+                  textStyle: WidgetStatePropertyAll(TextStyle(fontFamily: 'Sora',))
+              ),
               hourMinuteTextStyle: TextStyle(fontFamily: 'Sora', fontSize: 45),
               dayPeriodTextStyle: const TextStyle(
                 fontFamily: 'Sora',
                 fontSize: 16,
               ),
+
             ),
           ),
           child: child!,

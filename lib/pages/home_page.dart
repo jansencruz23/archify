@@ -451,21 +451,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                   ),
                   // Notification icon button
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(5, 14, 7, 0),
-                      child: IconButton(
-                        onPressed: () {
-                          _showNicknameAndAvatarDialog(context);
-                        },
-                        icon: Image.asset(
-                          'lib/assets/images/notification_icon.png',
-                          width: 30,
-                          height: 30,
-                        ),
-                      ),
-                    ),
-                  ],
+                  // actions: [
+                  //   Padding(
+                  //     padding: const EdgeInsets.fromLTRB(5, 14, 7, 0),
+                  //     child: IconButton(
+                  //       onPressed: () {
+                  //         _showNicknameAndAvatarDialog(context);
+                  //       },
+                  //       icon: Image.asset(
+                  //         'lib/assets/images/notification_icon.png',
+                  //         width: 30,
+                  //         height: 30,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ],
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(5),
                     child: Divider(

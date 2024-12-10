@@ -261,7 +261,7 @@ class _DaySettingsPageState extends State<EditDaySettingsPage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    "Ready for the Challenge?",
+                    "Update the day?",
                     style: TextStyle(
                       fontFamily: 'Sora',
                       fontWeight: FontWeight.bold,

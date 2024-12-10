@@ -193,17 +193,10 @@ class _SettingsPageState extends State<SettingsPage>
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 String enteredCode = _codeController.text;
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Code Entered: $enteredCode',
-                      style: const TextStyle(fontFamily: 'Sora'),
-                    ),
-                  ),
-                );
+                await joinDay(enteredCode);
               },
               child: const Text(
                 'Enter',
@@ -316,6 +309,30 @@ class _SettingsPageState extends State<SettingsPage>
   // for rating pop up
   void initializeDate() {
     minimumDate = DateTime.now();
+  }
+
+  Future<void> joinDay(String dayCode) async {
+    if (dayCode.isEmpty) return;
+    final dayExists = await _dayProvider.isDayExistingAndActive(dayCode);
+    final isRoomFull = await _dayProvider.isRoomFull(dayCode);
+
+    if (!mounted) return;
+
+    if (isRoomFull) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Room is full')),
+      );
+      return;
+    }
+
+    if (!dayExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Day does not exist or already finished')),
+      );
+      return;
+    }
+
+    goDaySpace(context, dayCode);
   }
 
   @override

@@ -101,13 +101,17 @@ class _MyTextFieldState extends State<MyTextField> {
               ),
               contentPadding: const EdgeInsets.only(left: 30),
               suffixIcon: widget.showToggleIcon
-                  ? IconButton(
-                      icon: Icon(
-                        isObscured ? Icons.visibility_off : Icons.visibility,
-                        color: Theme.of(context).colorScheme.onSurface,
+                  ? Padding(
+                padding:
+                const EdgeInsets.only(left: 0, top: 0, bottom: 0, right: 10),
+                    child: IconButton(
+                        icon: Icon(
+                          isObscured ? Icons.visibility_off : Icons.visibility,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        onPressed: _toggleObscureText,
                       ),
-                      onPressed: _toggleObscureText,
-                    )
+                  )
                   : null,
             ),
           );
