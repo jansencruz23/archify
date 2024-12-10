@@ -23,7 +23,7 @@ class _SetupProfilePicPageState extends State<SetupProfilePicPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(50, 40, 50, 30),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: Text(
             'Choose your profile photo',
             style: TextStyle(
@@ -42,22 +42,16 @@ class _SetupProfilePicPageState extends State<SetupProfilePicPage> {
             onTap: widget.onTap,
             child: Container(
               padding: const EdgeInsets.all(0),
-              height: 300,
-              width: 300,
+              height: MediaQuery.of(context).size.height * 0.4,
+              width: MediaQuery.of(context).size.height * 0.4,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
               ),
               child: userProvider.picturePath == ''
-                  ? Container(
-                      width: double
-                          .infinity, // Ensures it spans the full width of the parent
-                      child: Center(
-                        child: Icon(
-                          Icons.account_circle,
-                          color: Theme.of(context).colorScheme.secondary,
-                          size: MediaQuery.of(context).size.height * 0.4,
-                        ),
-                      ),
+                  ? Icon(
+                      Icons.account_circle,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: MediaQuery.of(context).size.height * 0.4,
                     )
                   : Container(
                       padding: const EdgeInsets.all(3),
