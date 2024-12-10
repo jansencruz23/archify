@@ -508,6 +508,9 @@ class _DaySpacePageState extends State<DaySpacePage>
       _remainingTime = day!.votingDeadline.difference(DateTime.now());
       _checkIsHost();
     }
+    else {
+      goDayGate(context);
+    }
 
     return Scaffold(
       appBar: PreferredSize(
