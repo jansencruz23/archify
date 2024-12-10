@@ -47,8 +47,8 @@ class _DaySpacePageState extends State<DaySpacePage>
   bool _isRotated = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
-  late Timer _timer = Timer.periodic(Duration.zero, (timer) {});
-  late Duration _remainingTime = Duration.zero;
+  Timer? _timer;
+  Duration? _remainingTime;
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -203,7 +203,6 @@ class _DaySpacePageState extends State<DaySpacePage>
       });
       _checkIsHost();
       _loadDay();
-      _startCountdown();
     });
   }
 
@@ -260,6 +259,16 @@ class _DaySpacePageState extends State<DaySpacePage>
     }
   }
 
+  Future<void> _checkDeadline() async {
+    if (day != null) {
+      final result =
+          await _dayProvider.hasVotingDeadlineExpired(widget.dayCode);
+      if (result) {
+        goDayGate(context);
+      }
+    }
+  }
+
   Future<bool> _isParticipant() async {
     return await _dayProvider.isParticipant(_dayCode);
   }
@@ -290,7 +299,7 @@ class _DaySpacePageState extends State<DaySpacePage>
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer!.cancel();
     _animationController.dispose();
     super.dispose();
     _dayCode = '';
@@ -361,6 +370,7 @@ class _DaySpacePageState extends State<DaySpacePage>
     await _dayProvider.loadDayByCode(_dayCode);
     await _dayProvider.loadMoments(_dayCode);
     await _dayProvider.loadHasUploaded(_dayCode);
+    _startCountdown();
   }
 
   Future<void> _startDay() async {
@@ -505,7 +515,7 @@ class _DaySpacePageState extends State<DaySpacePage>
     final votedMomentIds = listeningProvider.votedMomentIds;
     listeningProvider.listenToMoments(_dayCode);
     if (day != null) {
-      _remainingTime = day!.votingDeadline.difference(DateTime.now());
+//      _remainingTime = day!.votingDeadline.difference(DateTime.now());
       _checkIsHost();
     }
     else {
@@ -639,9 +649,10 @@ class _DaySpacePageState extends State<DaySpacePage>
                             padding: const EdgeInsets.only(
                                 left: 15, top: 0, bottom: 0),
                             child: Text(
-                              day?.votingDeadline == null
+                              day?.votingDeadline == null ||
+                                      _remainingTime == null
                                   ? 'DEADLINE: N/A'
-                                  : 'Voting ends in ${_formatDuration(_remainingTime)}...',
+                                  : 'Voting ends in ${_formatDuration(_remainingTime ?? Duration.zero)}...',
                               style: TextStyle(
                                 fontFamily: 'Sora',
                                 color: Theme.of(context)

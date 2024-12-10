@@ -323,7 +323,9 @@ class _NoMomentUploadedPageState extends State<NoMomentUploadedPage>
         if (widget.votingDeadline == null) return;
         final newRemainingTime =
             widget.votingDeadline!.difference(DateTime.now());
-        if (newRemainingTime <= Duration.zero) {
+        if (newRemainingTime <= Duration.zero ||
+            _remainingTime <= Duration.zero ||
+            !day!.status) {
           timer.cancel();
           setState(() {
             _remainingTime = Duration.zero;

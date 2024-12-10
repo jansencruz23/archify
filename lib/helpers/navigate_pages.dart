@@ -62,7 +62,7 @@ void goHome(BuildContext context) {
 }
 
 void goDayGate(BuildContext context) {
-  Navigator.push(
+  Navigator.pushReplacement(
     context,
     MaterialPageRoute(builder: (context) => const DayGate()),
   );
