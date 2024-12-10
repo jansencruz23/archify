@@ -45,33 +45,49 @@ class _SetupProfilePicPageState extends State<SetupProfilePicPage> {
               height: 300,
               width: 300,
               decoration: BoxDecoration(
-
                 shape: BoxShape.circle,
               ),
               child: userProvider.picturePath == ''
-                  ?  Center(
+                  ? Center(
                       child: Icon(
                         Icons.account_circle,
                         color: Theme.of(context).colorScheme.secondary,
-                        size: 300,
+                        size: MediaQuery.of(context).size.height * 0.4,
                       ),
                     )
                   : Container(
-                      height: 300,
-                      width: 300,
+                      padding: const EdgeInsets.all(3),
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      width: MediaQuery.of(context).size.height * 0.4,
                       decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 5,
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFFF5DEB3),
+                            Color(0xFFD2691E),
+                            Color(0xFFFF6F61),
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                         ),
-                        color: Colors.grey[200],
                         shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: userProvider.picturePath.startsWith('https')
-                              ? Image.network(userProvider.picturePath).image
-                              : Image.file(File(userProvider.picturePath))
-                                  .image,
-                          fit: BoxFit.cover,
+                      ),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        width: MediaQuery.of(context).size.height * 0.3,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 8,
+                          ),
+                          color: Colors.grey[200],
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: userProvider.picturePath.startsWith('https')
+                                ? Image.network(userProvider.picturePath).image
+                                : Image.file(File(userProvider.picturePath))
+                                    .image,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),

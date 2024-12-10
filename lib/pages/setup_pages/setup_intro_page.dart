@@ -24,7 +24,10 @@ class SetupIntroPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 0, top: 70, bottom: 0),
-              child: Image.asset('lib/assets/images/SetUp-Icon.png'),
+              child: Image.asset(
+                'lib/assets/images/SetUp-Icon.png',
+                height: MediaQuery.of(context).size.height * 0.3,
+              ),
             )
           ],
         ),
