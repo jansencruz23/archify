@@ -35,8 +35,7 @@ class _SetupProfilePicPageState extends State<SetupProfilePicPage> {
           ),
         ),
 
-        //  colors: [
-        //                     Color(0xFFF5DEB3),
+
         Center(
           child: GestureDetector(
             onTap: widget.onTap,
@@ -48,9 +47,8 @@ class _SetupProfilePicPageState extends State<SetupProfilePicPage> {
                 shape: BoxShape.circle,
               ),
               child: userProvider.picturePath == ''
-                  ? Container(
-                      width: double
-                          .infinity, // Ensures it spans the full width of the parent
+                  ? Align(
+                      alignment: Alignment.center,// Ensures it spans the full width of the parent
                       child: Center(
                         child: Icon(
                           Icons.account_circle,
