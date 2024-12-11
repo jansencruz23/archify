@@ -276,30 +276,29 @@ class _DayExpiredPageState extends State<DayExpiredPage>
       ),
       body: Stack(
         children: [
-          // Row(
-          //   children: [
-          //     Padding(
-          //       padding: const EdgeInsets.all(20.0),
-          //       child: Container(
-          //         decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(10.0),
-          //           color: Theme.of(context).colorScheme.secondary,
-          //         ),
-          //         child: Padding(
-          //           padding: const EdgeInsets.all(8.0),
-          //           child: Text(
-          //             'DAY CODE: ${widget.dayCode}',
-          //             style: TextStyle(
-          //               fontFamily: 'Sora',
-          //               fontWeight: FontWeight.bold,
-          //               color: Theme.of(context).colorScheme.surface,
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //     )
-          //   ],
-          // ),
+           Row(
+             children: [
+               Padding(
+                 padding: const EdgeInsets.all(20.0),
+                 child: Container(
+                   decoration: BoxDecoration(
+                     borderRadius: BorderRadius.circular(10.0),
+                     color: Theme.of(context).colorScheme.secondary,
+                   ),
+                   child: Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: Text(
+                       'DAY CODE: ${widget.dayCode}',
+                       style: TextStyle(
+                        fontFamily: 'Sora',
+                        fontWeight: FontWeight.bold,
+                         color: Theme.of(context).colorScheme.surface,
+                       ),
+                     ),
+                   ),        ),
+               )
+             ],
+           ),
           Center(
             child: Padding(
               padding: const EdgeInsets.all(36.0),
