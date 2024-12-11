@@ -2,6 +2,7 @@ import 'package:archify/components/my_button.dart';
 import 'package:archify/helpers/avatar_mapper.dart';
 import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MyNicknameAndAvatarDialog extends StatefulWidget {
   final void Function() onSubmit;
@@ -118,6 +119,9 @@ class _MyNicknameAndAvatarDialogState extends State<MyNicknameAndAvatarDialog> {
                                 controller: widget.nicknameController,
                                 focusNode: _fieldNickname,
                                 decoration: defaultDecoration,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(16),
+                                ],
                                 style: TextStyle(
                                   fontFamily: 'Sora',
                                   fontSize: getClampedFontSize(context, 0),
