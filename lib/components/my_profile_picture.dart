@@ -71,7 +71,7 @@ class _MyProfilePictureState extends State<MyProfilePicture> {
                     image: listeningProvider.picturePath.startsWith('https')
                         ? Image.network(listeningProvider.picturePath).image
                         : Image.file(File(listeningProvider.picturePath)).image,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fitWidth,
                   ),
                 ),
               ),
