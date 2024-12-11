@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:archify/components/my_button.dart';
@@ -34,6 +35,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   late final UserProvider _userProvider;
+  late final DayProvider _dayProvider;
 
   //Qrcode string
   String qrCode = '';
@@ -47,10 +49,29 @@ class _DayExpiredPageState extends State<DayExpiredPage>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
+      Route customRoute(Widget page, Offset startOffset) {
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const end = Offset.zero;
+            const curve = Curves.ease;
+
+            var tween =
+            Tween(begin: startOffset, end: end).chain(CurveTween(curve: curve));
+
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+      }
+
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          customRoute(HomePage(), Offset(-1.0, 0.0)), // navigate from left to right
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -65,12 +86,12 @@ class _DayExpiredPageState extends State<DayExpiredPage>
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          customRoute(ProfilePage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
+          customRoute(SettingsPage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       }
     });
@@ -153,12 +174,22 @@ class _DayExpiredPageState extends State<DayExpiredPage>
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -168,6 +199,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
   @override
   void initState() {
     super.initState();
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
     _controller = AnimationController(vsync: this);
     _animationController = AnimationController(
@@ -192,11 +224,6 @@ class _DayExpiredPageState extends State<DayExpiredPage>
     super.dispose();
   }
 
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
@@ -217,9 +244,9 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                 Text(
                   'Let’s keep the moment,',
                   style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.03),
                     fontFamily: 'Sora',
                     color: Theme.of(context).colorScheme.inversePrimary,
+                    fontSize: 12,
                   ),
                 ),
                 Positioned(
@@ -228,7 +255,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                   child: Text(
                     'Pick the best shot!',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.05),
+                      fontSize: getClampedFontSize(context, 0.05),
                       fontFamily: 'Sora',
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.inversePrimary,
@@ -249,31 +276,29 @@ class _DayExpiredPageState extends State<DayExpiredPage>
       ),
       body: Stack(
         children: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'DAY CODE: ${widget.dayCode}',
-                      style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.03),
+           Row(
+             children: [
+               Padding(
+                 padding: const EdgeInsets.all(20.0),
+                 child: Container(
+                   decoration: BoxDecoration(
+                     borderRadius: BorderRadius.circular(10.0),
+                     color: Theme.of(context).colorScheme.secondary,
+                   ),
+                   child: Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: Text(
+                       'DAY CODE: ${widget.dayCode}',
+                       style: TextStyle(
                         fontFamily: 'Sora',
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.surface,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
+                         color: Theme.of(context).colorScheme.surface,
+                       ),
+                     ),
+                   ),        ),
+               )
+             ],
+           ),
           Center(
             child: Padding(
               padding: const EdgeInsets.all(36.0),
@@ -287,9 +312,9 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                     'The photo battle is over—see the winning moment!',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.05),
                       fontFamily: 'Sora',
                       color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: getClampedFontSize(context, 0.05),
                     ),
                   ),
                 ],
@@ -307,7 +332,6 @@ class _DayExpiredPageState extends State<DayExpiredPage>
               isRotated: _isRotated,
               toggleRotation: _toggleRotation,
               showEnterDayCodeDialog: _showEnterDayCodeDialog,
-              updateCurrentDay: _loadCurrentDay,
             ),
           ),
           if (_showVerticalBar)
@@ -382,6 +406,7 @@ class _DayExpiredPageState extends State<DayExpiredPage>
                                       color: _currentDay != null
                                           ? Colors.grey[300]
                                           : Colors.white,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ),

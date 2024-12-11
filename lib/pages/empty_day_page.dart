@@ -1,4 +1,6 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
@@ -23,6 +25,7 @@ class EmptyDayPage extends StatefulWidget {
 class _EmptyDayPageState extends State<EmptyDayPage>
     with TickerProviderStateMixin {
   late final UserProvider _userProvider;
+  late final DayProvider _dayProvider;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
   bool _isRotated = false;
@@ -44,12 +47,22 @@ class _EmptyDayPageState extends State<EmptyDayPage>
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -63,10 +76,29 @@ class _EmptyDayPageState extends State<EmptyDayPage>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
+      Route customRoute(Widget page, Offset startOffset) {
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const end = Offset.zero;
+            const curve = Curves.ease;
+
+            var tween =
+            Tween(begin: startOffset, end: end).chain(CurveTween(curve: curve));
+
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+      }
+
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          customRoute(HomePage(), Offset(-1.0, 0.0)), // navigate from left to right
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -81,16 +113,18 @@ class _EmptyDayPageState extends State<EmptyDayPage>
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          customRoute(ProfilePage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
+          customRoute(SettingsPage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       }
     });
   }
+
+
 
   void _toggleRotation() {
     setState(() {
@@ -136,17 +170,10 @@ class _EmptyDayPageState extends State<EmptyDayPage>
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 String enteredCode = _codeController.text;
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Code Entered: $enteredCode',
-                      style: const TextStyle(fontFamily: 'Sora'),
-                    ),
-                  ),
-                );
+                await joinDay(enteredCode);
               },
               child: const Text(
                 'Enter',
@@ -159,10 +186,35 @@ class _EmptyDayPageState extends State<EmptyDayPage>
     );
   }
 
+  Future<void> joinDay(String dayCode) async {
+    if (dayCode.isEmpty) return;
+    final dayExists = await _dayProvider.isDayExistingAndActive(dayCode);
+    final isRoomFull = await _dayProvider.isRoomFull(dayCode);
+
+    if (!mounted) return;
+
+    if (isRoomFull) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Room is full')),
+      );
+      return;
+    }
+
+    if (!dayExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Day does not exist or already finished')),
+      );
+      return;
+    }
+
+    goDaySpace(context, dayCode);
+  }
+
   @override
   void initState() {
     super.initState();
     _userProvider = Provider.of<UserProvider>(context, listen: false);
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -181,11 +233,6 @@ class _EmptyDayPageState extends State<EmptyDayPage>
     super.dispose();
   }
 
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -202,7 +249,6 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                   Text(
                     'Let’s keep the moment,',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.03),
                       fontFamily: 'Sora',
                       color: Theme.of(context).colorScheme.inversePrimary,
                     ),
@@ -213,7 +259,7 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                     child: Text(
                       'Pick the best shot!',
                       style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
+                        fontSize: getClampedFontSize(context, 0.05),
                         fontFamily: 'Sora',
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.inversePrimary,
@@ -245,7 +291,7 @@ class _EmptyDayPageState extends State<EmptyDayPage>
                       'Pssst... the room\'s waiting for you. Got the code?',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
+                        fontSize: getClampedFontSize(context, 0.05),
                         fontFamily: 'Sora',
                         color: Theme.of(context).colorScheme.inversePrimary,
                       ),

@@ -59,10 +59,16 @@ dependencies:
   permission_handler: ^11.0.0
   gal: ^2.3.0
   dio: ^5.7.0
+  flutter_launcher_icons: ^0.14.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "lib/assets/icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -121,6 +127,10 @@ flutter:
     - lib/assets/images/edit_icon.png
     - lib/assets/images/leave_icon.png
     - lib/assets/images/download_icon.png
+    - lib/assets/images/SetUp-Icon.png
+    - lib/assets/images/send.png
+    - lib/assets/images/send_outlined.png
+    - lib/assets/icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

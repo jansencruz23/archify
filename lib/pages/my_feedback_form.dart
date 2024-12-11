@@ -1,4 +1,5 @@
 import 'package:archify/components/my_button.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -45,12 +46,6 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
     super.initState();
   }
 
-  //For Responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   void dispose() {
     _fieldSubject.dispose();
@@ -71,7 +66,7 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
             'Feedback',
             style: TextStyle(
                 fontFamily: 'Sora',
-                fontSize: 24,
+                fontSize: getClampedFontSize(context, 0.04),
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.inversePrimary),
           ),
@@ -89,13 +84,13 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 16.0,),
+                      top: 16.0,
+                    ),
                     child: Text(
                       'Got Feedback? Submit it here.',
                       style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.08),
+                        fontSize: getClampedFontSize(context, 0.04),
                         fontFamily: 'Sora',
-                        fontWeight: FontWeight.bold,
                         color: Color(0xFF333333),
                       ),
                     ),
@@ -109,7 +104,6 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                     child: Text(
                       'Subject',
                       style: TextStyle(
-                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Sora',
                         color: Theme.of(context).colorScheme.inversePrimary,
@@ -148,7 +142,6 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                     child: Text(
                       'Body',
                       style: TextStyle(
-                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Sora',
                         color: Theme.of(context).colorScheme.inversePrimary,
@@ -162,13 +155,14 @@ class _MyFeedbackFormState extends State<MyFeedbackForm> {
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(16.0),
                       labelText: 'Body',
+                      alignLabelWithHint: true,
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.teal)),
                     ),
                     onSubmitted: (_) {
                       _fieldBody.unfocus();
                     },
-                    maxLines: 5,
+                    maxLines: 10,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.inversePrimary,
                     ),

@@ -1,5 +1,7 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/models/day.dart';
+import 'package:archify/services/database/day/day_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/components/my_button.dart';
 import 'package:archify/components/my_navbar.dart';
@@ -24,6 +26,7 @@ class LoadingDayPage extends StatefulWidget {
 class _LoadingDayPage extends State<LoadingDayPage>
     with TickerProviderStateMixin {
   late final UserProvider _userProvider;
+  late final DayProvider _dayProvider;
   late Day? _currentDay;
   int _selectedIndex = 1;
   bool _showVerticalBar = false;
@@ -46,12 +49,22 @@ class _LoadingDayPage extends State<LoadingDayPage>
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -163,6 +176,7 @@ class _LoadingDayPage extends State<LoadingDayPage>
   void initState() {
     super.initState();
     _userProvider = Provider.of<UserProvider>(context, listen: false);
+    _dayProvider = Provider.of<DayProvider>(context, listen: false);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -185,11 +199,6 @@ class _LoadingDayPage extends State<LoadingDayPage>
     super.dispose();
   }
 
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   Widget build(BuildContext context) {
     final _userListeningProvider = Provider.of<UserProvider>(context);
@@ -209,9 +218,9 @@ class _LoadingDayPage extends State<LoadingDayPage>
                   Text(
                     'Let’s keep the moment,',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.03),
                       fontFamily: 'Sora',
                       color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: 12,
                     ),
                   ),
                   Positioned(
@@ -220,7 +229,7 @@ class _LoadingDayPage extends State<LoadingDayPage>
                     child: Text(
                       'Pick the best shot!',
                       style: TextStyle(
-                        fontSize: _getClampedFontSize(context, 0.05),
+                        fontSize: getClampedFontSize(context, 0.05),
                         fontFamily: 'Sora',
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.inversePrimary,

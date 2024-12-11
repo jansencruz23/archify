@@ -1,8 +1,7 @@
 import 'dart:async';
-
-import 'package:archify/components/my_input_alert_box.dart';
 import 'package:archify/components/my_mobile_scanner_overlay.dart';
 import 'package:archify/components/my_moment_tile.dart';
+import 'package:archify/helpers/font_helper.dart';
 import 'package:archify/helpers/navigate_pages.dart';
 import 'package:archify/components/my_navbar.dart';
 import 'package:archify/models/day.dart';
@@ -48,8 +47,8 @@ class _DaySpacePageState extends State<DaySpacePage>
   bool _isRotated = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
-  late Timer _timer = Timer.periodic(Duration.zero, (timer) {});
-  late Duration _remainingTime = Duration.zero;
+  Timer? _timer;
+  Duration? _remainingTime;
 
   final List<Map<String, dynamic>> _menuItems = [
     {'icon': Icons.wb_sunny, 'title': 'Enter a day code'},
@@ -60,15 +59,30 @@ class _DaySpacePageState extends State<DaySpacePage>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
+      Route customRoute(Widget page, Offset startOffset) {
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const end = Offset.zero;
+            const curve = Curves.ease;
+
+            var tween = Tween(begin: startOffset, end: end)
+                .chain(CurveTween(curve: curve));
+
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+      }
+
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } else if (index == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => EmptyDayPage()),
+          customRoute(
+              HomePage(), Offset(-1.0, 0.0)), // navigate from left to right
         );
       } else if (index == 2) {
         if (_showVerticalBar) {
@@ -83,12 +97,14 @@ class _DaySpacePageState extends State<DaySpacePage>
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          customRoute(
+              ProfilePage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       } else if (index == 4) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
+          customRoute(
+              SettingsPage(), Offset(1.0, 0.0)), // navigate from right to left
         );
       }
     });
@@ -187,7 +203,6 @@ class _DaySpacePageState extends State<DaySpacePage>
       });
       _checkIsHost();
       _loadDay();
-      _startCountdown();
     });
   }
 
@@ -244,6 +259,16 @@ class _DaySpacePageState extends State<DaySpacePage>
     }
   }
 
+  Future<void> _checkDeadline() async {
+    if (day != null) {
+      final result =
+          await _dayProvider.hasVotingDeadlineExpired(widget.dayCode);
+      if (result) {
+        goDayGate(context);
+      }
+    }
+  }
+
   Future<bool> _isParticipant() async {
     return await _dayProvider.isParticipant(_dayCode);
   }
@@ -274,7 +299,7 @@ class _DaySpacePageState extends State<DaySpacePage>
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer!.cancel();
     _animationController.dispose();
     super.dispose();
     _dayCode = '';
@@ -290,10 +315,9 @@ class _DaySpacePageState extends State<DaySpacePage>
                 child: Text(
                   'Who are you today?',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: 'Sora',
-                    color: Color(0xFF333333),
-                  ),
+                      fontFamily: 'Sora',
+                      color: Color(0xFF333333),
+                      fontSize: getClampedFontSize(context, 0.045)),
                 ),
               ),
               content: Container(
@@ -320,12 +344,22 @@ class _DaySpacePageState extends State<DaySpacePage>
       context,
       MaterialPageRoute(
         builder: (context) => QRScannerScreen(
-          onScan: (String code) {
+          onScan: (String code) async {
             setState(() {
               qrCode = code;
             });
-            goDaySpace(context, qrCode);
-            Navigator.pop(context);
+            final isExisting = await _dayProvider.isDayExistingAndActive(code);
+
+            if (isExisting && mounted) {
+              goDaySpace(context, qrCode);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Day does not exist or already finished'),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -336,6 +370,7 @@ class _DaySpacePageState extends State<DaySpacePage>
     await _dayProvider.loadDayByCode(_dayCode);
     await _dayProvider.loadMoments(_dayCode);
     await _dayProvider.loadHasUploaded(_dayCode);
+    _startCountdown();
   }
 
   Future<void> _startDay() async {
@@ -423,7 +458,7 @@ class _DaySpacePageState extends State<DaySpacePage>
               child: Text(
                 "Close",
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontFamily: 'Sora',
                 ),
               ),
@@ -469,12 +504,6 @@ class _DaySpacePageState extends State<DaySpacePage>
     await _dayProvider.toggleVote(_dayCode, momentId);
   }
 
-  //Font responsiveness
-  double _getClampedFontSize(BuildContext context, double scale) {
-    double calculatedFontSize = MediaQuery.of(context).size.width * scale;
-    return calculatedFontSize.clamp(12.0, 24.0); // Set min and max font size
-  }
-
   @override
   Widget build(BuildContext context) {
     final listeningProvider = Provider.of<DayProvider>(context);
@@ -483,9 +512,10 @@ class _DaySpacePageState extends State<DaySpacePage>
     day = listeningProvider.day;
     final moments = listeningProvider.moments;
     final hasUploaded = listeningProvider.hasUploaded;
+    final votedMomentIds = listeningProvider.votedMomentIds;
     listeningProvider.listenToMoments(_dayCode);
     if (day != null) {
-      _remainingTime = day!.votingDeadline.difference(DateTime.now());
+//      _remainingTime = day!.votingDeadline.difference(DateTime.now());
       _checkIsHost();
     }
 
@@ -502,9 +532,9 @@ class _DaySpacePageState extends State<DaySpacePage>
                 Text(
                   'Let’s keep the moment,',
                   style: TextStyle(
-                    fontSize: _getClampedFontSize(context, 0.03),
                     fontFamily: 'Sora',
                     color: Theme.of(context).colorScheme.inversePrimary,
+                    fontSize: 12,
                   ),
                 ),
                 Positioned(
@@ -513,7 +543,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                   child: Text(
                     'Pick the best shot!',
                     style: TextStyle(
-                      fontSize: _getClampedFontSize(context, 0.05),
+                      fontSize: getClampedFontSize(context, 0.05),
                       fontFamily: 'Sora',
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.inversePrimary,
@@ -540,96 +570,95 @@ class _DaySpacePageState extends State<DaySpacePage>
                     padding: const EdgeInsets.only(left: 20, right: 20),
                     child: Center(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Day Code Container
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, top: 20, bottom: 10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () => _showDayCode(
-                                      day?.code ?? '',
-                                      day?.name ?? '',
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, top: 15, bottom: 10),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 0, top: 0, bottom: 0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'DAY CODE: ${day?.code ?? ''}',
-                                        style: TextStyle(
-                                          fontSize: _getClampedFontSize(
-                                              context, 0.03),
-                                          fontFamily: 'Sora',
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface,
+                                    child: GestureDetector(
+                                      onTap: () => _showDayCode(
+                                        day?.code ?? '',
+                                        day?.name ?? '',
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12,
+                                            top: 5,
+                                            bottom: 5,
+                                            right: 12),
+                                        child: Text(
+                                          'DAY CODE: ${day?.code ?? ''}',
+                                          style: TextStyle(
+                                            fontFamily: 'Sora',
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, top: 20, bottom: 10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      day?.votingDeadline == null
-                                          ? 'DEADLINE: N/A'
-                                          : 'DEADLINE: ${_formatDuration(_remainingTime)}',
-                                      style: TextStyle(
-                                        fontSize:
-                                            _getClampedFontSize(context, 0.03),
-                                        fontFamily: 'Sora',
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                      ),
-                                    ),
-                                  ),
+                                Spacer(),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 0, top: 0, bottom: 0),
+                                  child: _isHost == null
+                                      ? const SizedBox()
+                                      : _isHost!
+                                          ? IconButton(
+                                              onPressed: _showSettings,
+                                              icon: Image.asset(
+                                                'lib/assets/images/edit_icon.png',
+                                                width: 26,
+                                                height: 26,
+                                              ),
+                                            )
+                                          : IconButton(
+                                              onPressed: _showSettings,
+                                              icon: Image.asset(
+                                                'lib/assets/images/leave_icon.png',
+                                                width: 24,
+                                                height: 24,
+                                              ),
+                                            ),
                                 ),
-                              ),
-                              Spacer(),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 8, top: 20, bottom: 10),
-                                child: _isHost == null
-                                    ? const SizedBox()
-                                    : _isHost!
-                                        ? IconButton(
-                                            onPressed: _showSettings,
-                                            icon: Image.asset(
-                                              'lib/assets/images/edit_icon.png',
-                                              width: 30,
-                                              height: 30,
-                                            ),
-                                          )
-                                        : IconButton(
-                                            onPressed: _showSettings,
-                                            icon: Image.asset(
-                                              'lib/assets/images/leave_icon.png',
-                                              width: 24,
-                                              height: 24,
-                                            ),
-                                          ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 15, top: 0, bottom: 0),
+                            child: Text(
+                              day?.votingDeadline == null ||
+                                      _remainingTime == null
+                                  ? 'DEADLINE: N/A'
+                                  : 'Voting ends in ${_formatDuration(_remainingTime ?? Duration.zero)}...',
+                              style: TextStyle(
+                                fontFamily: 'Sora',
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                              ),
+                            ),
+                          ),
+
                           // Moments Grid
                           Expanded(
                             child: MasonryGridView.builder(
@@ -642,9 +671,15 @@ class _DaySpacePageState extends State<DaySpacePage>
                                 final moment = moments![index];
                                 return MyMomentTile(
                                   moment: moment,
-                                  onTap: _showImageDialog,
                                   index: index,
                                   toggleVote: _toggleVote,
+                                  onTap: () => goViewImage(
+                                    context: context,
+                                    moment: moment,
+                                    toggleVote: () =>
+                                        _toggleVote(moment.momentId),
+                                    isActive: true,
+                                  ),
                                 );
                               },
                             ),
@@ -741,6 +776,7 @@ class _DaySpacePageState extends State<DaySpacePage>
                                             color: _currentDay != null
                                                 ? Colors.grey[300]
                                                 : Colors.white,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ),

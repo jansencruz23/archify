@@ -1,3 +1,4 @@
+import 'package:archify/helpers/font_helper.dart';
 import 'package:flutter/material.dart';
 
 class MyButton extends StatefulWidget {
@@ -53,7 +54,7 @@ class _MyButtonState extends State<MyButton> {
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Sora',
-                    fontSize: 18),
+                    fontSize: 14),
               ),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:archify/models/day.dart';
+import 'package:archify/models/moment.dart';
 import 'package:archify/pages/day_code_page.dart';
 import 'package:archify/pages/day_settings_page.dart';
 import 'package:archify/pages/day_space_page.dart';
@@ -6,6 +7,7 @@ import 'package:archify/pages/edit_day_settings_page.dart';
 import 'package:archify/pages/edit_profile_page.dart';
 import 'package:archify/pages/full_screen_image.dart';
 import 'package:archify/pages/home_page.dart';
+import 'package:archify/pages/view_image.dart';
 import 'package:archify/pages/profile_page.dart';
 import 'package:archify/pages/setup_page.dart';
 import 'package:archify/services/auth/auth_gate.dart';
@@ -60,7 +62,7 @@ void goHome(BuildContext context) {
 }
 
 void goDayGate(BuildContext context) {
-  Navigator.push(
+  Navigator.pushReplacement(
     context,
     MaterialPageRoute(builder: (context) => const DayGate()),
   );
@@ -84,6 +86,26 @@ void goEditSettings(BuildContext context, Day day) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => EditDaySettingsPage(day: day)),
+  );
+}
+
+void goViewImage({
+  required BuildContext context,
+  required Moment moment,
+  void Function()? toggleVote,
+  void Function()? toggleFavorite,
+  required bool isActive,
+}) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ViewImage(
+        moment: moment,
+        toggleVote: toggleVote,
+        isActive: isActive,
+        toggleFavorite: toggleFavorite,
+      ),
+    ),
   );
 }
 

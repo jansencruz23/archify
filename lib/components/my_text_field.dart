@@ -79,7 +79,6 @@ class _MyTextFieldState extends State<MyTextField> {
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
               fontFamily: 'Sora',
-              fontSize: 18,
             ),
             controller: widget.controller,
             obscureText: isObscured,
@@ -99,17 +98,20 @@ class _MyTextFieldState extends State<MyTextField> {
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontFamily: 'Sora',
-                fontSize: 18,
               ),
               contentPadding: const EdgeInsets.only(left: 30),
               suffixIcon: widget.showToggleIcon
-                  ? IconButton(
-                      icon: Icon(
-                        isObscured ? Icons.visibility_off : Icons.visibility,
-                        color: Theme.of(context).colorScheme.onSurface,
+                  ? Padding(
+                padding:
+                const EdgeInsets.only(left: 0, top: 0, bottom: 0, right: 10),
+                    child: IconButton(
+                        icon: Icon(
+                          isObscured ? Icons.visibility_off : Icons.visibility,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        onPressed: _toggleObscureText,
                       ),
-                      onPressed: _toggleObscureText,
-                    )
+                  )
                   : null,
             ),
           );
